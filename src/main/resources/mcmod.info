@@ -1,0 +1,16 @@
+[
+{
+  "modid": "from_the_depths",
+  "name": "From The Depths",
+  "description": "This mod includes a way for custom bosses to be generated in a lair to fight.",
+  "version": "${version}",
+  "mcversion": "1.12.1",
+  "url": "https://minecraft.curseforge.com/projects/prefab",
+  "updateUrl": "",
+  "authorList": ["WuestMan", "Kaojinn"],
+  "credits": "Kaojinn for making the textures and the construction of the ideas. Structure Preview functionality adapted from Botania by Vazkii http://botaniamod.net/license.php.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
