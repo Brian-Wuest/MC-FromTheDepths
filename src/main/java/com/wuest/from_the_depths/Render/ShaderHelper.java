@@ -29,7 +29,7 @@ public class ShaderHelper
 
 	public static void Initialize()
 	{
-		ShaderHelper.alphaShader = ShaderHelper.createProgram("/assets/from_the_depths/shader/alpha.vert", "/assets/from_the_depths/shader/alpha.frag");
+		ShaderHelper.alphaShader = ShaderHelper.createProgram("/assets/prefab/shader/alpha.vert", "/assets/prefab/shader/alpha.frag");
 	}
 
 	public static void useShader(int shader)

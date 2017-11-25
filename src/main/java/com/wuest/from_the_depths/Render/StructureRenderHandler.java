@@ -12,8 +12,7 @@ import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.Config.Structures.StructureConfiguration;
 import com.wuest.from_the_depths.Events.ClientEventHandler;
 import com.wuest.from_the_depths.Gui.GuiLangKeys;
-import com.wuest.from_the_depths.StructureGen.BuildBlock;
-import com.wuest.from_the_depths.StructureGen.Structure;
+import com.wuest.from_the_depths.StructureGen.*;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
@@ -48,7 +47,6 @@ public class StructureRenderHandler
 	// player's overlapping on structures and other things.
 	public static StructureConfiguration currentConfiguration;
 	public static Structure currentStructure;
-	
 	public static EnumFacing assumedNorth;
 	public static boolean rendering = false;
 	public static boolean showedMessage = false;
@@ -97,7 +95,7 @@ public class StructureRenderHandler
 	 * @param assumedNorth The assumed norther facing for this structure.
 	 * @param configuration The configuration for this structure.
 	 */
-	public static void setStructure(Structure structure, EnumFacing assumedNorth, StructureConfiguration configuration)//TODO: Structure structure, EnumFacing assumedNorth, StructureConfiguration configuration)
+	public static void setStructure(Structure structure, EnumFacing assumedNorth, StructureConfiguration configuration)
 	{
 		StructureRenderHandler.currentStructure = structure;
 		StructureRenderHandler.assumedNorth = assumedNorth;
@@ -172,7 +170,7 @@ public class StructureRenderHandler
 			}
 		}
 	}
-
+	
 	private static boolean renderComponentInWorld(World world, BuildBlock buildBlock)
 	{
 		double renderPosX, renderPosY, renderPosZ;
@@ -267,7 +265,16 @@ public class StructureRenderHandler
                 	
                     IBakedModel ibakedmodel = brd.getModelForState(state);
                     BlockModelRenderer renderer = brd.getBlockModelRenderer();
-                    renderer.renderModelBrightness(ibakedmodel, state, brightness, true);
+                    
+                    try
+                    {
+                    	renderer.renderModelBrightness(ibakedmodel, state, brightness, true);
+                    }
+                    catch(Exception ex)
+                    {
+                    	// Don't do anything if a mod broke this vanilla block rendering. It just won't show up during the preview then.
+                    }
+                    
                     break;
                 }
 				default:

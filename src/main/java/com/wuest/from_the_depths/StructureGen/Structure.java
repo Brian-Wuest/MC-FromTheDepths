@@ -20,9 +20,15 @@ import net.minecraft.block.BlockDoor.EnumDoorHalf;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -57,6 +63,12 @@ public class Structure
 	public World world;
 	public BlockPos originalPos;
 	public EnumFacing assumedNorth;
+	
+	@Expose
+	public ArrayList<BuildTileEntity> tileEntities = new ArrayList<BuildTileEntity>();
+	
+	@Expose
+	public ArrayList<BuildEntity> entities = new ArrayList<BuildEntity>();
 
 	public Structure()
 	{
@@ -69,7 +81,7 @@ public class Structure
 	 * 
 	 * @param <T> The type which extends Structure.
 	 * @param resourceLocation The location of the JSON file to load. Example:
-	 *            "assets/from_the_depths/structures/warehouse.json"
+	 *            "assets/prefab/structures/warehouse.json"
 	 * @param child The child class which extends Structure.
 	 * @return Null if the resource wasn't found or the JSON could not be
 	 *         parsed, otherwise the de-serialized object.
@@ -147,6 +159,56 @@ public class Structure
 			}
 
 			scannedStructure.getBlocks().add(buildBlock);
+			
+			TileEntity tileEntity = world.getTileEntity(currentPos);
+			
+			if (tileEntity != null)
+			{
+				ResourceLocation resourceLocation = TileEntity.getKey(tileEntity.getClass());
+				NBTTagCompound tagCompound = new NBTTagCompound();
+				tileEntity.writeToNBT(tagCompound);
+				
+				BuildTileEntity buildTileEntity = new BuildTileEntity();
+				buildTileEntity.setEntityDomain(resourceLocation.getResourceDomain());
+				buildTileEntity.setEntityName(resourceLocation.getResourcePath());
+				buildTileEntity.setStartingPosition(Structure.getStartingPositionFromOriginalAndCurrentPosition(currentPos, originalPos));
+				buildTileEntity.setEntityNBTData(tagCompound);
+				scannedStructure.tileEntities.add(buildTileEntity);
+			}
+		}
+		
+		int x_radiusRangeBegin = cornerPos1.getX() < cornerPos2.getX() ? cornerPos1.getX() : cornerPos2.getX();
+		int x_radiusRangeEnd = cornerPos1.getX() < cornerPos2.getX() ? cornerPos2.getX() : cornerPos1.getX();
+		int y_radiusRangeBegin = cornerPos1.getY() < cornerPos2.getY() ? cornerPos1.getY() : cornerPos2.getY();
+		int y_radiusRangeEnd = cornerPos1.getY() < cornerPos2.getY() ? cornerPos2.getY() : cornerPos1.getY();
+		int z_radiusRangeBegin = cornerPos1.getZ() < cornerPos2.getZ() ? cornerPos1.getZ() : cornerPos2.getZ();
+		int z_radiusRangeEnd = cornerPos1.getZ() < cornerPos2.getZ() ? cornerPos2.getZ() : cornerPos1.getZ();
+		
+		for (Entity entity : world.getLoadedEntityList())
+		{
+			BlockPos entityPos = entity.getPosition();
+			
+			if (entityPos.getX() >= x_radiusRangeBegin && entityPos.getX() <= x_radiusRangeEnd
+					&& entityPos.getZ() >= z_radiusRangeBegin && entityPos.getZ() <= z_radiusRangeEnd
+					&& entityPos.getY() >= y_radiusRangeBegin && entityPos.getY() <= y_radiusRangeEnd)
+			{
+				BuildEntity buildEntity = new BuildEntity();
+				buildEntity.setEntityId(EntityList.getID(entity.getClass()));
+				buildEntity.setStartingPosition(Structure.getStartingPositionFromOriginalAndCurrentPosition(entityPos, originalPos));
+				buildEntity.entityXAxisOffset = entityPos.getX() - entity.posX;
+				buildEntity.entityYAxisOffset = entityPos.getY() - entity.posY;
+				buildEntity.entityZAxisOffset = entityPos.getZ() - entity.posZ;
+				
+				if (entity instanceof EntityHanging)
+				{
+					buildEntity.entityYAxisOffset = buildEntity.entityYAxisOffset * -1;
+				}
+				
+				NBTTagCompound entityTagCompound = new NBTTagCompound();
+				entity.writeToNBT(entityTagCompound);
+				buildEntity.setEntityNBTData(entityTagCompound);
+				scannedStructure.entities.add(buildEntity);
+			}
 		}
 
 		Structure.CreateStructureFile(scannedStructure, fileLocation);
@@ -164,31 +226,7 @@ public class Structure
 		BuildBlock buildBlock = new BuildBlock();
 		buildBlock.setBlockDomain(currentBlock.getRegistryName().getResourceDomain());
 		buildBlock.setBlockName(currentBlock.getRegistryName().getResourcePath());
-
-		// if (currentPos.getX() > originalPos.getX()). currentPos is "East"
-		// of hitBlock
-		// if (currentPos.getZ() > originalPos.getZ()). currentPos is
-		// "South" of hitBlock
-
-		if (currentPos.getX() > originalPos.getX())
-		{
-			buildBlock.getStartingPosition().setEastOffset(currentPos.getX() - originalPos.getX());
-		}
-		else
-		{
-			buildBlock.getStartingPosition().setWestOffset(originalPos.getX() - currentPos.getX());
-		}
-
-		if (currentPos.getZ() > originalPos.getZ())
-		{
-			buildBlock.getStartingPosition().setSouthOffset(currentPos.getZ() - originalPos.getZ());
-		}
-		else
-		{
-			buildBlock.getStartingPosition().setNorthOffset(originalPos.getZ() - currentPos.getZ());
-		}
-
-		buildBlock.getStartingPosition().setHeightOffset(currentPos.getY() - originalPos.getY());
+		buildBlock.setStartingPosition(Structure.getStartingPositionFromOriginalAndCurrentPosition(currentPos, originalPos));
 
 		ImmutableMap<IProperty<?>, Comparable<?>> properties = currentState.getProperties();
 
@@ -210,6 +248,37 @@ public class Structure
 		}
 		
 		return buildBlock;
+	}
+	
+	public static PositionOffset getStartingPositionFromOriginalAndCurrentPosition(BlockPos currentPos, BlockPos originalPos)
+	{
+		// if (currentPos.getX() > originalPos.getX()). currentPos is "East"
+		// of hitBlock
+		// if (currentPos.getZ() > originalPos.getZ()). currentPos is
+		// "South" of hitBlock
+		PositionOffset positionOffSet = new PositionOffset();
+		
+		if (currentPos.getX() > originalPos.getX())
+		{
+			positionOffSet.setEastOffset(currentPos.getX() - originalPos.getX());
+		}
+		else
+		{
+			positionOffSet.setWestOffset(originalPos.getX() - currentPos.getX());
+		}
+
+		if (currentPos.getZ() > originalPos.getZ())
+		{
+			positionOffSet.setSouthOffset(currentPos.getZ() - originalPos.getZ());
+		}
+		else
+		{
+			positionOffSet.setNorthOffset(originalPos.getZ() - currentPos.getZ());
+		}
+
+		positionOffSet.setHeightOffset(currentPos.getY() - originalPos.getY());
+		
+		return positionOffSet;
 	}
 
 	public String getName()
@@ -296,7 +365,7 @@ public class Structure
 					{
 						block = BuildBlock.SetBlockState(configuration, world, originalPos, assumedNorth, block, foundBlock, blockState);
 
-						if (block.getSubBlock() != null)
+						if (block.getSubBlock() != null) 
 						{
 							foundBlock = Block.REGISTRY.getObject(block.getSubBlock().getResourceLocation());
 							blockState = foundBlock.getDefaultState();
@@ -364,6 +433,15 @@ public class Structure
 		return true;
 	}
 
+	/**
+	 * This method is to process before a clear space block is set to air.
+	 * @param pos The block position being processed.
+	 */
+	public void BeforeClearSpaceBlockReplaced(BlockPos pos)
+	{
+		
+	}
+	
 	/**
 	 * This method is used before any building occurs to check for things or
 	 * possibly pre-build locations. Note: This is even done before blocks are

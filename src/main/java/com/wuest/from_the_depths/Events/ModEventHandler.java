@@ -66,6 +66,17 @@ public class ModEventHandler
 			NBTTagCompound tag = FromTheDepths.proxy.proxyConfiguration.ToNBTTagCompound();
 			FromTheDepths.network.sendTo(new ConfigSyncMessage(tag), (EntityPlayerMP)event.player);
 			System.out.println("Sent config to '" + event.player.getDisplayNameString() + ".'");
+			
+			EntityPlayer player = event.player;
+			ItemStack stack = new ItemStack(ModRegistry.TotemOfSpawning());
+			stack.setCount(64);
+			NBTTagCompound compoundTag = ModRegistry.TotemOfSpawning().getNBTShareTag(stack);
+			NBTTagCompound entityInfo = new NBTTagCompound();
+			entityInfo.setString("domain", "minecraft");
+			entityInfo.setString("name", "cow");
+			compoundTag.setTag("entityInfo", entityInfo);
+			
+			player.inventory.addItemStackToInventory(stack);
 		}
 	}
 	

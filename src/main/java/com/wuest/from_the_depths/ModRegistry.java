@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.wuest.from_the_depths.Blocks.BlockAlterOfSpawning;
+import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.Items.Structures.ItemChickenCoop;
 import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
 import com.wuest.from_the_depths.Proxy.Messages.PlayerEntityTagMessage;
@@ -86,7 +88,17 @@ public class ModRegistry
 		ModRegistry.RegisterModComponents();
 	}
 
-	public static ItemChickenCoop ChickenCoop()
+	public static ItemTotemOfSpawning TotemOfSpawning()
+	{
+		return ModRegistry.GetItem(ItemTotemOfSpawning.class);
+	}
+	
+	public static BlockAlterOfSpawning AlterOfSpawning()
+	{
+		return ModRegistry.GetBlock(BlockAlterOfSpawning.class);
+	}
+	
+ 	public static ItemChickenCoop ChickenCoop()
 	{
 		return ModRegistry.GetItem(ItemChickenCoop.class);
 	}
@@ -189,6 +201,9 @@ public class ModRegistry
 	public static void RegisterModComponents()
 	{
 		ModRegistry.registerItem(new ItemChickenCoop("item_chicken_coop"));
+		
+		ModRegistry.registerBlock(new BlockAlterOfSpawning("block_alter_of_spawning"));
+		ModRegistry.registerItem(new ItemTotemOfSpawning("item_totem_of_spawning"));
 	}
 
 	/**

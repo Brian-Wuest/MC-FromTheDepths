@@ -82,7 +82,7 @@ public class ClientEventHandler
 	@SubscribeEvent
 	public static void onPlayerInteract(PlayerInteractEvent.RightClickBlock event)
 	{
-		if (event.getWorld().isRemote)
+		if (event.getWorld().isRemote) 
 		{
 			if (StructureRenderHandler.currentStructure != null && event.getEntityPlayer() == Minecraft.getMinecraft().player)
 			{

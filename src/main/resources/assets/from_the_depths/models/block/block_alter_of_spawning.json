@@ -1,0 +1,6 @@
+{
+	"parent": "block/cube_all",
+	"textures": {
+		"all": "from_the_depths:blocks/block_alter_of_spawning"
+	}
+}

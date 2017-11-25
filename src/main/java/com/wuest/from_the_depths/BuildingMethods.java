@@ -82,6 +82,56 @@ public class BuildingMethods
 	}
 
 	/**
+	 * This method consolidate drops for the current block into an existing ArrayList
+	 * @param block The block to get the drops from.
+	 * @param world The world which the block resides.
+	 * @param pos The block position.
+	 * @param state The current block state.
+	 * @param originalStacks The original list of stacks.
+	 * @param itemsToNotAdd The items to not add to the list.
+	 * @return An updated list of item stacks.
+	 */
+	public static ArrayList<ItemStack> ConsolidateDrops(Block block, World world, BlockPos pos, IBlockState state, ArrayList<ItemStack> originalStacks, ArrayList<Item> itemsToNotAdd)
+	{
+		for (ItemStack stack : block.getDrops(world, pos, state, 1))
+		{
+			if (itemsToNotAdd != null)
+			{
+				if (itemsToNotAdd.contains(stack.getItem()))
+				{
+					continue;
+				}
+			}
+			
+			// Check to see if this stack's item is equal to an existing item
+			// stack. If it is just add the count.
+			Boolean foundStack = false;
+
+			for (ItemStack existingStack : originalStacks)
+			{
+				if (ItemStack.areItemsEqual(existingStack, stack))
+				{
+					// Make sure that this combined stack is at or smaller than
+					// the max.
+					if (existingStack.getCount() + stack.getCount() <= stack.getMaxStackSize())
+					{
+						existingStack.setCount(existingStack.getCount() + stack.getCount());
+						foundStack = true;
+						break;
+					}
+				}
+			}
+
+			if (!foundStack)
+			{
+				originalStacks.add(stack);
+			}
+		}
+
+		return originalStacks;
+	}
+
+	/**
 	 * Creates a wall of blocks.
 	 * @param world The world to create the wall.
 	 * @param height The height of the wall.
@@ -125,6 +175,72 @@ public class BuildingMethods
 		}
 
 		return itemsDropped;
+	}
+
+	/**
+	 * 
+	 * Creates a wall of blocks.
+	 * @param world The world to create the wall.
+	 * @param height The height of the wall.
+	 * @param length The length of the wall.
+	 * @param direction The direction of the wall.
+	 * @param startingPosition Where the wall should start.
+	 * @param replacementBlock The block to create the wall out of.
+	 * @return An Arraylist of Itemstacks which contains the drops from any destroyed blocks.
+	 */
+	public static ArrayList<ItemStack> CreateWall(World world, int height, int length, EnumFacing direction, BlockPos startingPosition,
+			IBlockState replacementBlock)
+	{
+		ArrayList<ItemStack> itemsDropped = new ArrayList<ItemStack>();
+
+		BlockPos wallPos = null;
+
+		// i height, j is the actual wall counter.
+		for (int i = 0; i < height; i++)
+		{
+			// Reset wall building position to the starting position up by the
+			// height counter.
+			wallPos = startingPosition.up(i);
+
+			for (int j = 0; j < length; j++)
+			{
+				for (ItemStack stack : world.getBlockState(wallPos).getBlock().getDrops(world, wallPos, world.getBlockState(wallPos), 1))
+				{
+					itemsDropped.add(stack);
+				}
+
+				// j is the north/south counter.
+				BuildingMethods.ReplaceBlock(world, wallPos, replacementBlock);
+
+				wallPos = wallPos.offset(direction);
+			}
+		}
+
+		return itemsDropped;
+	}
+
+	/**
+	 * Creates a square floor of blocks.
+	 * @param world The world to create the floor in.
+	 * @param pos The block position to start creating the floor.
+	 * @param block The Type of block to create the floor out of.
+	 * @param width The width of the floor.
+	 * @param depth The length of the floor.
+	 * @param originalStack The original stack of items from previously harvested blocks.
+	 * @param facing The direction of the floor.
+	 * @param itemsToNotAdd The items to not include in the returned consolidated items.
+	 * @return An ArrayList of Itemstacks which contains the drops from all harvested blocks.
+	 */
+	public static ArrayList<ItemStack> SetFloor(World world, BlockPos pos, Block block, int width, int depth, ArrayList<ItemStack> originalStack, EnumFacing facing, ArrayList<Item> itemsToNotAdd)
+	{
+		for (int i = 0; i < width; i++)
+		{
+			originalStack.addAll(BuildingMethods.CreateWall(world, 1, depth, facing, pos, block, itemsToNotAdd));
+
+			pos = pos.offset(facing.rotateY());
+		}
+
+		return originalStack;
 	}
 
 	/**
@@ -269,6 +385,13 @@ public class BuildingMethods
 
 			if (MinecraftForge.EVENT_BUS.post(placeEvent))
 			{
+				return false;
+			}
+			
+			// A hardness of less than 0 is unbreakable.
+			if (blockState.getBlockHardness(world, currentPos) < 0.0f)
+			{
+				// This is bedrock or some other type of unbreakable block. Don't allow this block to be broken by a structure.
 				return false;
 			}
 		}
