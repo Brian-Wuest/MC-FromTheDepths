@@ -3,6 +3,7 @@ package com.wuest.from_the_depths.Proxy;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.file.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,6 +48,8 @@ public class CommonProxy implements IGuiHandler
 {
 	public static ModEventHandler eventHandler = new ModEventHandler();
 	public static ModConfiguration proxyConfiguration;
+	
+	public File modDirectory;
 
 	/*
 	 * Methods for ClientProxy to Override
@@ -57,7 +60,8 @@ public class CommonProxy implements IGuiHandler
 	
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		FromTheDepths.network = NetworkRegistry.INSTANCE.newSimpleChannel("FTDChannel");
+		this.modDirectory = new File(event.getModConfigurationDirectory().getAbsolutePath() + "\\FTD_Structures");
+		FromTheDepths.network = NetworkRegistry.INSTANCE.newSimpleChannel("FTDChannel123");
 		FromTheDepths.config = new Configuration(event.getSuggestedConfigurationFile());
 		FromTheDepths.config.load();
 		ModConfiguration.syncConfig();
@@ -70,11 +74,27 @@ public class CommonProxy implements IGuiHandler
 		
 		// Make sure that the mod configuration is re-synced after loading all of the recipes.
 		ModConfiguration.syncConfig();
+		
+		if (!this.modDirectory.exists())
+		{
+			try
+			{
+				java.nio.file.Files.createDirectory(this.modDirectory.toPath());
+			}
+			catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public void init(FMLInitializationEvent event)
 	{	
 		NetworkRegistry.INSTANCE.registerGuiHandler(FromTheDepths.instance, FromTheDepths.proxy);
+		
+		// Register custom recipes here.
+		ModRegistry.RegisterTotemOfSummoningRecipes();
 	}
 	
 	public void postinit(FMLPostInitializationEvent event)

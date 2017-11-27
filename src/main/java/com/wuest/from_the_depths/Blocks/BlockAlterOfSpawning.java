@@ -16,6 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 /**
@@ -80,6 +81,10 @@ public class BlockAlterOfSpawning extends Block
     					playerIn.inventoryContainer.detectAndSendChanges();
     					
     					return true;
+    				}
+    				else
+    				{
+    					playerIn.sendMessage(new TextComponentString("Entity with name of [" + entityInfo.getResourcePath() + "] and mod of [" + entityInfo.getResourceDomain() + "] was not found."));
     				}
     			}
     		}

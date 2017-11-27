@@ -1,14 +1,27 @@
 package com.wuest.from_the_depths;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.wuest.from_the_depths.Blocks.BlockAlterOfSpawning;
 import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.Items.Structures.ItemChickenCoop;
@@ -36,13 +49,17 @@ import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -234,6 +251,81 @@ public class ModRegistry
 		//CapabilityManager.INSTANCE.register(IStructureConfigurationCapability.class, new StructureConfigurationStorage(), StructureConfigurationCapability.class);
 	}
 
+	/**
+	 * This method is used to register totem of summoning recipes.
+	 */
+	public static void RegisterTotemOfSummoningRecipes() 
+	{
+		DirectoryStream<Path> stream = null;
+		JsonContext ctx = new JsonContext(FromTheDepths.MODID);
+		Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+		boolean loadedRecipe = false;
+		
+		try
+		{
+			stream = java.nio.file.Files.newDirectoryStream(FromTheDepths.proxy.modDirectory.toPath());
+			
+			for (Path path : stream)
+			{
+				File file = path.toFile();
+				
+				if (file.isFile())
+				{
+					String name = FilenameUtils.getBaseName(path.toString());
+					BufferedReader reader = null;
+					ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
+					reader = Files.newBufferedReader(path);
+					
+					try
+					{
+						JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
+						IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
+						
+						// Limit recipe registration to ONLY the items which are totems of spawning.
+						if (recipe.getRecipeOutput().getItem() instanceof ItemTotemOfSpawning)
+						{
+							ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
+						}
+					}
+					catch (JsonParseException e)
+	                {
+	                    FMLLog.log.error("Parsing error loading recipe {}", key, e);
+	                }
+					finally
+	                {
+	                    IOUtils.closeQuietly(reader);
+	                }
+				}
+			}
+			
+			if (loadedRecipe)
+			{
+				FMLCommonHandler.instance().resetClientRecipeBook();
+			}
+		}
+		
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (stream != null)
+			{
+				try
+				{
+					stream.close();
+				}
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Register an Item
 	 *
