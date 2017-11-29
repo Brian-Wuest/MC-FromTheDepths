@@ -13,6 +13,7 @@ Recipes will follow the standard recipe layout with some caveats.
     1. It is assumed that if the recipe is there that it should be registered.
     
 Below is an example of a recipe to create the item.
+
 **Note**: The "entityInfo" tag is the most important part here. This is what determines what entity to generate when used on an alter. When using a mod-specific entity and the mod is no longer installed the recipe will not be loaded.
 
     {
