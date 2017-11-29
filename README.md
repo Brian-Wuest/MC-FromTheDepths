@@ -33,10 +33,10 @@ Below is an example of a recipe to create the item.
           "item": "from_the_depths:item_totem_of_spawning",
           "data": 0,
           "nbt": {
-        "entityInfo": {
-          "domain": "minecraft",
-          "name": "zombie"
-        }
+              "entityInfo": {
+              "domain": "minecraft",
+              "name": "zombie"
+              }
           },
           "count": 1
       }
