@@ -60,7 +60,7 @@ public class CommonProxy implements IGuiHandler
 	
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		this.modDirectory = new File(event.getModConfigurationDirectory().getAbsolutePath() + "\\FTD_Structures");
+		this.modDirectory = new File(event.getModConfigurationDirectory().getAbsolutePath() + "\\FTD_Summons");
 		FromTheDepths.network = NetworkRegistry.INSTANCE.newSimpleChannel("FTDChannel123");
 		FromTheDepths.config = new Configuration(event.getSuggestedConfigurationFile());
 		FromTheDepths.config.load();

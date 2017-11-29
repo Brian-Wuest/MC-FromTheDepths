@@ -48,6 +48,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
@@ -264,6 +265,7 @@ public class ModRegistry
 		try
 		{
 			stream = java.nio.file.Files.newDirectoryStream(FromTheDepths.proxy.modDirectory.toPath());
+			ArrayList<ResourceLocation> entityInfos = new ArrayList<ResourceLocation>();
 			
 			for (Path path : stream)
 			{
@@ -280,11 +282,40 @@ public class ModRegistry
 					{
 						JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
 						IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
+						ItemStack recipeOutput = recipe.getRecipeOutput();
 						
 						// Limit recipe registration to ONLY the items which are totems of spawning.
-						if (recipe.getRecipeOutput().getItem() instanceof ItemTotemOfSpawning)
+						if (recipeOutput.getItem() instanceof ItemTotemOfSpawning)
 						{
-							ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
+							ResourceLocation recipeCompound = ModRegistry.TotemOfSpawning().getEntityResourceNameFromItemStack(recipeOutput);
+							
+							if (recipeCompound != null)
+							{
+								boolean foundExistingRegisteredEntity = false;
+								
+								for (ResourceLocation entityInfo : entityInfos)
+								{
+									if (entityInfo.getResourceDomain().equals(recipeCompound.getResourceDomain())
+											&& entityInfo.getResourcePath().equals(recipeCompound.getResourcePath()))
+									{
+										foundExistingRegisteredEntity = true;
+										
+										FMLLog.log.warn("Summoning recipe found at location [" + path.toString() + "] specifies an entity which was already registered.");
+										break;
+									}
+								}
+								
+								if (!foundExistingRegisteredEntity)
+								{
+									ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
+									ModRegistry.TotemOfSpawning().subItems.add(recipeOutput);
+									entityInfos.add(recipeCompound);
+								}
+							}
+							else
+							{
+								FMLLog.log.warn("Summoning recipe found at location [" + path.toString() + "] has output which doesn't contain valid nbt data.");
+							}
 						}
 					}
 					catch (JsonParseException e)

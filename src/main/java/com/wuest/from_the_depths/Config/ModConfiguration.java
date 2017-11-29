@@ -8,9 +8,11 @@ import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.UpdateChecker;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import scala.Tuple2;
@@ -38,12 +40,11 @@ public class ModConfiguration
 	// Recipe Options
 	public static String arenaStructureKey = "Arena";
 
-	
 	public static String[] recipeKeys = new String[] 
 	{ 
 		arenaStructureKey,
 	};
-
+	
 	public ModConfiguration()
 	{
 		this.recipeConfiguration = new HashMap<String, Boolean>();
@@ -85,6 +86,23 @@ public class ModConfiguration
 		{
 			tag.setBoolean(entry.getKey(), entry.getValue());
 		}
+		
+		if (ModRegistry.TotemOfSpawning().subItems.size() > 0)
+		{
+			NBTTagCompound totems = new NBTTagCompound();
+			
+			for (ItemStack stack : ModRegistry.TotemOfSpawning().subItems)
+			{
+				ResourceLocation location = ModRegistry.TotemOfSpawning().getEntityResourceNameFromItemStack(stack);
+				
+				if (location != null)
+				{
+					totems.setString(location.toString(), location.toString());
+				}
+			}
+			
+			tag.setTag("totems", totems);
+		}
 
 		return tag;
 	}
@@ -99,6 +117,22 @@ public class ModConfiguration
 		for (String key : ModConfiguration.recipeKeys)
 		{
 			config.recipeConfiguration.put(key, tag.getBoolean(key));
+		}
+		
+		if (tag.hasKey("totems"))
+		{
+			NBTTagCompound totems = tag.getCompoundTag("totems");
+			
+			for (String key : totems.getKeySet())
+			{
+				ResourceLocation totemEntity = new ResourceLocation(totems.getString(key));
+				ItemStack stack = ModRegistry.TotemOfSpawning().getItemStackUsingEntityResourceName(totemEntity);
+				
+				if (!stack.isEmpty())
+				{
+					ModRegistry.TotemOfSpawning().serverSubItems.add(stack);
+				}
+			}
 		}
 
 		return config;

@@ -6,8 +6,11 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * 
@@ -16,14 +19,43 @@ import net.minecraft.util.text.translation.I18n;
  */
 public class ItemTotemOfSpawning extends Item
 {
+	public NonNullList<ItemStack> subItems;
+	public NonNullList<ItemStack> serverSubItems;
+	
 	public ItemTotemOfSpawning(String name)
 	{
 		super();
-
+		
+		this.subItems = NonNullList.create();
+		this.serverSubItems = NonNullList.create();
 		this.setCreativeTab(CreativeTabs.MATERIALS);
 		ModRegistry.setItemName(this, name);
+		this.setHasSubtypes(true);
 	}
 	
+	/**
+	 * returns a list of items with the same ID, but different meta (eg: dye returns 16 items)
+	 */
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items)
+	{
+		if (this.isInCreativeTab(tab))
+		{
+			if (this.serverSubItems.size() > 0)
+			{
+				items.addAll(this.serverSubItems);
+			}
+			else if (this.subItems.size() > 0)
+			{
+				items.addAll(this.subItems);
+			}
+			else
+			{
+				super.getSubItems(tab, items);
+			}
+		}
+	}
 
     @Override
     public String getItemStackDisplayName(ItemStack stack)
@@ -74,5 +106,20 @@ public class ItemTotemOfSpawning extends Item
     	}
     	
     	return null;
+    }
+    
+    public ItemStack getItemStackUsingEntityResourceName(ResourceLocation resourceLocation)
+    {
+    	ItemStack stack = new ItemStack(ModRegistry.TotemOfSpawning());
+    	NBTTagCompound compound = this.getNBTShareTag(stack);
+    	
+    	NBTTagCompound entityInfo = new NBTTagCompound();
+    	entityInfo.setString("domain", resourceLocation.getResourceDomain());
+    	entityInfo.setString("name", resourceLocation.getResourcePath());
+    	
+    	compound.setTag("entityInfo", entityInfo);
+    	stack.setTagCompound(compound);
+    	
+    	return stack;
     }
 }
