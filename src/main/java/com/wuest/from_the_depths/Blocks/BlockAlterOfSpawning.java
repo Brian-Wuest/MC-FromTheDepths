@@ -1,8 +1,16 @@
 package com.wuest.from_the_depths.Blocks;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Path;
+
+import com.google.common.io.Files;
 import com.wuest.from_the_depths.ModRegistry;
+import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
 
+import jline.internal.Log.Level;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -10,14 +18,21 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * 
@@ -51,23 +66,42 @@ public class BlockAlterOfSpawning extends Block
     	{
     		ItemStack usedItem = playerIn.getHeldItem(hand);
     		
+    		ItemStack offHand = playerIn.getHeldItem(EnumHand.OFF_HAND);
+    		
+    		if (offHand.getItem() == Items.SPAWN_EGG)
+    		{
+    			ItemMonsterPlacer spawnEgg = (ItemMonsterPlacer)offHand.getItem();
+    			ResourceLocation testMonster = ItemMonsterPlacer.getNamedIdFrom(offHand);
+    			
+    			Entity entity = EntityList.createEntityByIDFromName(testMonster, worldIn);
+    			NBTTagCompound testTag = entity.serializeNBT();
+    			
+    			try
+				{
+					File path = File.createTempFile("test", ".json");
+					path.setWritable(true);
+					Files.write(testTag.toString(), path, Charset.defaultCharset());
+					FMLLog.log.warn("Data Written to:" + path.getAbsolutePath());
+				}
+				catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+    		}
+    		
     		if (usedItem != null && !usedItem.isEmpty() && usedItem.getItem() instanceof ItemTotemOfSpawning)
     		{
     			// Found a totem of spawning. Spawn the associated entity.
     			ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning)usedItem.getItem();
-    			ResourceLocation entityInfo = totemOfSpawning.getEntityResourceNameFromItemStack(usedItem);
+    			SpawnInfo entityInfo = totemOfSpawning.getSpawnInfoFromItemStack(usedItem);
     			
     			if (entityInfo != null)
     			{
-    				Entity entity = EntityList.createEntityByIDFromName(entityInfo, worldIn);
+    				EntityLiving entity = (EntityLiving)entityInfo.bossInfo.createEntityForWorld(worldIn, pos);
     				
     				if (entity != null)
     				{
-    					entity.forceSpawn = true;
-    					entity.setPositionAndUpdate(pos.getX(), pos.up(1).getY(), pos.getZ());
-    					
-    					worldIn.spawnEntity(entity);
-    					
     					// Entity was spawned, update the itemstack.
     					if (usedItem.getCount() == 1)
     					{
@@ -75,7 +109,7 @@ public class BlockAlterOfSpawning extends Block
     					}
     					else
     					{
-    						usedItem.setCount(usedItem.getCount() - 1);
+    						usedItem.shrink(1);
     					}
     					
     					playerIn.inventoryContainer.detectAndSendChanges();
@@ -84,7 +118,7 @@ public class BlockAlterOfSpawning extends Block
     				}
     				else
     				{
-    					playerIn.sendMessage(new TextComponentString("Entity with name of [" + entityInfo.getResourcePath() + "] and mod of [" + entityInfo.getResourceDomain() + "] was not found."));
+    					playerIn.sendMessage(new TextComponentString("Entity with name of [" + entityInfo.bossInfo.name + "] and mod of [" + entityInfo.bossInfo.domain + "] was not found."));
     				}
     			}
     		}

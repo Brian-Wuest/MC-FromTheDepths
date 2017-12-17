@@ -1,6 +1,7 @@
 package com.wuest.from_the_depths.Items;
 
 import com.wuest.from_the_depths.ModRegistry;
+import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
@@ -91,7 +92,7 @@ public class ItemTotemOfSpawning extends Item
         return stack.getTagCompound();
     }
     
-    public ResourceLocation getEntityResourceNameFromItemStack(ItemStack stack)
+    public SpawnInfo getSpawnInfoFromItemStack(ItemStack stack)
     {
     	NBTTagCompound compound = this.getNBTShareTag(stack);
     	
@@ -99,10 +100,51 @@ public class ItemTotemOfSpawning extends Item
     	{
     		NBTTagCompound entityInfo = compound.getCompoundTag("entityInfo");
     		
-    		String domain = entityInfo.getString("domain");
-    		String name = entityInfo.getString("name");
-    		
-    		return new ResourceLocation(domain, name);
+    		if (entityInfo.hasKey("entityKey"))
+    		{
+    			String entityKey = entityInfo.getString("entityKey");
+    			SpawnInfo returnValue = null;
+    			
+    			for (SpawnInfo spawnInfo : ModRegistry.SpawnInfos)
+    			{
+    				if (spawnInfo.key.equals(entityKey))
+    				{
+    					returnValue = spawnInfo;
+    					break;
+    				}
+    			}
+    			
+    			return returnValue;
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    public ResourceLocation getEntityResourceNameFromItemStack(ItemStack stack)
+    {
+    	SpawnInfo spawnInfo = this.getSpawnInfoFromItemStack(stack);
+    	
+    	if (spawnInfo != null)
+    	{
+    		return spawnInfo.bossInfo.createResourceLocation();
+    	}
+    	
+    	return null;
+    }
+    
+    /**
+     * This method is used to validate an ItemStack that it has a valid key.
+     * @param stack The stack to validate.
+     * @return The key string found or null if a string wasn't found.
+     */
+    public String getEntityKeyFromItemStack(ItemStack stack)
+    {
+    	SpawnInfo spawnInfo = this.getSpawnInfoFromItemStack(stack);
+    	
+    	if (spawnInfo != null)
+    	{
+    		return spawnInfo.key;
     	}
     	
     	return null;

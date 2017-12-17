@@ -50,6 +50,7 @@ public class CommonProxy implements IGuiHandler
 	public static ModConfiguration proxyConfiguration;
 	
 	public File modDirectory;
+	public File spawnInfoFile;
 
 	/*
 	 * Methods for ClientProxy to Override
@@ -61,6 +62,8 @@ public class CommonProxy implements IGuiHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
 		this.modDirectory = new File(event.getModConfigurationDirectory().getAbsolutePath() + "\\FTD_Summons");
+		this.spawnInfoFile = new File(event.getModConfigurationDirectory().getAbsolutePath() + "\\FTD_Summons\\spawnInfo.json");
+		
 		FromTheDepths.network = NetworkRegistry.INSTANCE.newSimpleChannel("FTDChannel123");
 		FromTheDepths.config = new Configuration(event.getSuggestedConfigurationFile());
 		FromTheDepths.config.load();
@@ -92,6 +95,9 @@ public class CommonProxy implements IGuiHandler
 	public void init(FMLInitializationEvent event)
 	{	
 		NetworkRegistry.INSTANCE.registerGuiHandler(FromTheDepths.instance, FromTheDepths.proxy);
+		
+		// Register the spawning info here.
+		ModRegistry.RegisterSpawningInfo();
 		
 		// Register custom recipes here.
 		ModRegistry.RegisterTotemOfSummoningRecipes();

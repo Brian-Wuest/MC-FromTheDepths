@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.wuest.from_the_depths.Blocks.BlockAlterOfSpawning;
+import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.Items.Structures.ItemChickenCoop;
 import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
@@ -70,6 +71,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import scala.Tuple2;
+import scala.actors.threadpool.Arrays;
 
 /**
  * This is the mod registry so there is a way to get to all instances of the blocks/items created by this mod.
@@ -87,6 +89,11 @@ public class ModRegistry
 	 * The ArrayList of mod registered blocks.
 	 */
 	public static ArrayList<Block> ModBlocks = new ArrayList<Block>();
+	
+	/**
+	 * THe ArrayList of mod spawn infos.
+	 */
+	public static ArrayList<SpawnInfo> SpawnInfos = new ArrayList<SpawnInfo>();
 
 	/**
 	 * The hashmap of mod guis.
@@ -253,6 +260,38 @@ public class ModRegistry
 	}
 
 	/**
+	 * This method is used to register spawning information from the mod directory.
+	 */
+	public static void RegisterSpawningInfo()
+	{
+		Gson GSON = new GsonBuilder().create();
+		BufferedReader reader = null;
+		
+		try
+		{
+			if (FromTheDepths.proxy.spawnInfoFile.exists())
+			{
+				reader = Files.newBufferedReader(FromTheDepths.proxy.spawnInfoFile.toPath());
+				SpawnInfo[] info = GSON.fromJson(reader , SpawnInfo[].class);
+			
+				ModRegistry.SpawnInfos.addAll(Arrays.asList(info));
+			}
+		}
+		catch (JsonParseException e)
+        {
+            FMLLog.log.error("Parsing error loading spawning information. {0}", e);
+        }
+		catch (IOException e)
+		{
+			FMLLog.log.error("Error loading spawning information file. {0}", e);
+		}
+		finally
+        {
+            IOUtils.closeQuietly(reader);
+        }
+	}
+	
+	/**
 	 * This method is used to register totem of summoning recipes.
 	 */
 	public static void RegisterTotemOfSummoningRecipes() 
@@ -274,58 +313,45 @@ public class ModRegistry
 				if (file.isFile())
 				{
 					String name = FilenameUtils.getBaseName(path.toString());
-					BufferedReader reader = null;
-					ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
-					reader = Files.newBufferedReader(path);
 					
-					try
+					// Don't include the spawning information file.
+					if (!name.equals("spawnInfo"))
 					{
-						JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-						IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
-						ItemStack recipeOutput = recipe.getRecipeOutput();
+						BufferedReader reader = null;
+						ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
+						reader = Files.newBufferedReader(path);
 						
-						// Limit recipe registration to ONLY the items which are totems of spawning.
-						if (recipeOutput.getItem() instanceof ItemTotemOfSpawning)
+						try
 						{
-							ResourceLocation recipeCompound = ModRegistry.TotemOfSpawning().getEntityResourceNameFromItemStack(recipeOutput);
+							JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
+							IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
+							ItemStack recipeOutput = recipe.getRecipeOutput();
 							
-							if (recipeCompound != null)
+							// Limit recipe registration to ONLY the items which are totems of spawning.
+							if (recipeOutput.getItem() instanceof ItemTotemOfSpawning)
 							{
-								boolean foundExistingRegisteredEntity = false;
+								String recipeCompound = ModRegistry.TotemOfSpawning().getEntityKeyFromItemStack(recipeOutput);
 								
-								for (ResourceLocation entityInfo : entityInfos)
+								if (recipeCompound == null)
 								{
-									if (entityInfo.getResourceDomain().equals(recipeCompound.getResourceDomain())
-											&& entityInfo.getResourcePath().equals(recipeCompound.getResourcePath()))
-									{
-										foundExistingRegisteredEntity = true;
-										
-										FMLLog.log.warn("Summoning recipe found at location [" + path.toString() + "] specifies an entity which was already registered.");
-										break;
-									}
+									FMLLog.log.warn("Summoning recipe found at location [" + path.toString() + "] has output which doesn't contain valid nbt data or specifies a boss which doesn't exist.");
 								}
-								
-								if (!foundExistingRegisteredEntity)
+								else
 								{
 									ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
 									ModRegistry.TotemOfSpawning().subItems.add(recipeOutput);
-									entityInfos.add(recipeCompound);
 								}
 							}
-							else
-							{
-								FMLLog.log.warn("Summoning recipe found at location [" + path.toString() + "] has output which doesn't contain valid nbt data.");
-							}
 						}
+						catch (JsonParseException e)
+		                {
+		                    FMLLog.log.error("Parsing error loading recipe {0}. {1}", key, e);
+		                }
+						finally
+		                {
+		                    IOUtils.closeQuietly(reader);
+		                }
 					}
-					catch (JsonParseException e)
-	                {
-	                    FMLLog.log.error("Parsing error loading recipe {}", key, e);
-	                }
-					finally
-	                {
-	                    IOUtils.closeQuietly(reader);
-	                }
 				}
 			}
 			
