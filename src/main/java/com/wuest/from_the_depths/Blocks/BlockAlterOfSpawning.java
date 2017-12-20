@@ -135,12 +135,12 @@ public class BlockAlterOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
     					
     					if (entityInfo.bossAddInfo != null)
     					{
-    						// Save off the spawn information for this tile entity since adds need to be spawned..
+    						// Save off the spawn information for this tile entity since adds need to be spawned.
+    						tileEntity.markDirty();
     						entityInfo.bossAddInfo.spawnFrequency = entityInfo.bossAddInfo.spawnFrequency * this.tickRate(worldIn);
     						entityInfo.bossAddInfo.totalSpawnDuration = entityInfo.bossAddInfo.totalSpawnDuration * this.tickRate(worldIn);
     						
         					tileEntity.getConfig().currentSpawnInfo = entityInfo;
-        					tileEntity.markDirty();
     					}
     					
     					return true;
