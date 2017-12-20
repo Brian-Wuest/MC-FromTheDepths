@@ -11,4 +11,44 @@ public class BossAddInfo extends BossInfo
 	{
 		super();
 	}
+	
+	public void writeToNBT(NBTTagCompound tag)
+	{
+		super.writeToNBT(tag);
+		
+		tag.setInteger("spawnFrequency", this.spawnFrequency);
+		tag.setInteger("totalSpawnDuration", this.totalSpawnDuration);
+	}
+	
+	public static BossAddInfo CreateFromNBT(NBTTagCompound tag)
+	{
+		BossAddInfo returnValue = new BossAddInfo();
+		
+		if (tag.hasKey("domain"))
+		{
+			returnValue.domain = tag.getString("domain");
+		}
+		
+		if (tag.hasKey("name"))
+		{
+			returnValue.name = tag.getString("name");
+		}
+		
+		if (tag.hasKey("nbtData"))
+		{
+			returnValue.nbtData = tag.getCompoundTag("nbtData");
+		}
+		
+		if (tag.hasKey("spawnFrequency"))
+		{
+			returnValue.spawnFrequency = tag.getInteger("spawnFrequency");
+		}
+		
+		if (tag.hasKey("totalSpawnDuration"))
+		{
+			returnValue.totalSpawnDuration = tag.getInteger("totalSpawnDuration");
+		}
+		
+		return returnValue;
+	}
 }

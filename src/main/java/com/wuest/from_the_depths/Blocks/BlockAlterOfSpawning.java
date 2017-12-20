@@ -5,10 +5,13 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
+import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.wuest.from_the_depths.ModRegistry;
+import com.wuest.from_the_depths.Base.TileBlockBase;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
+import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
 
 import jline.internal.Log.Level;
 import net.minecraft.block.Block;
@@ -39,7 +42,7 @@ import net.minecraftforge.fml.common.FMLLog;
  * @author WuestMan
  *
  */
-public class BlockAlterOfSpawning extends Block
+public class BlockAlterOfSpawning extends TileBlockBase<TileEntityAltarOfSpawning>
 {
 	/**
 	 * Initializes a new instance of the BlockAlterOfSpawning class.
@@ -54,6 +57,12 @@ public class BlockAlterOfSpawning extends Block
 		this.setResistance(6000000.0F);
 		
 		ModRegistry.setBlockName(this, name);
+	}
+	
+	@Override
+	public int tickRate(World worldIn)
+	{
+		return 20;
 	}
 	
     /**
@@ -92,6 +101,16 @@ public class BlockAlterOfSpawning extends Block
     		
     		if (usedItem != null && !usedItem.isEmpty() && usedItem.getItem() instanceof ItemTotemOfSpawning)
     		{
+    			TileEntityAltarOfSpawning tileEntity = this.getLocalTileEntity(worldIn, pos);
+    			
+    			if (tileEntity.getConfig().currentSpawnInfo != null
+    					&& !Strings.isNullOrEmpty(tileEntity.getConfig().currentSpawnInfo.key))
+    			{
+    				playerIn.sendMessage(new TextComponentString("Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all adds to be spawned."));
+    				playerIn.sendMessage(new TextComponentString("Current time until spawning is complete: " + String.valueOf(tileEntity.getConfig().currentSpawnInfo.bossAddInfo.totalSpawnDuration / this.tickRate(worldIn)) + " seconds." ));
+    				return true;
+    			}
+    			
     			// Found a totem of spawning. Spawn the associated entity.
     			ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning)usedItem.getItem();
     			SpawnInfo entityInfo = totemOfSpawning.getSpawnInfoFromItemStack(usedItem);
@@ -114,6 +133,16 @@ public class BlockAlterOfSpawning extends Block
     					
     					playerIn.inventoryContainer.detectAndSendChanges();
     					
+    					if (entityInfo.bossAddInfo != null)
+    					{
+    						// Save off the spawn information for this tile entity since adds need to be spawned..
+    						entityInfo.bossAddInfo.spawnFrequency = entityInfo.bossAddInfo.spawnFrequency * this.tickRate(worldIn);
+    						entityInfo.bossAddInfo.totalSpawnDuration = entityInfo.bossAddInfo.totalSpawnDuration * this.tickRate(worldIn);
+    						
+        					tileEntity.getConfig().currentSpawnInfo = entityInfo;
+        					tileEntity.markDirty();
+    					}
+    					
     					return true;
     				}
     				else
@@ -126,4 +155,15 @@ public class BlockAlterOfSpawning extends Block
     	
         return false;
     }
+
+	@Override
+	public int customUpdateState(World worldIn, BlockPos pos, IBlockState state, TileEntityAltarOfSpawning tileEntity)
+	{
+		return 0;
+	}
+
+	@Override
+	public void customBreakBlock(TileEntityAltarOfSpawning tileEntity, World worldIn, BlockPos pos, IBlockState state)
+	{
+	}
 }

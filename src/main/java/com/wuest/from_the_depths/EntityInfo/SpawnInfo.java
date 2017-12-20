@@ -24,7 +24,23 @@ public class SpawnInfo
 		this.bossAddInfo = bossAddInfo;
 	}
 	
-/*	public static SpawnInfo loadFromNBTData(NBTTagCompound nbtData) throws Exception
+	public void writeToNBT(NBTTagCompound tag)
+	{
+		tag.setString("key", this.key);
+		NBTTagCompound bossInfoTag = new NBTTagCompound();
+		NBTTagCompound bossAddInfoTag = new NBTTagCompound();
+		
+		this.bossInfo.writeToNBT(bossInfoTag);
+		tag.setTag("bossInfo", bossInfoTag);
+		
+		if (this.bossAddInfo != null)
+		{
+			this.bossAddInfo.writeToNBT(bossAddInfoTag);
+			tag.setTag("bossAddInfo", bossAddInfoTag);
+		}
+	}
+	
+	public static SpawnInfo loadFromNBTData(NBTTagCompound nbtData)
 	{
 		SpawnInfo spawnInfo = new SpawnInfo();
 		
@@ -32,19 +48,11 @@ public class SpawnInfo
 		{
 			spawnInfo.key = nbtData.getString("key");
 		}
-		else
-		{
-			throw new Exception("NBT Data does not contain a Key, this is required.");
-		}
 		
 		if (nbtData.hasKey("bossInfo"))
 		{
 			NBTTagCompound bossCompound = nbtData.getCompoundTag("bossInfo");
 			spawnInfo.bossInfo = BossInfo.CreateFromNBT(bossCompound);
-		}
-		else
-		{
-			throw new Exception("NBT Data does not contain boss information, this is required.");
 		}
 		
 		if (nbtData.hasKey("bossAddInfo"))
@@ -54,5 +62,5 @@ public class SpawnInfo
 		}
 		
 		return spawnInfo;	
-	}*/
+	}
 }

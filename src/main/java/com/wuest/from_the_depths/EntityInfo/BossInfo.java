@@ -56,4 +56,33 @@ public class BossInfo
 		
 		return entity;
 	}
+	
+	public void writeToNBT(NBTTagCompound tag)
+	{
+		tag.setString("domain", this.domain);
+		tag.setString("name", this.name);
+		tag.setTag("nbtData", this.nbtData);
+	}
+	
+	public static BossInfo CreateFromNBT(NBTTagCompound tag)
+	{
+		BossInfo returnValue = new BossInfo();
+		
+		if (tag.hasKey("domain"))
+		{
+			returnValue.domain = tag.getString("domain");
+		}
+		
+		if (tag.hasKey("name"))
+		{
+			returnValue.name = tag.getString("name");
+		}
+		
+		if (tag.hasKey("nbtData"))
+		{
+			returnValue.nbtData = tag.getCompoundTag("nbtData");
+		}
+		
+		return returnValue;
+	}
 }
