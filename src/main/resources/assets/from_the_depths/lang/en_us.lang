@@ -4,7 +4,7 @@ item.from_the_depths:item_totem_of_spawning=Totem of Spawning
 
 tile.from_the_depths:block_compressed_stone.block_double_compressed_stone.name=Double Compressed Stone
 tile.from_the_depths:block_half_granite_slab.name=Granite Slab
-tile.from_the_depths:block_alter_of_spawning.name=Altar of Spawning
+tile.from_the_depths:block_altar_of_spawning.name=Altar of Spawning
 
 from_the_depths.gui.starter.tab.general=General
 from_the_depths.gui.starter.tab.config=Config

@@ -42,13 +42,13 @@ import net.minecraftforge.fml.common.FMLLog;
  * @author WuestMan
  *
  */
-public class BlockAlterOfSpawning extends TileBlockBase<TileEntityAltarOfSpawning>
+public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawning>
 {
 	/**
 	 * Initializes a new instance of the BlockAlterOfSpawning class.
 	 * @param name The name to register this block as.
 	 */
-	public BlockAlterOfSpawning(String name)
+	public BlockAltarOfSpawning(String name)
 	{
 		super(Material.ROCK);
 		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
@@ -77,27 +77,27 @@ public class BlockAlterOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
     		
     		ItemStack offHand = playerIn.getHeldItem(EnumHand.OFF_HAND);
     		
-    		if (offHand.getItem() == Items.SPAWN_EGG)
-    		{
-    			ItemMonsterPlacer spawnEgg = (ItemMonsterPlacer)offHand.getItem();
-    			ResourceLocation testMonster = ItemMonsterPlacer.getNamedIdFrom(offHand);
-    			
-    			Entity entity = EntityList.createEntityByIDFromName(testMonster, worldIn);
-    			NBTTagCompound testTag = entity.serializeNBT();
-    			
-    			try
-				{
-					File path = File.createTempFile("test", ".json");
-					path.setWritable(true);
-					Files.write(testTag.toString(), path, Charset.defaultCharset());
-					FMLLog.log.warn("Data Written to:" + path.getAbsolutePath());
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-    		}
+//    		if (offHand.getItem() == Items.SPAWN_EGG)
+//    		{
+//    			ItemMonsterPlacer spawnEgg = (ItemMonsterPlacer)offHand.getItem();
+//    			ResourceLocation testMonster = ItemMonsterPlacer.getNamedIdFrom(offHand);
+//    			
+//    			Entity entity = EntityList.createEntityByIDFromName(testMonster, worldIn);
+//    			NBTTagCompound testTag = entity.serializeNBT();
+//    			
+//    			try
+//				{
+//					File path = File.createTempFile("test", ".json");
+//					path.setWritable(true);
+//					Files.write(testTag.toString(), path, Charset.defaultCharset());
+//					FMLLog.log.warn("Data Written to:" + path.getAbsolutePath());
+//				}
+//				catch (IOException e)
+//				{
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//    		}
     		
     		if (usedItem != null && !usedItem.isEmpty() && usedItem.getItem() instanceof ItemTotemOfSpawning)
     		{

@@ -22,7 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.wuest.from_the_depths.Blocks.BlockAlterOfSpawning;
+import com.wuest.from_the_depths.Blocks.BlockAltarOfSpawning;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.Items.Structures.ItemChickenCoop;
@@ -32,6 +32,7 @@ import com.wuest.from_the_depths.Proxy.Messages.StructureTagMessage;
 import com.wuest.from_the_depths.Proxy.Messages.Handlers.ConfigSyncHandler;
 import com.wuest.from_the_depths.Proxy.Messages.Handlers.PlayerEntityHandler;
 import com.wuest.from_the_depths.Proxy.Messages.Handlers.StructureHandler;
+import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPlanks;
@@ -118,9 +119,9 @@ public class ModRegistry
 		return ModRegistry.GetItem(ItemTotemOfSpawning.class);
 	}
 	
-	public static BlockAlterOfSpawning AlterOfSpawning()
+	public static BlockAltarOfSpawning AlterOfSpawning()
 	{
-		return ModRegistry.GetBlock(BlockAlterOfSpawning.class);
+		return ModRegistry.GetBlock(BlockAltarOfSpawning.class);
 	}
 	
  	public static ItemChickenCoop ChickenCoop()
@@ -227,7 +228,9 @@ public class ModRegistry
 	{
 		ModRegistry.registerItem(new ItemChickenCoop("item_chicken_coop"));
 		
-		ModRegistry.registerBlock(new BlockAlterOfSpawning("block_alter_of_spawning"));
+		ModRegistry.registerBlock(new BlockAltarOfSpawning("block_altar_of_spawning"));
+		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, "block_altar_of_spawning");;
+		
 		ModRegistry.registerItem(new ItemTotemOfSpawning("item_totem_of_spawning"));
 	}
 
