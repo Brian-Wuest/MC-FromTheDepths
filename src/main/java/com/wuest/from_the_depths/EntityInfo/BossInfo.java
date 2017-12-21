@@ -20,6 +20,7 @@ public class BossInfo
 	
 	public BossInfo()
 	{
+		this.nbtData = new NBTTagCompound();
 	}
 	
 	public ResourceLocation createResourceLocation()
@@ -42,6 +43,10 @@ public class BossInfo
 				if (this.nbtData != null && !this.nbtData.hasNoTags())
 				{
 					entityLiving.deserializeNBT(this.nbtData);
+				}
+				else
+				{
+					entityLiving.serializeNBT();
 				}
 				
 				entityLiving.forceSpawn = true;

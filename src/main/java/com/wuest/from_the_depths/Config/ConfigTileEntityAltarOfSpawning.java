@@ -44,7 +44,7 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig
 		
 		tag.setTag("pos", NBTUtil.createPosTag(this.pos));
 		
-		if (this.currentSpawnInfo != null && this.currentSpawnInfo.bossInfo != null && Strings.isNullOrEmpty(this.currentSpawnInfo.key))
+		if (this.currentSpawnInfo != null && this.currentSpawnInfo.bossInfo != null && !Strings.isNullOrEmpty(this.currentSpawnInfo.key))
 		{
 			NBTTagCompound spawnInfo = new NBTTagCompound();
 			this.currentSpawnInfo.writeToNBT(spawnInfo);

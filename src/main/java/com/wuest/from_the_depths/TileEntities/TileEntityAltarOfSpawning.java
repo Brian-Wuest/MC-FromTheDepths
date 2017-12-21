@@ -7,6 +7,12 @@ import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning>
 {
+	public TileEntityAltarOfSpawning()
+	{
+		super();
+		this.config = new ConfigTileEntityAltarOfSpawning();
+	}
+	
 	/**
      * Like the old updateEntity(), except more generic.
      */
