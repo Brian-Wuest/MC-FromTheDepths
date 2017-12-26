@@ -9,15 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -35,43 +31,25 @@ import com.wuest.from_the_depths.Proxy.Messages.Handlers.StructureHandler;
 import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockPlanks;
-import net.minecraft.block.BlockStone;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
+import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
-import scala.Tuple2;
 import scala.actors.threadpool.Arrays;
 
 /**
@@ -226,7 +204,7 @@ public class ModRegistry
 	 */
 	public static void RegisterModComponents()
 	{
-		ModRegistry.registerItem(new ItemChickenCoop("item_chicken_coop"));
+		//ModRegistry.registerItem(new ItemChickenCoop("item_chicken_coop"));
 		
 		ModRegistry.registerBlock(new BlockAltarOfSpawning("block_altar_of_spawning"));
 		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, "block_altar_of_spawning");;

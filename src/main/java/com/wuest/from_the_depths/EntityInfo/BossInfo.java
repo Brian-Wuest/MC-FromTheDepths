@@ -23,6 +23,14 @@ public class BossInfo
 		this.nbtData = new NBTTagCompound();
 	}
 	
+	public BossInfo(BossInfo oldInstance)
+	{
+		this();
+		this.domain = oldInstance.domain;
+		this.name = oldInstance.name;
+		this.nbtData = oldInstance.nbtData;
+	}
+	
 	public ResourceLocation createResourceLocation()
 	{
 		return new ResourceLocation(this.domain, this.name);

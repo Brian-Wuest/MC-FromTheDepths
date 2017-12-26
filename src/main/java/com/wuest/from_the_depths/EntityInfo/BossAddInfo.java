@@ -12,6 +12,13 @@ public class BossAddInfo extends BossInfo
 		super();
 	}
 	
+	public BossAddInfo(BossAddInfo oldInstance)
+	{
+		super(oldInstance);
+		this.spawnFrequency = oldInstance.spawnFrequency;
+		this.totalSpawnDuration = oldInstance.totalSpawnDuration;
+	}
+	
 	public void writeToNBT(NBTTagCompound tag)
 	{
 		super.writeToNBT(tag);

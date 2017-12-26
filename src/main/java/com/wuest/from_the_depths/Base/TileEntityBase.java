@@ -41,6 +41,11 @@ public abstract class TileEntityBase<T extends BaseConfig> extends TileEntity im
 	 */
 	public T getConfig()
 	{
+		if (this.config == null)
+		{
+			this.config = this.createConfigInstance();
+		}
+		
 		return this.config;
 	}
 	

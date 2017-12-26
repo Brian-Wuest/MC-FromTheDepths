@@ -47,6 +47,8 @@ public class ClientProxy extends CommonProxy
 	public void registerRenderers() 
 	{
 		ShaderHelper.Initialize();
+		
+		ClientModRegistry.RegisterSpecialRenderers();
 	}
 	
 	@Override

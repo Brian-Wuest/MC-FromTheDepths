@@ -24,6 +24,18 @@ public class SpawnInfo
 		this.bossAddInfo = bossAddInfo;
 	}
 	
+	public SpawnInfo(SpawnInfo oldInstance)
+	{
+		this();
+		this.key = oldInstance.key;
+		this.bossInfo = new BossInfo(oldInstance.bossInfo);
+		
+		if (oldInstance.bossAddInfo != null)
+		{
+			this.bossAddInfo = new BossAddInfo(oldInstance.bossAddInfo);
+		}
+	}
+	
 	public void writeToNBT(NBTTagCompound tag)
 	{
 		tag.setString("key", this.key);

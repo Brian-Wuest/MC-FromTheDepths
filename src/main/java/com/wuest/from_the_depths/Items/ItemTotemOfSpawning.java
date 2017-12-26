@@ -109,7 +109,7 @@ public class ItemTotemOfSpawning extends Item
     			{
     				if (spawnInfo.key.equals(entityKey))
     				{
-    					returnValue = spawnInfo;
+    					returnValue = new SpawnInfo(spawnInfo);
     					break;
     				}
     			}

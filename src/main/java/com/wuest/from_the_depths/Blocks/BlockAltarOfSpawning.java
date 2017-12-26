@@ -65,6 +65,16 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
 		return 20;
 	}
 	
+	/**
+	 * Determines if this block can provide power.
+	 * @param state The block state (not used, can be null).
+	 */
+	@Override
+	public boolean canProvidePower(IBlockState state)
+	{
+		return false;
+	}
+	
     /**
      * Called when the block is right clicked by a player.
      */
@@ -107,48 +117,50 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
     					&& !Strings.isNullOrEmpty(tileEntity.getConfig().currentSpawnInfo.key))
     			{
     				playerIn.sendMessage(new TextComponentString("Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all adds to be spawned."));
-    				playerIn.sendMessage(new TextComponentString("Current time until spawning is complete: " + String.valueOf(tileEntity.getConfig().currentSpawnInfo.bossAddInfo.totalSpawnDuration / this.tickRate(worldIn)) + " seconds." ));
+    				playerIn.sendMessage(new TextComponentString("Approximate time until spawning is complete: " + String.valueOf(tileEntity.getConfig().currentSpawnInfo.bossAddInfo.totalSpawnDuration / this.tickRate(worldIn)) + " seconds." ));
     				return true;
     			}
-    			
-    			// Found a totem of spawning. Spawn the associated entity.
-    			ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning)usedItem.getItem();
-    			SpawnInfo entityInfo = totemOfSpawning.getSpawnInfoFromItemStack(usedItem);
-    			
-    			if (entityInfo != null)
+    			else
     			{
-    				EntityLiving entity = (EntityLiving)entityInfo.bossInfo.createEntityForWorld(worldIn, pos);
-    				
-    				if (entity != null)
-    				{
-    					// Entity was spawned, update the itemstack.
-    					if (usedItem.getCount() == 1)
-    					{
-    						playerIn.inventory.deleteStack(usedItem);
-    					}
-    					else
-    					{
-    						usedItem.shrink(1);
-    					}
-    					
-    					playerIn.inventoryContainer.detectAndSendChanges();
-    					
-    					if (entityInfo.bossAddInfo != null)
-    					{
-    						// Save off the spawn information for this tile entity since adds need to be spawned.
-    						tileEntity.markDirty();
-    						entityInfo.bossAddInfo.spawnFrequency = entityInfo.bossAddInfo.spawnFrequency * this.tickRate(worldIn);
-    						entityInfo.bossAddInfo.totalSpawnDuration = entityInfo.bossAddInfo.totalSpawnDuration * this.tickRate(worldIn);
-    						
-        					tileEntity.getConfig().currentSpawnInfo = entityInfo;
-    					}
-    					
-    					return true;
-    				}
-    				else
-    				{
-    					playerIn.sendMessage(new TextComponentString("Entity with name of [" + entityInfo.bossInfo.name + "] and mod of [" + entityInfo.bossInfo.domain + "] was not found."));
-    				}
+	    			// Found a totem of spawning and we are not currently spawning a previous set of mosnters. Spawn the associated entity.
+	    			ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning)usedItem.getItem();
+	    			SpawnInfo entityInfo = totemOfSpawning.getSpawnInfoFromItemStack(usedItem);
+	    			
+	    			if (entityInfo != null)
+	    			{
+	    				EntityLiving entity = (EntityLiving)entityInfo.bossInfo.createEntityForWorld(worldIn, pos);
+	    				
+	    				if (entity != null)
+	    				{
+	    					// Entity was spawned, update the itemstack.
+	    					if (usedItem.getCount() == 1)
+	    					{
+	    						playerIn.inventory.deleteStack(usedItem);
+	    					}
+	    					else
+	    					{
+	    						usedItem.shrink(1);
+	    					}
+	    					
+	    					playerIn.inventoryContainer.detectAndSendChanges();
+	    					
+	    					if (entityInfo.bossAddInfo != null)
+	    					{
+	    						// Save off the spawn information for this tile entity since adds need to be spawned.
+	    						entityInfo.bossAddInfo.spawnFrequency = entityInfo.bossAddInfo.spawnFrequency * this.tickRate(worldIn);
+	    						entityInfo.bossAddInfo.totalSpawnDuration = entityInfo.bossAddInfo.totalSpawnDuration * this.tickRate(worldIn);
+	    						
+	        					tileEntity.getConfig().currentSpawnInfo = entityInfo;
+	        					tileEntity.markDirty();
+	    					}
+	    					
+	    					return true;
+	    				}
+	    				else
+	    				{
+	    					playerIn.sendMessage(new TextComponentString("Entity with name of [" + entityInfo.bossInfo.name + "] and mod of [" + entityInfo.bossInfo.domain + "] was not found."));
+	    				}
+	    			}
     			}
     		}
     	}
