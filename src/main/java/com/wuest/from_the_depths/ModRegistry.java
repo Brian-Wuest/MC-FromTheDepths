@@ -50,7 +50,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import scala.actors.threadpool.Arrays;
 
 /**
  * This is the mod registry so there is a way to get to all instances of the blocks/items created by this mod.
@@ -253,9 +252,12 @@ public class ModRegistry
 			if (FromTheDepths.proxy.spawnInfoFile.exists())
 			{
 				reader = Files.newBufferedReader(FromTheDepths.proxy.spawnInfoFile.toPath());
-				SpawnInfo[] info = GSON.fromJson(reader , SpawnInfo[].class);
+				SpawnInfo[] infos = GSON.fromJson(reader , SpawnInfo[].class);
 			
-				ModRegistry.SpawnInfos.addAll(Arrays.asList(info));
+				for (SpawnInfo info : infos)
+				{
+					ModRegistry.SpawnInfos.add(info);
+				}
 			}
 		}
 		catch (JsonParseException e)
