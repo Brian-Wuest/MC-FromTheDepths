@@ -30,6 +30,9 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig
 	public BlockPos pos;
 	public SpawnInfo currentSpawnInfo;
 	public int ticksForCurrentSpawn;
+	public boolean spawningBoss;
+	public int totalLightningBolts;
+	public int ticksUntilNextLightningBolt;
 
 	public ConfigTileEntityAltarOfSpawning()
 	{
@@ -51,6 +54,9 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig
 			tag.setTag("spawnInfo", spawnInfo);
 			
 			tag.setInteger("ticksForCurrentSpawn", this.ticksForCurrentSpawn);
+			tag.setBoolean("spawningBoss", this.spawningBoss);
+			tag.setInteger("totalLightningBolts", this.totalLightningBolts);
+			tag.setInteger("ticksUntilNextLightningBolt", this.ticksUntilNextLightningBolt);
 		}
 		
 		compound.setTag("configTag", tag);
@@ -83,6 +89,21 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig
 				{
 					config.ticksForCurrentSpawn = tag.getInteger("ticksForCurrentSpawn");
 				}
+				
+				if (tag.hasKey("spawningBoss"))
+				{
+					config.spawningBoss = tag.getBoolean("spawningBoss");
+					
+					if (tag.hasKey("totalLightningBolts"))
+					{
+						config.totalLightningBolts = tag.getInteger("totalLightningBolts");
+					}
+					
+					if (tag.hasKey("ticksUntilNextLightningBolt"))
+					{
+						config.ticksUntilNextLightningBolt = tag.getInteger("ticksUntilNextLightningBolt");
+					}
+				}
 			}
 		}
 		
@@ -94,5 +115,4 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig
 		this.pos = new BlockPos(0,0,0);
 		this.currentSpawnInfo = null;
 	}
-	
 }
