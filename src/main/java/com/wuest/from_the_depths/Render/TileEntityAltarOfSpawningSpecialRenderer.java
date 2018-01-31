@@ -14,9 +14,9 @@ public class TileEntityAltarOfSpawningSpecialRenderer extends TileEntitySpecialR
 
         if (itextcomponent != null)
         {
-            this.setLightmapDisabled(true);
-            this.drawNameplate(te, itextcomponent.getFormattedText(), x, y, z, 12);
-            this.setLightmapDisabled(false);
+           // this.setLightmapDisabled(true);
+           // this.drawNameplate(te, itextcomponent.getFormattedText(), x, y, z, 12);
+           // this.setLightmapDisabled(false);
         }
     }
 }
