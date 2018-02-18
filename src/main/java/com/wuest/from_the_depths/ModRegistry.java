@@ -205,7 +205,16 @@ public class ModRegistry
 	{
 		//ModRegistry.registerItem(new ItemChickenCoop("item_chicken_coop"));
 		
-		ModRegistry.registerBlock(new BlockAltarOfSpawning("block_altar_of_spawning"));
+		try
+		{
+			Block block = new BlockAltarOfSpawning("block_altar_of_spawning");
+			ModRegistry.registerBlock(block);
+		}
+		catch (Exception ex)
+		{
+			FMLLog.getLogger().warn(ex.getMessage());
+		}
+		
 		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, "block_altar_of_spawning");;
 		
 		ModRegistry.registerItem(new ItemTotemOfSpawning("item_totem_of_spawning"));
