@@ -1,4 +1,8 @@
 {
     "variants": {
+        "facing=north": { "model": "from_the_depths:block_altar_of_spawning" },
+        "facing=south": { "model": "from_the_depths:block_altar_of_spawning", "y": 180 },
+        "facing=west":  { "model": "from_the_depths:block_altar_of_spawning", "y": 270 },
+        "facing=east":  { "model": "from_the_depths:block_altar_of_spawning", "y": 90 }
     }
 }
