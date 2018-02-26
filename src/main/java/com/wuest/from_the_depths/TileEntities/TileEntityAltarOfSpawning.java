@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
 public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning>
@@ -87,7 +88,8 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
 	@Override
 	public void update()
 	{
-		if (!this.world.isRemote)
+		// When this is a peaceful world, don't allow this process to continue.
+		if (!this.world.isRemote && this.world.getDifficulty() != EnumDifficulty.PEACEFUL)
 		{
 			if (this.config.currentSpawnInfo != null)
 			{

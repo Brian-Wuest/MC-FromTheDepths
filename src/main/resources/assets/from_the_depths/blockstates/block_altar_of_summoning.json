@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "from_the_depths:block_altar_of_summoning" },
+        "facing=south": { "model": "from_the_depths:block_altar_of_summoning", "y": 180 },
+        "facing=west":  { "model": "from_the_depths:block_altar_of_summoning", "y": 270 },
+        "facing=east":  { "model": "from_the_depths:block_altar_of_summoning", "y": 90 }
+    }
+}

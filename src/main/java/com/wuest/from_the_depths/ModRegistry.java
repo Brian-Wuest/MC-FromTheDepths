@@ -207,7 +207,7 @@ public class ModRegistry
 		
 		try
 		{
-			Block block = new BlockAltarOfSpawning("block_altar_of_spawning");
+			Block block = new BlockAltarOfSpawning("block_altar_of_summoning");
 			ModRegistry.registerBlock(block);
 		}
 		catch (Exception ex)
@@ -215,9 +215,9 @@ public class ModRegistry
 			FMLLog.getLogger().warn(ex.getMessage());
 		}
 		
-		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, "block_altar_of_spawning");;
+		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, "block_altar_of_summoning");;
 		
-		ModRegistry.registerItem(new ItemTotemOfSpawning("item_totem_of_spawning"));
+		ModRegistry.registerItem(new ItemTotemOfSpawning("item_totem_of_summoning"));
 	}
 
 	/**

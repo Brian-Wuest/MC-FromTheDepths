@@ -60,6 +60,12 @@ public class BossInfo
             int randomZ = BossInfo.random.nextInt(3) * (BossInfo.random.nextInt(100) % 2 == 0 ? -1 : 1);
             BlockPos spawnPos = new BlockPos(pos.getX() + randomX, pos.up(1).getY(), pos.getZ() + randomZ);
 			
+            if (spawnPos.getX() == pos.getX() && spawnPos.getZ() == pos.getZ())
+            {
+            	// Never let the spawn to be on-top of the block, make it right next to the block.
+            	spawnPos.north().east();
+            }
+            
 			// When NBT data is provided, everything needs to be provided. Position information is updated to be appropriate for this world.
 			if (this.nbtData != null && !this.nbtData.hasNoTags())
 			{

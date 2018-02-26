@@ -1,10 +1,10 @@
 item.from_the_depths:item_chicken_coop.name=Chicken Coop
-item.from_the_depths:item_totem_of_spawning.name=Totem of Spawning
-item.from_the_depths:item_totem_of_spawning=Totem of Spawning
+item.from_the_depths:item_totem_of_summoning.name=Totem of Summoning
+item.from_the_depths:item_totem_of_summoning=Totem of Summoning
 
 tile.from_the_depths:block_compressed_stone.block_double_compressed_stone.name=Double Compressed Stone
 tile.from_the_depths:block_half_granite_slab.name=Granite Slab
-tile.from_the_depths:block_altar_of_spawning.name=Altar of Spawning
+tile.from_the_depths:block_altar_of_summoning.name=Altar of Summoning
 
 from_the_depths.gui.starter.tab.general=General
 from_the_depths.gui.starter.tab.config=Config
@@ -16,9 +16,6 @@ from_the_depths.wall.block.type.birch=Birch
 from_the_depths.wall.block.type.jungle=Jungle
 from_the_depths.wall.block.type.acacia=Acacia
 from_the_depths.wall.block.type.darkoak=Dark Oak
-
-from_the_depths.gui.treefarm.facing=Tree Farm Facing
-from_the_depths.gui.treefarm.structure.size=This structure is 38x38 blocks in size.
 
 from_the_depths.gui.structure.facing=Structure Facing
 from_the_depths.gui.structure.glass=Glass Color

@@ -30,6 +30,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -196,7 +197,8 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
     		
     		ItemStack offHand = playerIn.getHeldItem(EnumHand.OFF_HAND);
     		
-    		if (usedItem != null && !usedItem.isEmpty() && usedItem.getItem() instanceof ItemTotemOfSpawning)
+    		if (usedItem != null && !usedItem.isEmpty() && usedItem.getItem() instanceof ItemTotemOfSpawning
+    				&& worldIn.getDifficulty() != EnumDifficulty.PEACEFUL)
     		{
     			TileEntityAltarOfSpawning tileEntity = this.getLocalTileEntity(worldIn, pos);
     			
