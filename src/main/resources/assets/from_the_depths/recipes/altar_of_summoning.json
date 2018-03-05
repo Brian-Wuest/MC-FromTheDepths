@@ -1,0 +1,29 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "group": "Altar of Summoning",
+    "pattern": [
+        "aaa",
+        "cbc",
+        "ddd"
+    ],
+    "key": {
+        "a": {
+            "item": "minecraft:torch",
+            "data": 32767
+        },
+        "b": {
+            "item": "minecraft:redstone_block"
+        },
+        "c": {
+            "item": "minecraft:cobblestone"
+        },
+        "d": {
+            "item": "minecraft:stick"
+        }
+    },
+    "result": {
+        "item": "from_the_depths:block_altar_of_summoning",
+        "data": 0,
+        "count": 1
+    }
+}
