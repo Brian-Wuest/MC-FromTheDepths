@@ -255,7 +255,7 @@ public class ModRegistry
 	{
 		Gson GSON = new GsonBuilder().create();
 		BufferedReader reader = null;
-		
+		 
 		try
 		{
 			if (FromTheDepths.proxy.spawnInfoFile.exists())
@@ -265,6 +265,16 @@ public class ModRegistry
 			
 				for (SpawnInfo info : infos)
 				{
+/*					if (info.bossInfo.nbtData != null)
+					{
+						info.bossInfo.testData = JsonToNBT.getTagFromJson(info.bossInfo.nbtData.toString());
+					}
+					
+					if (info.bossAddInfo != null && info.bossAddInfo.nbtData != null)
+					{
+						info.bossAddInfo.testData = JsonToNBT.getTagFromJson(info.bossAddInfo.nbtData.toString());
+					}*/
+					
 					ModRegistry.SpawnInfos.add(info);
 				}
 			}
@@ -337,7 +347,7 @@ public class ModRegistry
 						}
 						catch (JsonParseException e)
 		                {
-		                    FMLLog.log.error("Parsing error loading recipe {0}. {1}", key, e);
+		                    FMLLog.log.error("Parsing error loading recipe {}. {}", key, e);
 		                }
 						finally
 		                {

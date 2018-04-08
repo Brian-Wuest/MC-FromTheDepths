@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.UpdateChecker;
+import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -93,11 +94,14 @@ public class ModConfiguration
 			
 			for (ItemStack stack : ModRegistry.TotemOfSpawning().subItems)
 			{
-				ResourceLocation location = ModRegistry.TotemOfSpawning().getEntityResourceNameFromItemStack(stack);
+				SpawnInfo spawnInfo = ModRegistry.TotemOfSpawning().getSpawnInfoFromItemStack(stack);
 				
-				if (location != null)
+				if (spawnInfo != null)
 				{
-					totems.setString(location.toString(), location.toString());
+					NBTTagCompound compound = new NBTTagCompound();
+					compound.setString("resourceLocation", spawnInfo.bossInfo.createResourceLocation().toString());
+					compound.setString("entityKey", spawnInfo.key);
+					totems.setTag(spawnInfo.key, compound);
 				}
 			}
 			
@@ -125,8 +129,10 @@ public class ModConfiguration
 			
 			for (String key : totems.getKeySet())
 			{
-				ResourceLocation totemEntity = new ResourceLocation(totems.getString(key));
-				ItemStack stack = ModRegistry.TotemOfSpawning().getItemStackUsingEntityResourceName(totemEntity);
+				NBTTagCompound tagCompound = totems.getCompoundTag(key);
+				ResourceLocation totemEntity = new ResourceLocation(tagCompound.getString("resourceLocation"));
+				
+				ItemStack stack = ModRegistry.TotemOfSpawning().getItemStackUsingEntityResourceName(totemEntity, key);
 				
 				if (!stack.isEmpty())
 				{

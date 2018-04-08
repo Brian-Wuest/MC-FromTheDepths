@@ -2,6 +2,9 @@ package com.wuest.from_the_depths.TileEntities;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.Base.TileEntityBase;
 import com.wuest.from_the_depths.Config.ConfigTileEntityAltarOfSpawning;
@@ -10,8 +13,10 @@ import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.effect.EntityLightningBolt;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -19,10 +24,12 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 
 public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning>
 {
+    private static final Predicate<EntityPlayerMP> VALID_PLAYER = Predicates.<EntityPlayerMP>and(EntitySelectors.IS_ALIVE, EntitySelectors.withinRange(0.0D, 15.0D, 0.0D, 15.0D));
+    
 	public TileEntityAltarOfSpawning()
 	{
 		super();
@@ -97,8 +104,25 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
 				{
 					if (this.config.totalLightningBolts >= 4)
 					{
-						this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos);
+						Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos);
+						
+						if (entity == null)
+						{
+							TextComponentString component = new TextComponentString("Unable to summon boss monster due to limited air space in summoning area");
+
+					        for (EntityPlayerMP player : this.world.getPlayers(EntityPlayerMP.class, VALID_PLAYER))
+					        {
+					        	player.sendMessage(component);
+					        }
+						}
+						
 						this.config.spawningBoss = false;
+						
+						if (this.config.currentSpawnInfo.bossAddInfo == null)
+						{
+							this.config.currentSpawnInfo = null;
+						}
+						
 						this.markDirty();
 					}
 					else if (this.config.ticksUntilNextLightningBolt - 1 <= 0)
@@ -161,7 +185,17 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
 						this.config.ticksForCurrentSpawn = 0;
 						
 						// Spawn the entity in this world above this block.
-						this.config.currentSpawnInfo.bossAddInfo.createEntityForWorld(this.world, this.pos.up());
+						Entity entity = this.config.currentSpawnInfo.bossAddInfo.createEntityForWorld(this.world, this.pos.up());
+						
+						if (entity == null)
+						{
+							TextComponentString component = new TextComponentString("Unable to summon additional monster due to limited air space in summoning area");
+
+					        for (EntityPlayerMP player : this.world.getPlayers(EntityPlayerMP.class, VALID_PLAYER))
+					        {
+					        	player.sendMessage(component);
+					        }
+						}
 						
 						this.markDirty();
 						
@@ -185,8 +219,12 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
 		this.config.totalLightningBolts = 0;
 		this.config.ticksUntilNextLightningBolt = tickRate;
 		this.config.currentSpawnInfo = spawnInfo;
-		this.config.currentSpawnInfo.bossAddInfo.spawnFrequency = this.config.currentSpawnInfo.bossAddInfo.spawnFrequency * tickRate;
-		this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration = this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration * tickRate;
+		
+		if (this.config.currentSpawnInfo.bossAddInfo != null)
+		{
+			this.config.currentSpawnInfo.bossAddInfo.spawnFrequency = this.config.currentSpawnInfo.bossAddInfo.spawnFrequency * tickRate;
+			this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration = this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration * tickRate;
+		}
 		
 		this.markDirty();
 	}

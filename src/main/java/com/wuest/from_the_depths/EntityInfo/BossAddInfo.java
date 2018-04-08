@@ -41,9 +41,24 @@ public class BossAddInfo extends BossInfo
 			returnValue.name = tag.getString("name");
 		}
 		
-		if (tag.hasKey("nbtData"))
+		if (tag.hasKey("displayName"))
 		{
-			returnValue.nbtData = tag.getCompoundTag("nbtData");
+			returnValue.displayName = tag.getString("displayName");
+		}
+		
+		if (tag.hasKey("maxHealth"))
+		{
+			returnValue.maxHealth = tag.getInteger("maxHealth");
+		}
+		
+		if (tag.hasKey("attackDamage"))
+		{
+			returnValue.attackDamage = tag.getFloat("attackDamage");
+		}
+		
+		if (tag.hasKey("alwaysShowDisplayName"))
+		{
+			returnValue.alwaysShowDisplayName = tag.getBoolean("alwaysShowDisplayName");
 		}
 		
 		if (tag.hasKey("spawnFrequency"))

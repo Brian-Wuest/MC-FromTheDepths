@@ -61,11 +61,11 @@ public class ItemTotemOfSpawning extends Item
     @Override
     public String getItemStackDisplayName(ItemStack stack)
     {
-    	ResourceLocation resourceLocation = this.getEntityResourceNameFromItemStack(stack);
+    	SpawnInfo resourceLocation = this.getSpawnInfoFromItemStack(stack);
     	
     	if (resourceLocation != null)
     	{
-    		String value = ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim() + " (" + resourceLocation.getResourcePath() + ")";
+    		String value = ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim() + " (" + resourceLocation.key + ")";
     		return value;
     	}
     	
@@ -150,7 +150,7 @@ public class ItemTotemOfSpawning extends Item
     	return null;
     }
     
-    public ItemStack getItemStackUsingEntityResourceName(ResourceLocation resourceLocation)
+    public ItemStack getItemStackUsingEntityResourceName(ResourceLocation resourceLocation, String key)
     {
     	ItemStack stack = new ItemStack(ModRegistry.TotemOfSpawning());
     	NBTTagCompound compound = this.getNBTShareTag(stack);
@@ -158,6 +158,7 @@ public class ItemTotemOfSpawning extends Item
     	NBTTagCompound entityInfo = new NBTTagCompound();
     	entityInfo.setString("domain", resourceLocation.getResourceDomain());
     	entityInfo.setString("name", resourceLocation.getResourcePath());
+    	entityInfo.setString("entityKey", key);
     	
     	compound.setTag("entityInfo", entityInfo);
     	stack.setTagCompound(compound);
