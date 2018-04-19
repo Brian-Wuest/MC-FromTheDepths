@@ -2,6 +2,8 @@ package com.wuest.from_the_depths.Proxy;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
@@ -12,6 +14,7 @@ import com.wuest.from_the_depths.Events.ModEventHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -28,8 +31,9 @@ public class CommonProxy implements IGuiHandler
 	public static ModEventHandler eventHandler = new ModEventHandler();
 	public static ModConfiguration proxyConfiguration;
 	
-	public File modDirectory;
+	public Path modDirectory;
 	public File spawnInfoFile;
+	public Path spawnInfoFilePath;
 
 	/*
 	 * Methods for ClientProxy to Override
@@ -40,8 +44,10 @@ public class CommonProxy implements IGuiHandler
 	
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		this.modDirectory = new File(event.getModConfigurationDirectory().getAbsolutePath() + "\\FTD_Summons");
-		this.spawnInfoFile = new File(event.getModConfigurationDirectory().getAbsolutePath() + "\\FTD_Summons\\spawnInfo.json");
+		this.modDirectory = Paths.get(event.getModConfigurationDirectory().getAbsolutePath(), "FTD_Summons");
+		this.spawnInfoFilePath = Paths.get(event.getModConfigurationDirectory().getAbsolutePath(), "FTD_Summons", "spawnInfo.json");
+		
+		this.spawnInfoFile = this.spawnInfoFilePath.toFile();
 		
 		FromTheDepths.network = NetworkRegistry.INSTANCE.newSimpleChannel("FTDChannel123");
 		FromTheDepths.config = new Configuration(event.getSuggestedConfigurationFile());
@@ -57,18 +63,21 @@ public class CommonProxy implements IGuiHandler
 		// Make sure that the mod configuration is re-synced after loading all of the recipes.
 		ModConfiguration.syncConfig();
 		
-		if (!this.modDirectory.exists())
-		{
-			try
-			{
-				java.nio.file.Files.createDirectory(this.modDirectory.toPath());
-			}
-			catch (IOException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+        if (!this.modDirectory.toFile().exists())
+        {
+        	FMLLog.log.warn("From The Depths: The summons directory doesn't exist, creating this directory");
+        	
+            try
+            {
+                java.nio.file.Files.createDirectory(this.modDirectory);
+            }
+            catch (IOException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
 	}
 	
 	public void init(FMLInitializationEvent event)

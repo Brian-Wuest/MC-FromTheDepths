@@ -305,7 +305,7 @@ public class ModRegistry
 		
 		try
 		{
-			stream = java.nio.file.Files.newDirectoryStream(FromTheDepths.proxy.modDirectory.toPath());
+			stream = java.nio.file.Files.newDirectoryStream(FromTheDepths.proxy.modDirectory);
 			ArrayList<ResourceLocation> entityInfos = new ArrayList<ResourceLocation>();
 			
 			for (Path path : stream)
