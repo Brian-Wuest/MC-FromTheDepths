@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 /**
  * This is the server side proxy.
+ * 
  * @author WuestMan
  *
  */
@@ -30,7 +31,7 @@ public class CommonProxy implements IGuiHandler
 {
 	public static ModEventHandler eventHandler = new ModEventHandler();
 	public static ModConfiguration proxyConfiguration;
-	
+
 	public Path modDirectory;
 	public File spawnInfoFile;
 	public Path spawnInfoFilePath;
@@ -41,55 +42,59 @@ public class CommonProxy implements IGuiHandler
 	public void registerRenderers()
 	{
 	}
-	
+
 	public void preInit(FMLPreInitializationEvent event)
 	{
-		this.modDirectory = Paths.get(event.getModConfigurationDirectory().getAbsolutePath(), "FTD_Summons");
-		this.spawnInfoFilePath = Paths.get(event.getModConfigurationDirectory().getAbsolutePath(), "FTD_Summons", "spawnInfo.json");
+		this.modDirectory = Paths.get(
+				event.getModConfigurationDirectory().getAbsolutePath(),
+				"FTD_Summons");
+		
+		this.spawnInfoFilePath = Paths.get(
+				event.getModConfigurationDirectory().getAbsolutePath(),
+				"FTD_Summons", "spawnInfo.json");
 
 		this.spawnInfoFile = this.spawnInfoFilePath.toFile();
+
+		FromTheDepths.network = NetworkRegistry.INSTANCE
+				.newSimpleChannel("FTDChannel123");
 		
-		FromTheDepths.network = NetworkRegistry.INSTANCE.newSimpleChannel("FTDChannel123");
-		FromTheDepths.config = new Configuration(event.getSuggestedConfigurationFile());
+		FromTheDepths.config = new Configuration(
+				event.getSuggestedConfigurationFile());
+		
 		FromTheDepths.config.load();
 		ModConfiguration.syncConfig();
-		
+
 		// Register messages.
 		ModRegistry.RegisterMessages();
-		
+
 		// Register the capabilities.
 		ModRegistry.RegisterCapabilities();
-		
-		// Make sure that the mod configuration is re-synced after loading all of the recipes.
+
+		// Make sure that the mod configuration is re-synced after loading all
+		// of the recipes.
 		ModConfiguration.syncConfig();
-		
-        if (!this.modDirectory.toFile().exists())
-        {
-        	FromTheDepths.logger.warn("From_The_Depths: The summons directory doesn't exist, creating this directory: {}", this.modDirectory.toString());
-        	
-            try
-            {
-                java.nio.file.Files.createDirectory(this.modDirectory);
-            }
-            catch (Exception e)
-            {
-            	FromTheDepths.logger.error("From_The_Depths: Unable to create the summons directory. The error is: {}", e.getMessage());
-            }
-        }
+
+		if (!this.modDirectory.toFile().exists())
+		{
+			FromTheDepths.logger.warn(
+					"From_The_Depths: The summons directory doesn't exist, unable to load boss summons. Expected directory: {}",
+					this.modDirectory.toString());
+		}
 
 	}
-	
+
 	public void init(FMLInitializationEvent event)
-	{	
-		NetworkRegistry.INSTANCE.registerGuiHandler(FromTheDepths.instance, FromTheDepths.proxy);
-		
+	{
+		NetworkRegistry.INSTANCE.registerGuiHandler(FromTheDepths.instance,
+				FromTheDepths.proxy);
+
 		// Register the spawning info here.
 		ModRegistry.RegisterSpawningInfo();
-		
+
 		// Register custom recipes here.
 		ModRegistry.RegisterTotemOfSummoningRecipes();
 	}
-	
+
 	public void postinit(FMLPostInitializationEvent event)
 	{
 		if (UpdateChecker.showMessage)
@@ -97,15 +102,17 @@ public class CommonProxy implements IGuiHandler
 			UpdateChecker.checkVersion();
 		}
 	}
-	
+
 	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+	public Object getServerGuiElement(int ID, EntityPlayer player, World world,
+			int x, int y, int z)
 	{
 		return ModRegistry.GetModGuiByID(ID, x, y, z);
 	}
 
 	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
+			int x, int y, int z)
 	{
 		return ModRegistry.GetModGuiByID(ID, x, y, z);
 	}
