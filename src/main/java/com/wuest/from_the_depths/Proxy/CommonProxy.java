@@ -77,7 +77,7 @@ public class CommonProxy implements IGuiHandler
 		if (!this.modDirectory.toFile().exists())
 		{
 			FromTheDepths.logger.warn(
-					"From_The_Depths: The summons directory doesn't exist, unable to load boss summons. Expected directory: {}",
+					"From_The_Depths: The summons directory doesn't exist, unable to load boss summons. Please create this directory. Expected directory: {}",
 					this.modDirectory.toString());
 		}
 
