@@ -46,7 +46,7 @@ public class CommonProxy implements IGuiHandler
 	{
 		this.modDirectory = Paths.get(event.getModConfigurationDirectory().getAbsolutePath(), "FTD_Summons");
 		this.spawnInfoFilePath = Paths.get(event.getModConfigurationDirectory().getAbsolutePath(), "FTD_Summons", "spawnInfo.json");
-		
+
 		this.spawnInfoFile = this.spawnInfoFilePath.toFile();
 		
 		FromTheDepths.network = NetworkRegistry.INSTANCE.newSimpleChannel("FTDChannel123");
@@ -65,16 +65,15 @@ public class CommonProxy implements IGuiHandler
 		
         if (!this.modDirectory.toFile().exists())
         {
-        	FMLLog.log.warn("From The Depths: The summons directory doesn't exist, creating this directory");
+        	FromTheDepths.logger.warn("From_The_Depths: The summons directory doesn't exist, creating this directory: {}", this.modDirectory.toString());
         	
             try
             {
                 java.nio.file.Files.createDirectory(this.modDirectory);
             }
-            catch (IOException e)
+            catch (Exception e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            	FromTheDepths.logger.error("From_The_Depths: Unable to create the summons directory. The error is: {}", e.getMessage());
             }
         }
 

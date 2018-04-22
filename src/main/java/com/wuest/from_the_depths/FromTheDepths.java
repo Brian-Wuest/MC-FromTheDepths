@@ -1,5 +1,7 @@
 package com.wuest.from_the_depths;
 
+import org.apache.logging.log4j.Logger;
+
 import com.wuest.from_the_depths.Proxy.CommonProxy;
 
 import net.minecraft.init.Blocks;
@@ -45,6 +47,8 @@ public class FromTheDepths
 	 * This is the configuration of the mod.
 	 */
 	public static Configuration config;
+	
+	public static Logger logger;
 
 	static
 	{
@@ -58,6 +62,7 @@ public class FromTheDepths
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		FromTheDepths.logger = event.getModLog();
 		FromTheDepths.proxy.preInit(event);
 	}
 
