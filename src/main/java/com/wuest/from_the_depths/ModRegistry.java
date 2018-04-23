@@ -277,7 +277,7 @@ public class ModRegistry
 				String fileContents = Files.toString(
 						FromTheDepths.proxy.spawnInfoFile,
 						Charset.defaultCharset());
-				
+
 				SpawnInfo[] infos = GSON.fromJson(fileContents,
 						SpawnInfo[].class);
 
@@ -301,12 +301,13 @@ public class ModRegistry
 		}
 		catch (JsonParseException e)
 		{
-			FromTheDepths.logger.error("Parsing error loading spawning information. {}",
-					e);
+			FromTheDepths.logger
+					.error("Parsing error loading spawning information. {}", e);
 		}
 		catch (IOException e)
 		{
-			FromTheDepths.logger.error("Error loading spawning information file. {}", e);
+			FromTheDepths.logger
+					.error("Error loading spawning information file. {}", e);
 		}
 	}
 
@@ -315,82 +316,89 @@ public class ModRegistry
 	 */
 	public static void RegisterTotemOfSummoningRecipes()
 	{
-		JsonContext ctx = new JsonContext(FromTheDepths.MODID);
-		Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
-		boolean loadedRecipe = false;
-
-		ArrayList<ResourceLocation> entityInfos = new ArrayList<ResourceLocation>();
-
-		for (File file : FromTheDepths.proxy.modDirectory.toFile().listFiles())
+		if (FromTheDepths.proxy.modDirectory.toFile().exists())
 		{
-			if (file.isFile())
+			JsonContext ctx = new JsonContext(FromTheDepths.MODID);
+			Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
+			boolean loadedRecipe = false;
+
+			ArrayList<ResourceLocation> entityInfos = new ArrayList<ResourceLocation>();
+
+			for (File file : FromTheDepths.proxy.modDirectory.toFile()
+					.listFiles())
 			{
-				Path path = file.toPath();
-				String name = Files.getNameWithoutExtension(file.getName());
-
-				// Don't include the spawning information file.
-				if (!name.contains("spawnInfo"))
+				if (file.isFile())
 				{
-					ResourceLocation key = new ResourceLocation(ctx.getModId(),
-							name);
+					Path path = file.toPath();
+					String name = Files.getNameWithoutExtension(file.getName());
 
-					try
+					// Don't include the spawning information file.
+					if (!name.contains("spawnInfo"))
 					{
-						String fileContents = Files.toString(file,
-								Charset.defaultCharset());
+						ResourceLocation key = new ResourceLocation(
+								ctx.getModId(), name);
 
-						JsonObject json = JsonUtils.fromJson(GSON, fileContents,
-								JsonObject.class, true);
-
-						IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
-						ItemStack recipeOutput = recipe.getRecipeOutput();
-
-						// Limit recipe registration to ONLY the items which are
-						// totems of spawning.
-						if (recipeOutput
-								.getItem() instanceof ItemTotemOfSpawning)
+						try
 						{
-							String recipeCompound = ModRegistry
-									.TotemOfSpawning()
-									.getEntityKeyFromItemStack(recipeOutput);
+							String fileContents = Files.toString(file,
+									Charset.defaultCharset());
 
-							if (recipeCompound == null)
+							JsonObject json = JsonUtils.fromJson(GSON,
+									fileContents, JsonObject.class, true);
+
+							IRecipe recipe = CraftingHelper.getRecipe(json,
+									ctx);
+							ItemStack recipeOutput = recipe.getRecipeOutput();
+
+							// Limit recipe registration to ONLY the items which
+							// are
+							// totems of spawning.
+							if (recipeOutput
+									.getItem() instanceof ItemTotemOfSpawning)
 							{
-								FromTheDepths.logger.warn(
-										"From_The_Depths: Summoning recipe found at location [{}] has output which doesn't contain valid nbt data or specifies a boss which doesn't exist.",
-										path.toString());
-							}
-							else
-							{
-								ForgeRegistries.RECIPES
-										.register(recipe.setRegistryName(key));
-								
-								ModRegistry.TotemOfSpawning().subItems
-										.add(recipeOutput);
-								
-								loadedRecipe = true;
+								String recipeCompound = ModRegistry
+										.TotemOfSpawning()
+										.getEntityKeyFromItemStack(
+												recipeOutput);
+
+								if (recipeCompound == null)
+								{
+									FromTheDepths.logger.warn(
+											"From_The_Depths: Summoning recipe found at location [{}] has output which doesn't contain valid nbt data or specifies a boss which doesn't exist.",
+											path.toString());
+								}
+								else
+								{
+									ForgeRegistries.RECIPES.register(
+											recipe.setRegistryName(key));
+
+									ModRegistry.TotemOfSpawning().subItems
+											.add(recipeOutput);
+
+									loadedRecipe = true;
+								}
 							}
 						}
-					}
-					catch (JsonParseException e)
-					{
-						FromTheDepths.logger.error(
-								"From_The_Depths: Parsing error loading recipe {}. {}",
-								key, e);
-					}
-					catch (Exception e)
-					{
-						FromTheDepths.logger.error(
-								"From_The_Depths: Error loading recipe {}. {}",
-								key, e);
+						catch (JsonParseException e)
+						{
+							FromTheDepths.logger.error(
+									"From_The_Depths: Parsing error loading recipe {}. {}",
+									key, e);
+						}
+						catch (Exception e)
+						{
+							FromTheDepths.logger.error(
+									"From_The_Depths: Error loading recipe {}. {}",
+									key, e);
+						}
 					}
 				}
 			}
-		}
 
-		if (loadedRecipe)
-		{
-			FMLCommonHandler.instance().resetClientRecipeBook();
+			if (loadedRecipe)
+			{
+				FMLCommonHandler.instance().resetClientRecipeBook();
+			}
 		}
 	}
 
