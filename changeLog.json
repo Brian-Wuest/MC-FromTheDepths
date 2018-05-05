@@ -1,13 +1,14 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/prefab",
   "promos": {
-	  "1.12-latest": "1.1.0.2",
-	  "1.12-recommended": "1.1.0.2"
+	  "1.12-latest": "1.1.0.3",
+	  "1.12-recommended": "1.1.0.3"
   },
   "1.12": {
 	  "1.0.0.0": "Initial release.",
 	  "1.1.0.0": "Major changes to spawnInfo.json layout. Please refer to pages tab of the project on CurseForge.",
 	  "1.1.0.1": "Fixed issues with creating summons folder on non-windows machines.",
-	  "1.1.0.2": "Fixed more issues with reading summons file and added more logging."
+	  "1.1.0.2": "Fixed more issues with reading summons file and added more logging.",
+	  "1.1.0.3": "Removed some un-used code and fixed issues with loading recipes when the directory doesn't exist."
   }
 }
