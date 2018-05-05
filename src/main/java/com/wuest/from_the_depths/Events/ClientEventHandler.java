@@ -1,40 +1,21 @@
 package com.wuest.from_the_depths.Events;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.lwjgl.opengl.GL11;
-
-import com.google.common.collect.Lists;
-import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.FromTheDepths;
+import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.Config.EntityPlayerConfiguration;
-import com.wuest.from_the_depths.Config.ModConfiguration;
 import com.wuest.from_the_depths.Proxy.ClientProxy;
-import com.wuest.from_the_depths.Render.StructureRenderHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -71,7 +52,6 @@ public class ClientEventHandler
 
 		if (mc.player != null && mc.objectMouseOver != null && mc.objectMouseOver.getBlockPos() != null && (!mc.player.isSneaking()))
 		{
-			StructureRenderHandler.renderPlayerLook(mc.player, mc.objectMouseOver);
 		}
 	}
 
@@ -84,11 +64,7 @@ public class ClientEventHandler
 	{
 		if (event.getWorld().isRemote) 
 		{
-			if (StructureRenderHandler.currentStructure != null && event.getEntityPlayer() == Minecraft.getMinecraft().player)
-			{
-				StructureRenderHandler.setStructure(null, EnumFacing.NORTH, null);
-				event.setCanceled(true);
-			}
+		
 		}
 	}
 	

@@ -1,17 +1,12 @@
 package com.wuest.from_the_depths.Proxy.Messages.Handlers;
 
 import com.wuest.from_the_depths.Config.EntityPlayerConfiguration;
-import com.wuest.from_the_depths.Config.Structures.StructureConfiguration;
 import com.wuest.from_the_depths.Events.ClientEventHandler;
-import com.wuest.from_the_depths.Events.ModEventHandler;
 import com.wuest.from_the_depths.Proxy.Messages.PlayerEntityTagMessage;
-import com.wuest.from_the_depths.Proxy.Messages.StructureTagMessage;
-import com.wuest.from_the_depths.Proxy.Messages.StructureTagMessage.EnumStructureConfiguration;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;

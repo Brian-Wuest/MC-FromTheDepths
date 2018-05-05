@@ -1,10 +1,5 @@
 package com.wuest.from_the_depths.Config;
 
-import java.util.HashMap;
-
-import com.wuest.from_the_depths.Config.Structures.StructureConfiguration;
-import com.wuest.from_the_depths.Events.ModEventHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -14,7 +9,6 @@ import net.minecraft.nbt.NBTTagCompound;
  */
 public class EntityPlayerConfiguration
 {
-	public HashMap<String, StructureConfiguration> clientConfigurations = new HashMap<String, StructureConfiguration>();
 	public static final String PLAYER_ENTITY_TAG = "FromTheDepthsTag";
 	
 	public EntityPlayerConfiguration()
@@ -77,39 +71,11 @@ public class EntityPlayerConfiguration
 	{
 		NBTTagCompound compoundTag = this.getModIsPlayerNewTag(player);
 	}
-	
-	/**
-	 * Gets the client config for this gui screen.
-	 * @param guiName The name of the gui screen class.
-	 * @param structureConfiguration The structure configuration class.
-	 * @return A default instance of the structure configuration or the existing one found.
-	 */
-	public <T extends StructureConfiguration> T getClientConfig(String guiName, Class<T> structureConfiguration)
-	{
-		T config = (T) this.clientConfigurations.get(guiName);
-		
-		if (config == null)
-		{
-			try
-			{
-				config = structureConfiguration.newInstance();
-				this.clientConfigurations.put(guiName, config);
-			}
-			catch (InstantiationException | IllegalAccessException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		return config;
-	}
 
 	/**
 	 * This is for clearing out non-persisted objects so when a player changes worlds that the client-side config is cleared.
 	 */
 	public void clearNonPersistedObjects()
 	{
-		this.clientConfigurations.clear();
 	}
 }

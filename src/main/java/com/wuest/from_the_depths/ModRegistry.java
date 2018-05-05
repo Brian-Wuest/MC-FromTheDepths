@@ -17,13 +17,10 @@ import com.google.gson.JsonParseException;
 import com.wuest.from_the_depths.Blocks.BlockAltarOfSpawning;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
-import com.wuest.from_the_depths.Items.Structures.ItemChickenCoop;
 import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
 import com.wuest.from_the_depths.Proxy.Messages.PlayerEntityTagMessage;
-import com.wuest.from_the_depths.Proxy.Messages.StructureTagMessage;
 import com.wuest.from_the_depths.Proxy.Messages.Handlers.ConfigSyncHandler;
 import com.wuest.from_the_depths.Proxy.Messages.Handlers.PlayerEntityHandler;
-import com.wuest.from_the_depths.Proxy.Messages.Handlers.StructureHandler;
 import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
 
 import net.minecraft.block.Block;
@@ -97,11 +94,6 @@ public class ModRegistry
 	public static BlockAltarOfSpawning AlterOfSpawning()
 	{
 		return ModRegistry.GetBlock(BlockAltarOfSpawning.class);
-	}
-
-	public static ItemChickenCoop ChickenCoop()
-	{
-		return ModRegistry.GetItem(ItemChickenCoop.class);
 	}
 
 	/**
@@ -244,8 +236,6 @@ public class ModRegistry
 	{
 		FromTheDepths.network.registerMessage(ConfigSyncHandler.class,
 				ConfigSyncMessage.class, 1, Side.CLIENT);
-		FromTheDepths.network.registerMessage(StructureHandler.class,
-				StructureTagMessage.class, 2, Side.SERVER);
 
 		FromTheDepths.network.registerMessage(PlayerEntityHandler.class,
 				PlayerEntityTagMessage.class, 3, Side.CLIENT);
@@ -506,8 +496,6 @@ public class ModRegistry
 	 */
 	public static void AddGuis()
 	{
-		ModRegistry.ModGuis.put(ModRegistry.GuiChickenCoop,
-				com.wuest.from_the_depths.Gui.Structures.GuiChickenCoop.class);
 	}
 
 	/**

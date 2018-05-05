@@ -1,14 +1,14 @@
 package com.wuest.from_the_depths.Proxy;
 
-import com.wuest.from_the_depths.*;
+import com.wuest.from_the_depths.ClientModRegistry;
+import com.wuest.from_the_depths.FromTheDepths;
+import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.Config.ModConfiguration;
 import com.wuest.from_the_depths.Events.ClientEventHandler;
-import com.wuest.from_the_depths.Render.ShaderHelper;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.event.*;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 /**
  * 
@@ -46,8 +46,6 @@ public class ClientProxy extends CommonProxy
 	@Override
 	public void registerRenderers() 
 	{
-		ShaderHelper.Initialize();
-		
 		ClientModRegistry.RegisterSpecialRenderers();
 	}
 	
