@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -202,8 +203,6 @@ public class ModRegistry
 	 */
 	public static void RegisterModComponents()
 	{
-		// ModRegistry.registerItem(new ItemChickenCoop("item_chicken_coop"));
-
 		try
 		{
 			Block block = new BlockAltarOfSpawning("block_altar_of_summoning");
@@ -266,7 +265,7 @@ public class ModRegistry
 			{
 				String fileContents = Files.toString(
 						FromTheDepths.proxy.spawnInfoFile,
-						Charset.defaultCharset());
+						StandardCharsets.UTF_8);
 
 				SpawnInfo[] infos = GSON.fromJson(fileContents,
 						SpawnInfo[].class);
@@ -331,7 +330,7 @@ public class ModRegistry
 						try
 						{
 							String fileContents = Files.toString(file,
-									Charset.defaultCharset());
+									StandardCharsets.UTF_8);
 
 							JsonObject json = JsonUtils.fromJson(GSON,
 									fileContents, JsonObject.class, true);

@@ -49,10 +49,8 @@ public class CommonProxy implements IGuiHandler
 				event.getModConfigurationDirectory().getAbsolutePath(),
 				"FTD_Summons");
 		
-		this.spawnInfoFilePath = Paths.get(
-				event.getModConfigurationDirectory().getAbsolutePath(),
-				"FTD_Summons", "spawnInfo.json");
-
+		this.spawnInfoFilePath = this.modDirectory.resolve("spawnInfo.json");
+		
 		this.spawnInfoFile = this.spawnInfoFilePath.toFile();
 
 		FromTheDepths.network = NetworkRegistry.INSTANCE
