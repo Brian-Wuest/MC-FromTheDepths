@@ -319,10 +319,10 @@ public class ModRegistry
 				if (file.isFile())
 				{
 					Path path = file.toPath();
-					String name = Files.getNameWithoutExtension(file.getName());
+					String name = Files.getNameWithoutExtension(file.getName()).toLowerCase();
 
 					// Don't include the spawning information file.
-					if (!name.contains("spawnInfo"))
+					if (!name.contains("spawninfo"))
 					{
 						ResourceLocation key = new ResourceLocation(
 								ctx.getModId(), name);
