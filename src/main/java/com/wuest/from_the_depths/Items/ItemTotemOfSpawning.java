@@ -1,5 +1,6 @@
 package com.wuest.from_the_depths.Items;
 
+import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 
@@ -103,18 +104,21 @@ public class ItemTotemOfSpawning extends Item
     		if (entityInfo.hasKey("entityKey"))
     		{
     			String entityKey = entityInfo.getString("entityKey");
-    			SpawnInfo returnValue = null;
     			
     			for (SpawnInfo spawnInfo : ModRegistry.SpawnInfos)
     			{
     				if (spawnInfo.key.equals(entityKey))
     				{
-    					returnValue = new SpawnInfo(spawnInfo);
-    					break;
+    					return new SpawnInfo(spawnInfo);
     				}
     			}
     			
-    			return returnValue;
+    			FromTheDepths.logger.info("Entity Key: [{}], was not found in the list of bosses loaded earlier.", entityKey);
+    			return null;
+    		}
+    		else
+    		{
+    			FromTheDepths.logger.info("Could not find entityKey tag for item [{}]", stack.getItem().getRegistryName().toString());
     		}
     	}
     	

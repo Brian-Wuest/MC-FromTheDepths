@@ -1,10 +1,12 @@
 package com.wuest.from_the_depths.Proxy;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import javax.swing.filechooser.FileFilter;
+
+import com.google.common.io.Files;
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.UpdateChecker;
@@ -14,7 +16,6 @@ import com.wuest.from_the_depths.Events.ModEventHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -49,9 +50,21 @@ public class CommonProxy implements IGuiHandler
 				event.getModConfigurationDirectory().getAbsolutePath(),
 				"FTD_Summons");
 		
-		this.spawnInfoFilePath = this.modDirectory.resolve("spawnInfo.json");
-		
-		this.spawnInfoFile = this.spawnInfoFilePath.toFile();
+		for (File file : this.modDirectory.toFile().listFiles())
+		{
+			if (file.isFile())
+			{
+				Path path = file.toPath();
+				String name = Files.getNameWithoutExtension(file.getName()).toLowerCase();
+				
+				if (name.contains("spawninfo"))
+				{
+					this.spawnInfoFilePath = path;
+					this.spawnInfoFile = file;
+					break;
+				}
+			}
+		}
 
 		FromTheDepths.network = NetworkRegistry.INSTANCE
 				.newSimpleChannel("FTDChannel123");

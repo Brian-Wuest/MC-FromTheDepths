@@ -270,6 +270,8 @@ public class ModRegistry
 				SpawnInfo[] infos = GSON.fromJson(fileContents,
 						SpawnInfo[].class);
 
+				FromTheDepths.logger.info("Loading boss information from spawnInfo.json, found {} bosses to load!", infos.length);
+				
 				for (SpawnInfo info : infos)
 				{
 					/*
@@ -283,7 +285,7 @@ public class ModRegistry
 					 * JsonToNBT.getTagFromJson(info.bossAddInfo.nbtData.
 					 * toString()); }
 					 */
-
+					FromTheDepths.logger.info("Found Boss: {}", info.key);
 					ModRegistry.SpawnInfos.add(info);
 				}
 			}
