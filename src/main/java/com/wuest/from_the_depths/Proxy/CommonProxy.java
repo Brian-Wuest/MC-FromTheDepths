@@ -49,29 +49,40 @@ public class CommonProxy implements IGuiHandler
 		this.modDirectory = Paths.get(
 				event.getModConfigurationDirectory().getAbsolutePath(),
 				"FTD_Summons");
-		
-		for (File file : this.modDirectory.toFile().listFiles())
+
+		File modDirectoryFile = this.modDirectory.toFile();
+
+		if (modDirectoryFile.exists())
 		{
-			if (file.isFile())
+			for (File file : modDirectoryFile.listFiles())
 			{
-				Path path = file.toPath();
-				String name = Files.getNameWithoutExtension(file.getName()).toLowerCase();
-				
-				if (name.contains("spawninfo"))
+				if (file.isFile())
 				{
-					this.spawnInfoFilePath = path;
-					this.spawnInfoFile = file;
-					break;
+					String name = Files.getNameWithoutExtension(file.getName())
+							.toLowerCase();
+
+					if (name.contains("spawninfo"))
+					{
+						this.spawnInfoFilePath = file.toPath();
+						this.spawnInfoFile = file;
+						break;
+					}
 				}
 			}
+		}
+		else
+		{
+			FromTheDepths.logger.warn(
+					"The summons directory doesn't exist, unable to load boss summons. Please create this directory. Expected directory: {}",
+					this.modDirectory.toString());
 		}
 
 		FromTheDepths.network = NetworkRegistry.INSTANCE
 				.newSimpleChannel("FTDChannel123");
-		
+
 		FromTheDepths.config = new Configuration(
 				event.getSuggestedConfigurationFile());
-		
+
 		FromTheDepths.config.load();
 		ModConfiguration.syncConfig();
 
@@ -84,14 +95,6 @@ public class CommonProxy implements IGuiHandler
 		// Make sure that the mod configuration is re-synced after loading all
 		// of the recipes.
 		ModConfiguration.syncConfig();
-
-		if (!this.modDirectory.toFile().exists())
-		{
-			FromTheDepths.logger.warn(
-					"From_The_Depths: The summons directory doesn't exist, unable to load boss summons. Please create this directory. Expected directory: {}",
-					this.modDirectory.toString());
-		}
-
 	}
 
 	public void init(FMLInitializationEvent event)

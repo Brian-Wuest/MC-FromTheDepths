@@ -261,7 +261,8 @@ public class ModRegistry
 
 		try
 		{
-			if (FromTheDepths.proxy.spawnInfoFile.exists())
+			if (FromTheDepths.proxy.spawnInfoFile != null 
+					&& FromTheDepths.proxy.spawnInfoFile.exists())
 			{
 				String fileContents = Files.toString(
 						FromTheDepths.proxy.spawnInfoFile,
