@@ -1,8 +1,8 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/prefab",
   "promos": {
-	  "1.12-latest": "1.1.0.6",
-	  "1.12-recommended": "1.1.0.6"
+	  "1.12-latest": "1.1.0.7",
+	  "1.12-recommended": "1.1.0.7"
   },
   "1.12": {
 	  "1.0.0.0": "Initial release.",
@@ -12,6 +12,7 @@
 	  "1.1.0.3": "Removed some un-used code and fixed issues with loading recipes when the directory doesn't exist.",
 	  "1.1.0.4": "Recipe/summon files must now be UTF-8 encoded.",
 	  "1.1.0.5": "Fixes an issue with loading the spawninfo file.",
-	  "1.1.0.6": "Fixing a different issue with loading the spawninfo file and adding more logging"
+	  "1.1.0.6": "Fixing a different issue with loading the spawninfo file and adding more logging",
+	  "1.1.0.7": "Fixing issue when the FTD_Summons directory doesn't exist"
   }
 }
