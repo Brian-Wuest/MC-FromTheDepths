@@ -150,10 +150,19 @@ public class BossInfo
 	        }
 	        else
 	        {
+	        	int count = 0;
+	        	
 	        	// There is solid ground here, go up until air is found.
 	        	while (!world.isAirBlock(spawnPos))
 	        	{
 	        		spawnPos = spawnPos.up();
+	        		count++;
+	        		
+	        		// 20 Solid or non-air blocks in a row. Just break at this point. The monster will be spawned in solid ground or in the void in a Sky-block world.
+	        		if (count >= 20)
+	        		{
+	        			break;
+	        		}
 	        	}
 	        }
 	        
