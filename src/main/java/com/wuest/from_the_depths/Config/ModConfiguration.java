@@ -32,9 +32,11 @@ public class ModConfiguration
 	// Config file option names.
 	private static String showMessageName = "Show Message";
 	private static String enableStructurePreviewName = "Include Structure Previews";
+	private static String allowAltarToBeDestroyedName = "Allow Altar to be Destroyed";
 
 	// Configuration Options.
 	public boolean enableStructurePreview;
+	public boolean allowAltarToBeDestroyed;
 
 	public HashMap<String, Boolean> recipeConfiguration;
 
@@ -62,6 +64,7 @@ public class ModConfiguration
 
 		// General settings.
 		FromTheDepths.proxy.proxyConfiguration.enableStructurePreview = config.getBoolean(ModConfiguration.enableStructurePreviewName, ModConfiguration.OPTIONS, true, "Determines if the Preview buttons in structure GUIs and other structure previews functions are enabled. Client side only.");
+		FromTheDepths.proxy.proxyConfiguration.allowAltarToBeDestroyed = config.getBoolean(ModConfiguration.allowAltarToBeDestroyedName, ModConfiguration.OPTIONS, false, "Determines if the Altar can be destroyed. server configuration overrides client.");
 		
 		// Recipe configuration.
 		for (String key : ModConfiguration.recipeKeys)
@@ -82,6 +85,7 @@ public class ModConfiguration
 
 		tag.setBoolean(ModConfiguration.enableStructurePreviewName, this.enableStructurePreview);
 		tag.setBoolean(ModConfiguration.showMessageName, UpdateChecker.showMessage);
+		tag.setBoolean(ModConfiguration.allowAltarToBeDestroyedName, this.allowAltarToBeDestroyed);
 
 		for (Entry<String, Boolean> entry : this.recipeConfiguration.entrySet())
 		{
@@ -116,6 +120,7 @@ public class ModConfiguration
 		ModConfiguration config = new ModConfiguration();
 
 		config.enableStructurePreview = tag.getBoolean(ModConfiguration.enableStructurePreviewName);
+		config.allowAltarToBeDestroyed = tag.getBoolean(ModConfiguration.allowAltarToBeDestroyedName);
 		UpdateChecker.showMessage = tag.getBoolean(ModConfiguration.showMessageName);
 
 		for (String key : ModConfiguration.recipeKeys)

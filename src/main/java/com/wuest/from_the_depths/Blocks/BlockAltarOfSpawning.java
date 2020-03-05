@@ -3,6 +3,7 @@ package com.wuest.from_the_depths.Blocks;
 import java.util.Random;
 
 import com.google.common.base.Strings;
+import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.Base.TileBlockBase;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
@@ -59,12 +60,23 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
 		super(BlockMaterial);
 		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 		this.setSoundType(SoundType.STONE);
-		this.setBlockUnbreakable();
-		this.setResistance(6000000.0F);
 		
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 		
 		ModRegistry.setBlockName(this, name);
+	}
+	
+	public static void SetBreakableStatus()
+	{
+		boolean allowAltarToBeDestroyed = FromTheDepths.proxy.getServerConfiguration().allowAltarToBeDestroyed;
+		
+		if (!allowAltarToBeDestroyed) {
+			ModRegistry.AlterOfSpawning().setBlockUnbreakable();
+			ModRegistry.AlterOfSpawning().setResistance(6000000.0F);
+		} else {
+			ModRegistry.AlterOfSpawning().setHardness(2);
+			ModRegistry.AlterOfSpawning().setResistance(4.00000F);
+		}
 	}
 	
 	@Override

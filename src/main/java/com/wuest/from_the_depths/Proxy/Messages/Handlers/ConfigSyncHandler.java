@@ -1,7 +1,9 @@
 package com.wuest.from_the_depths.Proxy.Messages.Handlers;
 
 import com.wuest.from_the_depths.FromTheDepths;
+import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.UpdateChecker;
+import com.wuest.from_the_depths.Blocks.BlockAltarOfSpawning;
 import com.wuest.from_the_depths.Config.ModConfiguration;
 import com.wuest.from_the_depths.Proxy.ClientProxy;
 import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
@@ -53,6 +55,8 @@ IMessageHandler<ConfigSyncMessage, IMessage>
 				{
 					Minecraft.getMinecraft().player.sendMessage(new TextComponentString(UpdateChecker.messageToShow));
 				}
+				
+				BlockAltarOfSpawning.SetBreakableStatus();
 			}
 		});
 

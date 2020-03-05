@@ -2,6 +2,7 @@ package com.wuest.from_the_depths.Events;
 
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
+import com.wuest.from_the_depths.Blocks.BlockAltarOfSpawning;
 import com.wuest.from_the_depths.Config.ModConfiguration;
 import com.wuest.from_the_depths.Proxy.ClientProxy;
 import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
@@ -39,51 +40,7 @@ public class ModEventHandler
 			FromTheDepths.network.sendTo(new ConfigSyncMessage(tag), (EntityPlayerMP)event.player);
 			System.out.println("Sent config to '" + event.player.getDisplayNameString() + ".'");
 			
-/*			ArrayList<String> tags = new ArrayList<String>();
-			for (ResourceLocation location :  EntityList.getEntityNameList())
-			{
-				Entity entity = EntityList.createEntityByIDFromName(location, event.player.world);
-				
-				if (entity instanceof EntityLivingBase)
-				{
-					tags.add(entity.serializeNBT().toString());
-				}
-			}
-			
-			BufferedWriter writer =  null;
-			try
-			{
-				writer = Files.newWriter(FromTheDepths.proxy.spawnInfoFile, Charset.defaultCharset());
-			}
-			catch (FileNotFoundException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			if (writer != null)
-			{
-				try
-				{
-					writer.write("[");
-					
-					for (String string : tags)
-					{
-						writer.write(string);
-						writer.write(",");
-					}
-					
-					writer.write("]");
-					
-					writer.flush();
-					writer.close();
-				}
-				catch (IOException e1)
-				{
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}*/
+			BlockAltarOfSpawning.SetBreakableStatus();
 		}
 	}
 	
