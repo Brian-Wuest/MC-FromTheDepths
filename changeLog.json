@@ -1,8 +1,8 @@
 {
   "homepage": "https://minecraft.curseforge.com/projects/prefab",
   "promos": {
-	  "1.12-latest": "1.1.0.8",
-	  "1.12-recommended": "1.1.0.8"
+	  "1.12-latest": "1.1.0.9",
+	  "1.12-recommended": "1.1.0.9"
   },
   "1.12": {
 	  "1.0.0.0": "Initial release.",
@@ -14,6 +14,7 @@
 	  "1.1.0.5": "Fixes an issue with loading the spawninfo file.",
 	  "1.1.0.6": "Fixing a different issue with loading the spawninfo file and adding more logging",
 	  "1.1.0.7": "Fixing issue when the FTD_Summons directory doesn't exist",
-	  "1.1.0.8": "Fixing infinite loop when summoning monsters in Skyblock worlds"
+	  "1.1.0.8": "Fixing infinite loop when summoning monsters in Skyblock worlds",
+	  "1.1.0.9": "Adding configuration to allow the Altar to be broken in survival"
   }
 }
