@@ -1,15 +1,5 @@
 package com.wuest.from_the_depths;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,11 +9,10 @@ import com.wuest.from_the_depths.Blocks.BlockAltarOfSpawning;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
-import com.wuest.from_the_depths.Proxy.Messages.PlayerEntityTagMessage;
 import com.wuest.from_the_depths.Proxy.Messages.Handlers.ConfigSyncHandler;
 import com.wuest.from_the_depths.Proxy.Messages.Handlers.PlayerEntityHandler;
+import com.wuest.from_the_depths.Proxy.Messages.PlayerEntityTagMessage;
 import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.Item;
@@ -45,15 +34,22 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 /**
  * This is the mod registry so there is a way to get to all instances of the
  * blocks/items created by this mod.
- * 
- * @author WuestMan
  *
+ * @author WuestMan
  */
-public class ModRegistry
-{
+public class ModRegistry {
 	/**
 	 * The ArrayList of mod registered items.
 	 */
@@ -79,37 +75,24 @@ public class ModRegistry
 	 */
 	public static final int GuiChickenCoop = 1;
 
-	/**
-	 * Static constructor for the mod registry.
-	 */
-	static
-	{
-		ModRegistry.RegisterModComponents();
-	}
-
-	public static ItemTotemOfSpawning TotemOfSpawning()
-	{
+	public static ItemTotemOfSpawning TotemOfSpawning() {
 		return ModRegistry.GetItem(ItemTotemOfSpawning.class);
 	}
 
-	public static BlockAltarOfSpawning AlterOfSpawning()
-	{
+	public static BlockAltarOfSpawning AlterOfSpawning() {
 		return ModRegistry.GetBlock(BlockAltarOfSpawning.class);
 	}
 
 	/**
 	 * Gets the item from the ModItems collections.
-	 * 
-	 * @param <T> The type which extends item.
+	 *
+	 * @param <T>          The type which extends item.
 	 * @param genericClass The class of item to get from the collection.
 	 * @return Null if the item could not be found otherwise the item found.
 	 */
-	public static <T extends Item> T GetItem(Class<T> genericClass)
-	{
-		for (Item entry : ModRegistry.ModItems)
-		{
-			if (entry.getClass() == genericClass)
-			{
+	public static <T extends Item> T GetItem(Class<T> genericClass) {
+		for (Item entry : ModRegistry.ModItems) {
+			if (entry.getClass() == genericClass) {
 				return (T) entry;
 			}
 		}
@@ -119,17 +102,14 @@ public class ModRegistry
 
 	/**
 	 * Gets the block from the ModBlockss collections.
-	 * 
-	 * @param <T> The type which extends Block.
+	 *
+	 * @param <T>          The type which extends Block.
 	 * @param genericClass The class of block to get from the collection.
 	 * @return Null if the block could not be found otherwise the block found.
 	 */
-	public static <T extends Block> T GetBlock(Class<T> genericClass)
-	{
-		for (Block entry : ModRegistry.ModBlocks)
-		{
-			if (entry.getClass() == genericClass)
-			{
+	public static <T extends Block> T GetBlock(Class<T> genericClass) {
+		for (Block entry : ModRegistry.ModBlocks) {
+			if (entry.getClass() == genericClass) {
 				return (T) entry;
 			}
 		}
@@ -139,55 +119,39 @@ public class ModRegistry
 
 	/**
 	 * Gets the gui screen for the ID and passes position data to it.
-	 * 
+	 *
 	 * @param id The ID of the screen to get.
-	 * @param x The X-Axis of where this screen was created from, this is used
-	 *            to create a BlockPos.
-	 * @param y The Y-Axis of where this screen was created from, this is used
-	 *            to create a BlockPos.
-	 * @param z The Z-Axis of where this screen was created from, this is used
-	 *            to create a BlockPos.
+	 * @param x  The X-Axis of where this screen was created from, this is used
+	 *           to create a BlockPos.
+	 * @param y  The Y-Axis of where this screen was created from, this is used
+	 *           to create a BlockPos.
+	 * @param z  The Z-Axis of where this screen was created from, this is used
+	 *           to create a BlockPos.
 	 * @return Null if the screen wasn't found, otherwise the screen found.
 	 */
-	public static GuiScreen GetModGuiByID(int id, int x, int y, int z)
-	{
-		for (Entry<Integer, Class> entry : ModRegistry.ModGuis.entrySet())
-		{
-			if (entry.getKey() == id)
-			{
-				try
-				{
+	public static GuiScreen GetModGuiByID(int id, int x, int y, int z) {
+		for (Entry<Integer, Class> entry : ModRegistry.ModGuis.entrySet()) {
+			if (entry.getKey() == id) {
+				try {
 					return (GuiScreen) entry.getValue()
 							.getConstructor(int.class, int.class, int.class)
 							.newInstance(x, y, z);
-				}
-				catch (InstantiationException e)
-				{
+				} catch (InstantiationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				catch (IllegalAccessException e)
-				{
+				} catch (IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				catch (IllegalArgumentException e)
-				{
+				} catch (IllegalArgumentException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				catch (InvocationTargetException e)
-				{
+				} catch (InvocationTargetException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				catch (NoSuchMethodException e)
-				{
+				} catch (NoSuchMethodException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
-				catch (SecurityException e)
-				{
+				} catch (SecurityException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -201,20 +165,16 @@ public class ModRegistry
 	 * This is where all in-game mod components (Items, Blocks) will be
 	 * registered.
 	 */
-	public static void RegisterModComponents()
-	{
-		try
-		{
+	public static void RegisterModComponents() {
+		try {
 			Block block = new BlockAltarOfSpawning("block_altar_of_summoning");
 			ModRegistry.registerBlock(block);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			FMLLog.getLogger().warn(ex.getMessage());
 		}
 
 		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class,
-				"block_altar_of_summoning");
+				"from_the_depths:block_altar_of_summoning");
 
 		ModRegistry.registerItem(
 				new ItemTotemOfSpawning("item_totem_of_summoning"));
@@ -223,16 +183,14 @@ public class ModRegistry
 	/**
 	 * Registers records into the ore dictionary.
 	 */
-	public static void RegisterOreDictionaryRecords()
-	{
+	public static void RegisterOreDictionaryRecords() {
 		// Register certain blocks into the ore dictionary.
 	}
 
 	/**
 	 * This is where the mod messages are registered.
 	 */
-	public static void RegisterMessages()
-	{
+	public static void RegisterMessages() {
 		FromTheDepths.network.registerMessage(ConfigSyncHandler.class,
 				ConfigSyncMessage.class, 1, Side.CLIENT);
 
@@ -243,8 +201,7 @@ public class ModRegistry
 	/**
 	 * This is where mod capabilities are registered.
 	 */
-	public static void RegisterCapabilities()
-	{
+	public static void RegisterCapabilities() {
 		// Register the dimension home capability.
 		// CapabilityManager.INSTANCE.register(IStructureConfigurationCapability.class,
 		// new StructureConfigurationStorage(),
@@ -255,15 +212,12 @@ public class ModRegistry
 	 * This method is used to register spawning information from the mod
 	 * directory.
 	 */
-	public static void RegisterSpawningInfo()
-	{
+	public static void RegisterSpawningInfo() {
 		Gson GSON = new GsonBuilder().create();
 
-		try
-		{
-			if (FromTheDepths.proxy.spawnInfoFile != null 
-					&& FromTheDepths.proxy.spawnInfoFile.exists())
-			{
+		try {
+			if (FromTheDepths.proxy.spawnInfoFile != null
+					&& FromTheDepths.proxy.spawnInfoFile.exists()) {
 				String fileContents = Files.toString(
 						FromTheDepths.proxy.spawnInfoFile,
 						StandardCharsets.UTF_8);
@@ -272,15 +226,14 @@ public class ModRegistry
 						SpawnInfo[].class);
 
 				FromTheDepths.logger.info("Loading boss information from spawnInfo.json, found {} bosses to load!", infos.length);
-				
-				for (SpawnInfo info : infos)
-				{
+
+				for (SpawnInfo info : infos) {
 					/*
 					 * if (info.bossInfo.nbtData != null) {
 					 * info.bossInfo.testData =
 					 * JsonToNBT.getTagFromJson(info.bossInfo.nbtData.toString()
 					 * ); }
-					 * 
+					 *
 					 * if (info.bossAddInfo != null && info.bossAddInfo.nbtData
 					 * != null) { info.bossAddInfo.testData =
 					 * JsonToNBT.getTagFromJson(info.bossAddInfo.nbtData.
@@ -290,14 +243,10 @@ public class ModRegistry
 					ModRegistry.SpawnInfos.add(info);
 				}
 			}
-		}
-		catch (JsonParseException e)
-		{
+		} catch (JsonParseException e) {
 			FromTheDepths.logger
 					.error("Parsing error loading spawning information. {}", e);
-		}
-		catch (IOException e)
-		{
+		} catch (IOException e) {
 			FromTheDepths.logger
 					.error("Error loading spawning information file. {}", e);
 		}
@@ -306,32 +255,25 @@ public class ModRegistry
 	/**
 	 * This method is used to register totem of summoning recipes.
 	 */
-	public static void RegisterTotemOfSummoningRecipes()
-	{
-		if (FromTheDepths.proxy.modDirectory.toFile().exists())
-		{
+	public static void RegisterTotemOfSummoningRecipes() {
+		if (FromTheDepths.proxy.modDirectory.toFile().exists()) {
 			JsonContext ctx = new JsonContext(FromTheDepths.MODID);
 			Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
 			boolean loadedRecipe = false;
 
 			ArrayList<ResourceLocation> entityInfos = new ArrayList<ResourceLocation>();
 
-			for (File file : FromTheDepths.proxy.modDirectory.toFile()
-					.listFiles())
-			{
-				if (file.isFile())
-				{
+			for (File file : FromTheDepths.proxy.modDirectory.toFile().listFiles()) {
+				if (file.isFile()) {
 					Path path = file.toPath();
 					String name = Files.getNameWithoutExtension(file.getName()).toLowerCase();
 
 					// Don't include the spawning information file.
-					if (!name.contains("spawninfo"))
-					{
+					if (!name.contains("spawninfo")) {
 						ResourceLocation key = new ResourceLocation(
 								ctx.getModId(), name);
 
-						try
-						{
+						try {
 							String fileContents = Files.toString(file,
 									StandardCharsets.UTF_8);
 
@@ -346,21 +288,17 @@ public class ModRegistry
 							// are
 							// totems of spawning.
 							if (recipeOutput
-									.getItem() instanceof ItemTotemOfSpawning)
-							{
+									.getItem() instanceof ItemTotemOfSpawning) {
 								String recipeCompound = ModRegistry
 										.TotemOfSpawning()
 										.getEntityKeyFromItemStack(
 												recipeOutput);
 
-								if (recipeCompound == null)
-								{
+								if (recipeCompound == null) {
 									FromTheDepths.logger.warn(
 											"From_The_Depths: Summoning recipe found at location [{}] has output which doesn't contain valid nbt data or specifies a boss which doesn't exist.",
 											path.toString());
-								}
-								else
-								{
+								} else {
 									ForgeRegistries.RECIPES.register(
 											recipe.setRegistryName(key));
 
@@ -370,15 +308,11 @@ public class ModRegistry
 									loadedRecipe = true;
 								}
 							}
-						}
-						catch (JsonParseException e)
-						{
+						} catch (JsonParseException e) {
 							FromTheDepths.logger.error(
 									"From_The_Depths: Parsing error loading recipe {}. {}",
 									key, e);
-						}
-						catch (Exception e)
-						{
+						} catch (Exception e) {
 							FromTheDepths.logger.error(
 									"From_The_Depths: Error loading recipe {}. {}",
 									key, e);
@@ -387,8 +321,7 @@ public class ModRegistry
 				}
 			}
 
-			if (loadedRecipe)
-			{
+			if (loadedRecipe) {
 				FMLCommonHandler.instance().resetClientRecipeBook();
 			}
 		}
@@ -398,11 +331,10 @@ public class ModRegistry
 	 * Register an Item
 	 *
 	 * @param item The Item instance
-	 * @param <T> The Item type
+	 * @param <T>  The Item type
 	 * @return The Item instance
 	 */
-	public static <T extends Item> T registerItem(T item)
-	{
+	public static <T extends Item> T registerItem(T item) {
 		ModRegistry.ModItems.add(item);
 
 		return item;
@@ -410,29 +342,26 @@ public class ModRegistry
 
 	/**
 	 * Registers a block in the game registry.
-	 * 
-	 * @param <T> The type of block to register.
+	 *
+	 * @param <T>   The type of block to register.
 	 * @param block The block to register.
 	 * @return The block which was registered.
 	 */
-	public static <T extends Block> T registerBlock(T block)
-	{
+	public static <T extends Block> T registerBlock(T block) {
 		return ModRegistry.registerBlock(block, true);
 	}
 
 	/**
 	 * Registers a block in the game registry.
-	 * 
-	 * @param <T> The type of block to register.
-	 * @param block The block to register.
+	 *
+	 * @param <T>              The type of block to register.
+	 * @param block            The block to register.
 	 * @param includeItemBlock True to include a default item block.
 	 * @return The block which was registered.
 	 */
 	public static <T extends Block> T registerBlock(T block,
-			boolean includeItemBlock)
-	{
-		if (includeItemBlock)
-		{
+													boolean includeItemBlock) {
+		if (includeItemBlock) {
 			ModItems.add(new ItemBlock(block)
 					.setRegistryName(block.getRegistryName()));
 		}
@@ -444,20 +373,18 @@ public class ModRegistry
 
 	/**
 	 * Registers a block in the game registry.
-	 * 
-	 * @param <T> The type of block to register.
-	 * @param <I> The type of item block to register.
-	 * @param block The block to register.
+	 *
+	 * @param <T>       The type of block to register.
+	 * @param <I>       The type of item block to register.
+	 * @param block     The block to register.
 	 * @param itemBlock The item block to register with the block.
 	 * @return The block which was registered.
 	 */
 	public static <T extends Block, I extends ItemBlock> T registerBlock(
-			T block, I itemBlock)
-	{
+			T block, I itemBlock) {
 		ModRegistry.ModBlocks.add(block);
 
-		if (itemBlock != null)
-		{
+		if (itemBlock != null) {
 			ModRegistry.ModItems.add(itemBlock);
 		}
 
@@ -468,13 +395,11 @@ public class ModRegistry
 	 * Set the registry name of {@code item} to {@code itemName} and the
 	 * un-localised name to the full registry name.
 	 *
-	 * @param item The item
+	 * @param item     The item
 	 * @param itemName The item's name
 	 */
-	public static void setItemName(Item item, String itemName)
-	{
-		if (itemName != null)
-		{
+	public static void setItemName(Item item, String itemName) {
+		if (itemName != null) {
 			item.setRegistryName(itemName);
 			item.setUnlocalizedName(item.getRegistryName().toString());
 		}
@@ -484,11 +409,10 @@ public class ModRegistry
 	 * Set the registry name of {@code block} to {@code blockName} and the
 	 * un-localised name to the full registry name.
 	 *
-	 * @param block The block
+	 * @param block     The block
 	 * @param blockName The block's name
 	 */
-	public static void setBlockName(Block block, String blockName)
-	{
+	public static void setBlockName(Block block, String blockName) {
 		block.setRegistryName(blockName);
 		block.setUnlocalizedName(block.getRegistryName().toString());
 	}
@@ -496,21 +420,19 @@ public class ModRegistry
 	/**
 	 * Adds all of the Mod Guis to the HasMap.
 	 */
-	public static void AddGuis()
-	{
+	public static void AddGuis() {
 	}
 
 	/**
 	 * This should only be used for registering recipes for vanilla objects and
 	 * not mod-specific objects.
-	 * 
-	 * @param name The name of the recipe. ModID is pre-pended to it.
-	 * @param stack The output of the recipe.
+	 *
+	 * @param name             The name of the recipe. ModID is pre-pended to it.
+	 * @param stack            The output of the recipe.
 	 * @param recipeComponents The recipe components.
 	 */
 	public static ShapedRecipes AddShapedRecipe(String name, String groupName,
-			ItemStack stack, Object... recipeComponents)
-	{
+												ItemStack stack, Object... recipeComponents) {
 		name = FromTheDepths.MODID.toLowerCase().replace(' ', '_') + ":" + name;
 
 		ShapedPrimer primer = CraftingHelper.parseShaped(recipeComponents);
@@ -525,31 +447,23 @@ public class ModRegistry
 	/**
 	 * This should only be used for registering recipes for vanilla objects and
 	 * not mod-specific objects.
-	 * 
-	 * @param name The name of the recipe.
-	 * @param stack The output stack.
+	 *
+	 * @param name             The name of the recipe.
+	 * @param stack            The output stack.
 	 * @param recipeComponents The recipe components.
 	 */
 	public static ShapelessRecipes AddShapelessRecipe(String name,
-			String groupName, ItemStack stack, Object... recipeComponents)
-	{
+													  String groupName, ItemStack stack, Object... recipeComponents) {
 		name = FromTheDepths.MODID.toLowerCase().replace(' ', '_') + ":" + name;
 		NonNullList<Ingredient> list = NonNullList.create();
 
-		for (Object object : recipeComponents)
-		{
-			if (object instanceof ItemStack)
-			{
+		for (Object object : recipeComponents) {
+			if (object instanceof ItemStack) {
 				list.add(Ingredient.fromStacks(((ItemStack) object).copy()));
-			}
-			else if (object instanceof Item)
-			{
+			} else if (object instanceof Item) {
 				list.add(Ingredient.fromStacks(new ItemStack((Item) object)));
-			}
-			else
-			{
-				if (!(object instanceof Block))
-				{
+			} else {
+				if (!(object instanceof Block)) {
 					throw new IllegalArgumentException(
 							"Invalid shapeless recipe: unknown type "
 									+ object.getClass().getName() + "!");

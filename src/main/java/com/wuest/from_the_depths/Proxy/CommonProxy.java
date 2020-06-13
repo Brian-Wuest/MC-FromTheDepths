@@ -46,6 +46,8 @@ public class CommonProxy implements IGuiHandler
 
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		ModRegistry.RegisterModComponents();
+
 		this.modDirectory = Paths.get(
 				event.getModConfigurationDirectory().getAbsolutePath(),
 				"FTD_Summons");
