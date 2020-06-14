@@ -1,5 +1,6 @@
 package com.wuest.from_the_depths.EntityInfo;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
@@ -9,6 +10,7 @@ import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -22,6 +24,7 @@ public abstract class BaseMonster {
   public int maxHealth;
   public float attackDamage;
   public boolean alwaysShowDisplayName;
+  public ArrayList<DropInfo> additionalDrops;
 
   static {
     BaseMonster.random = new Random();
@@ -31,6 +34,7 @@ public abstract class BaseMonster {
     this.maxHealth = -1;
     this.attackDamage = -1;
     this.alwaysShowDisplayName = false;
+    this.additionalDrops = new ArrayList<DropInfo>();
   }
 
   public ResourceLocation createResourceLocation() {
@@ -167,6 +171,19 @@ public abstract class BaseMonster {
     tag.setInteger("maxHealth", this.maxHealth);
     tag.setFloat("attackDamage", this.attackDamage);
     tag.setBoolean("alwaysShowDisplayName", this.alwaysShowDisplayName);
+
+    NBTTagList additionalDrops = new NBTTagList();
+
+    if (this.additionalDrops != null) {
+      for (DropInfo info : this.additionalDrops) {
+        NBTTagCompound dropInfo = new NBTTagCompound();
+        info.writeToNBT(dropInfo);
+
+        additionalDrops.appendTag(dropInfo);
+      }
+
+      tag.setTag("additionalDrops", additionalDrops);
+    }
   }
 
   public void loadFromNBT(NBTTagCompound tag) {
@@ -192,6 +209,24 @@ public abstract class BaseMonster {
 
     if (tag.hasKey("alwaysShowDisplayName")) {
       this.alwaysShowDisplayName = tag.getBoolean("alwaysShowDisplayName");
+    }
+
+    if (tag.hasKey("additionalDrops")) {
+      this.additionalDrops = new ArrayList<DropInfo>();
+
+      NBTTagList dropList = tag.getTagList("additionalDrops", 10);
+
+      if (!dropList.hasNoTags()) {
+        for (int i = 0; i < dropList.tagCount(); i++) {
+          NBTTagCompound dropInfoTag = dropList.getCompoundTagAt(i);
+          DropInfo dropInfo = new DropInfo();
+          dropInfo.loadFromNBTData(dropInfoTag);
+
+          if (dropInfo.item != null && !dropInfo.item.isEmpty()) {
+            this.additionalDrops.add(dropInfo);
+          }
+        }
+      }
     }
   }
 
