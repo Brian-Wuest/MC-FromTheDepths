@@ -39,6 +39,7 @@
       "maxSpawns": 4,
       "timeBetweenSpawns": 100,
       "spawnbeforeBoss": true,
+      "_comment3": "The next wave of adds will start spawning after these adds have been spawned",
       "nextWaveOfAdds": {
         "domain": "minecraft",
         "name": "slime",
