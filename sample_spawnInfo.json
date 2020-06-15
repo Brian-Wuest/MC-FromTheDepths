@@ -1,0 +1,52 @@
+{
+  "_comment": "Spawn some pre-boss monsters then the boss, then some creepers.",
+  "key": "Custom_Zombie",
+  "bossInfo": {
+    "domain": "minecraft",
+    "name": "zombie",
+    "displayName": "Custom Zombie Rawr!",
+    "maxHealth": 40,
+    "attackDamage": 10.5,
+    "alwaysShowDisplayName": true
+  },
+  "bossAddInfo": [
+    {
+      "_comment": "Spawns a bunch of silverfish, after that is done. Wait 20 seconds and spawn a big slime. After that spawn a random amount of chickens.",
+      "domain": "minecraft",
+      "name": "silverfish",
+      "minSpawns": 4,
+      "maxSpawns": 4,
+      "timeBetweenSpawns": 100,
+      "spawnbeforeBoss": true,
+      "nextWaveOfAdds": {
+        "domain": "minecraft",
+        "name": "slime",
+        "minSpawns": 1,
+        "maxSpawns": 1,
+        "timeToWaitBeforeSpawn": 200,
+        "maxHealth": 50,
+        "nextWaveOfAdds": {
+          "domain": "minecraft",
+          "name": "chicken",
+          "minSpawns": 2,
+          "maxSpawns": 4,
+          "timeBetweenSpawns": 20,
+          "timeToWaitBeforeSpawn": 100
+        }
+      }
+    },
+    {
+      "_comment": "Spawns some creepers while the boss is around to make the fight crazy. They start spawning 15 seconds after the boss spawns.",
+      "domain": "minecraft",
+      "name": "creeper",
+      "displayName": "Custom Creeper!",
+      "maxHealth": 5,
+      "attackDamage": 5,
+      "alwaysShowDisplayName": false,
+      "minSpawns": 4,
+      "maxSpawns": 4,
+      "timeBetweenSpawns": 20,
+      "waitTicksAfterBossSpawn": 300
+    }
+  ]
+}
