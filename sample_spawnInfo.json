@@ -7,7 +7,27 @@
     "displayName": "Custom Zombie Rawr!",
     "maxHealth": 40,
     "attackDamage": 10.5,
-    "alwaysShowDisplayName": true
+    "alwaysShowDisplayName": true,
+    "dropInfo": [
+      {
+        "item": "minecraft:diamond",
+        "minDrops": 1,
+        "maxDrops": 4,
+        "dropchance": 20
+      },
+      {
+        "item": "minecraft:gold_chestplate",
+        "minDrops": 1,
+        "maxDrops": 1,
+        "dropchance": 15
+      },
+      {
+        "item": "minecraft:diamond_sword",
+        "minDrops": 1,
+        "maxDrops": 1,
+        "dropchance": 5
+      }
+    ]
   },
   "bossAddInfo": [
     {
