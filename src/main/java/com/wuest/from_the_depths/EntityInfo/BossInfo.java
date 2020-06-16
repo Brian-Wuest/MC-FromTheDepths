@@ -28,6 +28,11 @@ public class BossInfo extends BaseMonster implements INBTSerializable<BossInfo> 
     newInstance.domain = this.domain;
     newInstance.maxHealth = this.maxHealth;
     newInstance.name = this.name;
+    newInstance.timeToWaitBeforeSpawn = this.timeToWaitBeforeSpawn;
+
+    for (DropInfo info : this.additionalDrops) {
+      newInstance.additionalDrops.add(info.clone());
+    }
 
     return newInstance;
   }

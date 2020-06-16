@@ -1,5 +1,7 @@
 package com.wuest.from_the_depths.EntityInfo;
 
+import com.wuest.from_the_depths.FromTheDepths;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public class DropInfo implements INBTSerializable<DropInfo> {
@@ -14,7 +16,7 @@ public class DropInfo implements INBTSerializable<DropInfo> {
     this.item = "";
     this.minDrops = 0;
     this.maxDrops = 0;
-    this.dropChance = 0;
+    this.dropChance = 5;
   }
 
   @Override
@@ -27,20 +29,30 @@ public class DropInfo implements INBTSerializable<DropInfo> {
 
   @Override
   public DropInfo loadFromNBTData(NBTTagCompound nbtData) {
-    if (nbtData.hasKey("item")) {
-      this.item = nbtData.getString("item");
+    this.item = nbtData.getString("item");
+    this.minDrops = nbtData.getInteger("minDrops");
+    this.maxDrops = nbtData.getInteger("maxDrops");
+    this.dropChance = nbtData.getInteger("dropChance");
+
+    if (this.minDrops < 0) {
+      this.minDrops = 0;
+      FromTheDepths.logger.warn("Minimum Drops value is less than zero; please check your files. Setting to zero.");
     }
 
-    if (nbtData.hasKey("minDrops")) {
-      this.minDrops = nbtData.getInteger("minDrops");
+    if (this.maxDrops < 0) {
+      this.maxDrops = 0;
+      FromTheDepths.logger.warn("Maximum Drops value is less than zero; please check your files. Setting to zero.");
     }
 
-    if (nbtData.hasKey("maxDrops")) {
-      this.maxDrops = nbtData.getInteger("maxDrops");
+    if (this.maxDrops < this.minDrops) {
+      this.maxDrops = this.minDrops;
+      FromTheDepths.logger
+          .warn("Maximum Drops value is less than minimum drops; please check your files. Setting to minimum drops.");
     }
 
-    if (nbtData.hasKey("dropChance")) {
-      this.dropChance = nbtData.getInteger("dropChance");
+    if (this.dropChance < 0) {
+      this.dropChance = 5;
+      FromTheDepths.logger.warn("The drop chance is less than zero; please check yoru files. Setting to five.");
     }
 
     return this;

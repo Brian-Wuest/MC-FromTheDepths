@@ -24,6 +24,7 @@ public abstract class BaseMonster {
   public int maxHealth;
   public float attackDamage;
   public boolean alwaysShowDisplayName;
+  public int timeToWaitBeforeSpawn;
   public ArrayList<DropInfo> additionalDrops;
 
   static {
@@ -35,6 +36,7 @@ public abstract class BaseMonster {
     this.attackDamage = -1;
     this.alwaysShowDisplayName = false;
     this.additionalDrops = new ArrayList<DropInfo>();
+    this.timeToWaitBeforeSpawn = 20;
   }
 
   public ResourceLocation createResourceLocation() {
@@ -160,6 +162,14 @@ public abstract class BaseMonster {
     return false;
   }
 
+  public NBTTagCompound createTag() {
+    NBTTagCompound tag = new NBTTagCompound();
+
+    this.writeToNBT(tag);
+
+    return tag;
+  }
+
   public void writeToNBT(NBTTagCompound tag) {
     tag.setString("domain", this.domain);
     tag.setString("name", this.name);
@@ -171,6 +181,7 @@ public abstract class BaseMonster {
     tag.setInteger("maxHealth", this.maxHealth);
     tag.setFloat("attackDamage", this.attackDamage);
     tag.setBoolean("alwaysShowDisplayName", this.alwaysShowDisplayName);
+    tag.setInteger("timeToWaitBeforeSpawn", this.timeToWaitBeforeSpawn);
 
     NBTTagList additionalDrops = new NBTTagList();
 
@@ -187,29 +198,13 @@ public abstract class BaseMonster {
   }
 
   public void loadFromNBT(NBTTagCompound tag) {
-    if (tag.hasKey("domain")) {
-      this.domain = tag.getString("domain");
-    }
-
-    if (tag.hasKey("name")) {
-      this.name = tag.getString("name");
-    }
-
-    if (tag.hasKey("displayName")) {
-      this.displayName = tag.getString("displayName");
-    }
-
-    if (tag.hasKey("maxHealth")) {
-      this.maxHealth = tag.getInteger("maxHealth");
-    }
-
-    if (tag.hasKey("attackDamage")) {
-      this.attackDamage = tag.getFloat("attackDamage");
-    }
-
-    if (tag.hasKey("alwaysShowDisplayName")) {
-      this.alwaysShowDisplayName = tag.getBoolean("alwaysShowDisplayName");
-    }
+    this.domain = tag.getString("domain");
+    this.name = tag.getString("name");
+    this.displayName = tag.getString("displayName");
+    this.maxHealth = tag.getInteger("maxHealth");
+    this.attackDamage = tag.getFloat("attackDamage");
+    this.alwaysShowDisplayName = tag.getBoolean("alwaysShowDisplayName");
+    this.timeToWaitBeforeSpawn = tag.getInteger("timeToWaitBeforeSpawn");
 
     if (tag.hasKey("additionalDrops")) {
       this.additionalDrops = new ArrayList<DropInfo>();
