@@ -64,7 +64,6 @@ public class ModEventHandler {
     if (event.player.world.isRemote) {
       // Make sure to null out the server configuration from the client.
       ((ClientProxy) FromTheDepths.proxy).serverConfiguration = null;
-      ModRegistry.TotemOfSpawning().serverSubItems.clear();
     }
   }
 

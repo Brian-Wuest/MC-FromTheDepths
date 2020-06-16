@@ -191,8 +191,6 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
     if (!worldIn.isRemote) {
       ItemStack usedItem = playerIn.getHeldItem(hand);
 
-      ItemStack offHand = playerIn.getHeldItem(EnumHand.OFF_HAND);
-
       if (usedItem != null && !usedItem.isEmpty() && usedItem.getItem() instanceof ItemTotemOfSpawning
           && worldIn.getDifficulty() != EnumDifficulty.PEACEFUL) {
         TileEntityAltarOfSpawning tileEntity = this.getLocalTileEntity(worldIn, pos);
@@ -206,7 +204,7 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
           // Found a totem of spawning and we are not currently spawning a previous set of
           // mosnters. Initiate the spawning of the entity.
           ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning) usedItem.getItem();
-          SpawnInfo spawnInfo = totemOfSpawning.getSpawnInfoFromItemStack(usedItem);
+          SpawnInfo spawnInfo = totemOfSpawning.spawnInfo;
 
           if (spawnInfo != null) {
             if (spawnInfo.bossInfo.isValidEntity(worldIn)) {

@@ -4,12 +4,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.swing.filechooser.FileFilter;
-
-import com.google.common.io.Files;
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
-import com.wuest.from_the_depths.UpdateChecker;
 import com.wuest.from_the_depths.Config.ModConfiguration;
 import com.wuest.from_the_depths.Events.ModEventHandler;
 
@@ -28,113 +24,74 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
  * @author WuestMan
  *
  */
-public class CommonProxy implements IGuiHandler
-{
-	public static ModEventHandler eventHandler = new ModEventHandler();
-	public static ModConfiguration proxyConfiguration;
+public class CommonProxy implements IGuiHandler {
+  public static ModEventHandler eventHandler = new ModEventHandler();
+  public static ModConfiguration proxyConfiguration;
 
-	public Path modDirectory;
-	public File spawnInfoFile;
-	public Path spawnInfoFilePath;
+  public Path modDirectory;
+  public File spawnInfoFile;
+  public Path spawnInfoFilePath;
 
-	/*
-	 * Methods for ClientProxy to Override
-	 */
-	public void registerRenderers()
-	{
-	}
+  /*
+   * Methods for ClientProxy to Override
+   */
+  public void registerRenderers() {
+  }
 
-	public void preInit(FMLPreInitializationEvent event)
-	{
-		ModRegistry.RegisterModComponents();
+  public void preInit(FMLPreInitializationEvent event) {
+    this.modDirectory = Paths.get(event.getModConfigurationDirectory().getAbsolutePath(), "FTD_Summons");
 
-		this.modDirectory = Paths.get(
-				event.getModConfigurationDirectory().getAbsolutePath(),
-				"FTD_Summons");
+    File modDirectoryFile = this.modDirectory.toFile();
 
-		File modDirectoryFile = this.modDirectory.toFile();
+    if (modDirectoryFile.exists()) {
+      FromTheDepths.logger.warn(
+          "The summons directory doesn't exist, unable to load boss summons. Please create this directory. Expected directory: {}",
+          this.modDirectory.toString());
+    }
 
-		if (modDirectoryFile.exists())
-		{
-			for (File file : modDirectoryFile.listFiles())
-			{
-				if (file.isFile())
-				{
-					String name = Files.getNameWithoutExtension(file.getName())
-							.toLowerCase();
+    ModRegistry.RegisterSpawningInfo();
 
-					if (name.contains("spawninfo"))
-					{
-						this.spawnInfoFilePath = file.toPath();
-						this.spawnInfoFile = file;
-						break;
-					}
-				}
-			}
-		}
-		else
-		{
-			FromTheDepths.logger.warn(
-					"The summons directory doesn't exist, unable to load boss summons. Please create this directory. Expected directory: {}",
-					this.modDirectory.toString());
-		}
+    ModRegistry.RegisterModComponents();
 
-		FromTheDepths.network = NetworkRegistry.INSTANCE
-				.newSimpleChannel("FTDChannel123");
+    FromTheDepths.network = NetworkRegistry.INSTANCE.newSimpleChannel("FTDChannel123");
 
-		FromTheDepths.config = new Configuration(
-				event.getSuggestedConfigurationFile());
+    FromTheDepths.config = new Configuration(event.getSuggestedConfigurationFile());
 
-		FromTheDepths.config.load();
-		ModConfiguration.syncConfig();
+    FromTheDepths.config.load();
+    ModConfiguration.syncConfig();
 
-		// Register messages.
-		ModRegistry.RegisterMessages();
+    // Register messages.
+    ModRegistry.RegisterMessages();
 
-		// Register the capabilities.
-		ModRegistry.RegisterCapabilities();
+    // Register the capabilities.
+    ModRegistry.RegisterCapabilities();
 
-		// Make sure that the mod configuration is re-synced after loading all
-		// of the recipes.
-		ModConfiguration.syncConfig();
-	}
+    // Make sure that the mod configuration is re-synced after loading all
+    // of the recipes.
+    ModConfiguration.syncConfig();
+  }
 
-	public void init(FMLInitializationEvent event)
-	{
-		NetworkRegistry.INSTANCE.registerGuiHandler(FromTheDepths.instance,
-				FromTheDepths.proxy);
+  public void init(FMLInitializationEvent event) {
+    NetworkRegistry.INSTANCE.registerGuiHandler(FromTheDepths.instance, FromTheDepths.proxy);
 
-		// Register the spawning info here.
-		ModRegistry.RegisterSpawningInfo();
+    // Register custom recipes here.
+    ModRegistry.RegisterTotemOfSummoningRecipes();
+  }
 
-		// Register custom recipes here.
-		ModRegistry.RegisterTotemOfSummoningRecipes();
-	}
+  public void postinit(FMLPostInitializationEvent event) {
+  }
 
-	public void postinit(FMLPostInitializationEvent event)
-	{
-		if (UpdateChecker.showMessage)
-		{
-			UpdateChecker.checkVersion();
-		}
-	}
+  @Override
+  public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    return ModRegistry.GetModGuiByID(ID, x, y, z);
+  }
 
-	@Override
-	public Object getServerGuiElement(int ID, EntityPlayer player, World world,
-			int x, int y, int z)
-	{
-		return ModRegistry.GetModGuiByID(ID, x, y, z);
-	}
+  @Override
+  public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    return ModRegistry.GetModGuiByID(ID, x, y, z);
+  }
 
-	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
-			int x, int y, int z)
-	{
-		return ModRegistry.GetModGuiByID(ID, x, y, z);
-	}
-
-	public ModConfiguration getServerConfiguration()
-	{
-		return CommonProxy.proxyConfiguration;
-	}
+  public ModConfiguration getServerConfiguration() {
+    return CommonProxy.proxyConfiguration;
+  }
 }

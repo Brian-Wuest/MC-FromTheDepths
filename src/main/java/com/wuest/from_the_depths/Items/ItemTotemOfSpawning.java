@@ -1,5 +1,7 @@
 package com.wuest.from_the_depths.Items;
 
+import javax.annotation.Nullable;
+
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
@@ -8,11 +10,9 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * 
@@ -20,48 +20,20 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  *
  */
 public class ItemTotemOfSpawning extends Item {
-  public NonNullList<ItemStack> subItems;
-  public NonNullList<ItemStack> serverSubItems;
+  public SpawnInfo spawnInfo;
 
-  public ItemTotemOfSpawning(String name) {
+  public ItemTotemOfSpawning(SpawnInfo spawnInfo, String name) {
     super();
 
-    this.subItems = NonNullList.create();
-    this.serverSubItems = NonNullList.create();
+    this.spawnInfo = spawnInfo;
+
+    String registryName = name + "_"
+        + spawnInfo.key.toLowerCase().trim().replace(' ', '_').replace('-', '_').replace('\t', '_');
+
     this.setCreativeTab(CreativeTabs.MATERIALS);
-    ModRegistry.setItemName(this, name);
-    this.setHasSubtypes(true);
-  }
+    ModRegistry.setItemName(this, registryName);
 
-  /**
-   * returns a list of items with the same ID, but different meta (eg: dye returns
-   * 16 items)
-   */
-  @Override
-  @SideOnly(Side.CLIENT)
-  public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
-    if (this.isInCreativeTab(tab)) {
-      if (this.serverSubItems.size() > 0) {
-        items.addAll(this.serverSubItems);
-      } else if (this.subItems.size() > 0) {
-        items.addAll(this.subItems);
-      } else {
-        super.getSubItems(tab, items);
-      }
-    }
-  }
-
-  @Override
-  public String getItemStackDisplayName(ItemStack stack) {
-    SpawnInfo resourceLocation = this.getSpawnInfoFromItemStack(stack);
-
-    if (resourceLocation != null) {
-      String value = ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim() + " ("
-          + resourceLocation.key + ")";
-      return value;
-    }
-
-    return ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim();
+    this.setUnlocalizedName(name);
   }
 
   /**
@@ -80,73 +52,41 @@ public class ItemTotemOfSpawning extends Item {
       stack.setTagCompound(stack.serializeNBT());
     }
 
+    if (!stack.getTagCompound().hasKey("spawn_info") && this.spawnInfo != null) {
+      stack.getTagCompound().setString("spawn_info", this.spawnInfo.key);
+    }
+
     return stack.getTagCompound();
   }
 
-  public SpawnInfo getSpawnInfoFromItemStack(ItemStack stack) {
-    NBTTagCompound compound = this.getNBTShareTag(stack);
-
-    if (compound != null && compound.hasKey("entityInfo")) {
-      NBTTagCompound entityInfo = compound.getCompoundTag("entityInfo");
-
-      if (entityInfo.hasKey("entityKey")) {
-        String entityKey = entityInfo.getString("entityKey");
-
-        for (SpawnInfo spawnInfo : ModRegistry.SpawnInfos) {
-          if (spawnInfo.key.equals(entityKey)) {
-            return spawnInfo.clone();
-          }
-        }
-
-        FromTheDepths.logger.info("Entity Key: [{}], was not found in the list of bosses loaded earlier.", entityKey);
-        return null;
-      } else {
-        FromTheDepths.logger.info("Could not find entityKey tag for item [{}]",
-            stack.getItem().getRegistryName().toString());
-      }
-    }
-
-    return null;
-  }
-
-  public ResourceLocation getEntityResourceNameFromItemStack(ItemStack stack) {
-    SpawnInfo spawnInfo = this.getSpawnInfoFromItemStack(stack);
-
-    if (spawnInfo != null) {
-      return spawnInfo.bossInfo.createResourceLocation();
-    }
-
-    return null;
-  }
-
   /**
-   * This method is used to validate an ItemStack that it has a valid key.
+   * Override this method to decide what to do with the NBT data received from
+   * getNBTShareTag().
    * 
-   * @param stack The stack to validate.
-   * @return The key string found or null if a string wasn't found.
+   * @param stack The stack that received NBT
+   * @param nbt   Received NBT, can be null
    */
-  public String getEntityKeyFromItemStack(ItemStack stack) {
-    SpawnInfo spawnInfo = this.getSpawnInfoFromItemStack(stack);
+  @Override
+  public void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    super.readNBTShareTag(stack, nbt);
 
-    if (spawnInfo != null) {
-      return spawnInfo.key;
+    // If there is a spawn information key; make sure to get it from the registry.
+    String spawn_info = nbt.getString("spawn_info");
+
+    if (ModRegistry.SpawnInfosAndItems.containsKey(spawn_info)) {
+      Tuple<SpawnInfo, ItemTotemOfSpawning> tuple = ModRegistry.SpawnInfosAndItems.get(spawn_info);
+      this.spawnInfo = tuple.getFirst();
     }
-
-    return null;
   }
 
-  public ItemStack getItemStackUsingEntityResourceName(ResourceLocation resourceLocation, String key) {
-    ItemStack stack = new ItemStack(ModRegistry.TotemOfSpawning());
-    NBTTagCompound compound = this.getNBTShareTag(stack);
+  @Override
+  public String getItemStackDisplayName(ItemStack stack) {
+    if (this.spawnInfo != null) {
+      String value = ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim() + " ("
+          + spawnInfo.key + ")";
+      return value;
+    }
 
-    NBTTagCompound entityInfo = new NBTTagCompound();
-    entityInfo.setString("domain", resourceLocation.getResourceDomain());
-    entityInfo.setString("name", resourceLocation.getResourcePath());
-    entityInfo.setString("entityKey", key);
-
-    compound.setTag("entityInfo", entityInfo);
-    stack.setTagCompound(compound);
-
-    return stack;
+    return ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim();
   }
 }
