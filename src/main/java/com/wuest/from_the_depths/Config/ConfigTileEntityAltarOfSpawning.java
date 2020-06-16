@@ -1,10 +1,14 @@
 package com.wuest.from_the_depths.Config;
 
+import java.util.ArrayList;
+
 import com.google.common.base.Strings;
 import com.wuest.from_the_depths.Base.BaseConfig;
+import com.wuest.from_the_depths.EntityInfo.BossAddInfo;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 
@@ -18,10 +22,10 @@ import net.minecraft.util.math.BlockPos;
 public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
   public BlockPos pos;
   public SpawnInfo currentSpawnInfo;
-  public int ticksForCurrentSpawn;
-  public boolean spawningBoss;
+  public boolean bossSpawned;
   public int totalLightningBolts;
   public int ticksUntilNextLightningBolt;
+  public ArrayList<BossAddInfo> preBossMinions;
 
   public ConfigTileEntityAltarOfSpawning() {
     super();
@@ -40,10 +44,20 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
       this.currentSpawnInfo.writeToNBT(spawnInfo);
       tag.setTag("spawnInfo", spawnInfo);
 
-      tag.setInteger("ticksForCurrentSpawn", this.ticksForCurrentSpawn);
-      tag.setBoolean("spawningBoss", this.spawningBoss);
+      tag.setBoolean("bossSpawned", this.bossSpawned);
       tag.setInteger("totalLightningBolts", this.totalLightningBolts);
       tag.setInteger("ticksUntilNextLightningBolt", this.ticksUntilNextLightningBolt);
+
+      NBTTagList tagList = new NBTTagList();
+      if (!this.preBossMinions.isEmpty()) {
+        for (BossAddInfo bossAddInfo : this.preBossMinions) {
+          NBTTagCompound addTagCompound = new NBTTagCompound();
+          bossAddInfo.writeToNBT(addTagCompound);
+          tagList.appendTag(addTagCompound);
+        }
+      }
+
+      tag.setTag("preBossMinions", tagList);
     }
 
     compound.setTag("configTag", tag);
@@ -56,9 +70,7 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
     if (compound.hasKey("configTag")) {
       NBTTagCompound tag = compound.getCompoundTag("configTag");
 
-      if (tag.hasKey("pos")) {
-        config.pos = NBTUtil.getPosFromTag(tag.getCompoundTag("pos"));
-      }
+      config.pos = NBTUtil.getPosFromTag(tag.getCompoundTag("pos"));
 
       if (tag.hasKey("spawnInfo")) {
         SpawnInfo spawnInfo = new SpawnInfo();
@@ -68,19 +80,17 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
           config.currentSpawnInfo = null;
         }
 
-        if (tag.hasKey("ticksForCurrentSpawn")) {
-          config.ticksForCurrentSpawn = tag.getInteger("ticksForCurrentSpawn");
-        }
+        config.bossSpawned = tag.getBoolean("bossSpawned");
+        config.totalLightningBolts = tag.getInteger("totalLightningBolts");
+        config.ticksUntilNextLightningBolt = tag.getInteger("ticksUntilNextLightningBolt");
 
-        if (tag.hasKey("spawningBoss")) {
-          config.spawningBoss = tag.getBoolean("spawningBoss");
+        NBTTagList preBossMinionTagList = tag.getTagList("preBossMinions", 9);
 
-          if (tag.hasKey("totalLightningBolts")) {
-            config.totalLightningBolts = tag.getInteger("totalLightningBolts");
-          }
-
-          if (tag.hasKey("ticksUntilNextLightningBolt")) {
-            config.ticksUntilNextLightningBolt = tag.getInteger("ticksUntilNextLightningBolt");
+        if (!preBossMinionTagList.hasNoTags()) {
+          for (int i = 0; i < preBossMinionTagList.tagCount(); i++) {
+            NBTTagCompound bossAddInfoCompound = preBossMinionTagList.getCompoundTagAt(i);
+            BossAddInfo bossAddInfo = new BossAddInfo();
+            this.preBossMinions.add(bossAddInfo.loadFromNBTData(bossAddInfoCompound));
           }
         }
       }
@@ -91,6 +101,7 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
 
   public void Initialize() {
     this.pos = new BlockPos(0, 0, 0);
+    this.preBossMinions = new ArrayList<BossAddInfo>();
     this.currentSpawnInfo = null;
   }
 }

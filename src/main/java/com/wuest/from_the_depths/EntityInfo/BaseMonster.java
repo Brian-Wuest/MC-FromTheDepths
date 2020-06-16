@@ -73,6 +73,16 @@ public abstract class BaseMonster {
 
         entityLiving.serializeNBT();
 
+        // Add a tracking tag to the entity's saved NBT data.
+        NBTTagCompound trackingTag = new NBTTagCompound();
+        trackingTag.setBoolean("tracking", true);
+
+        // TODO: Write the drop information directly on the monster so people cannot
+        // change it after spawning.
+        NBTTagCompound entityCompoundTag = entityLiving.getEntityData();
+
+        entityCompoundTag.setTag("from_the_depths", trackingTag);
+
         entityLiving.forceSpawn = true;
         entityLiving.rotationYawHead = entityLiving.rotationYaw;
         entityLiving.renderYawOffset = entityLiving.rotationYaw;
@@ -83,6 +93,7 @@ public abstract class BaseMonster {
 
         world.addWeatherEffect(new EntityLightningBolt(world, (double) spawnPos.getX(), (double) spawnPos.getY(),
             (double) spawnPos.getZ(), true));
+
         entityLiving.playLivingSound();
       }
     }

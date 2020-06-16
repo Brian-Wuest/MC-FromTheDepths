@@ -4,228 +4,219 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.Base.TileEntityBase;
 import com.wuest.from_the_depths.Config.ConfigTileEntityAltarOfSpawning;
+import com.wuest.from_the_depths.EntityInfo.BossAddInfo;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.SPacketChat;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumDifficulty;
-import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
 
-public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning>
-{
-    private static final Predicate<EntityPlayerMP> VALID_PLAYER = Predicates.<EntityPlayerMP>and(EntitySelectors.IS_ALIVE, EntitySelectors.withinRange(0.0D, 15.0D, 0.0D, 15.0D));
-    
-	public TileEntityAltarOfSpawning()
-	{
-		super();
-		this.config = new ConfigTileEntityAltarOfSpawning();
-	}
-	
-	@Override
-    public void setPos(BlockPos posIn)
-    {
-        this.pos = posIn.toImmutable();
-        this.getConfig().pos = this.pos;
-    }
-	
-    /**
-     * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it
-     * hasn't changed and skip it.
-     */
-    @Override
-	public void markDirty()
-    {
-    	super.markDirty();
-    	
-    	if (!this.world.isRemote)
-    	{
-    		MinecraftServer server = this.world.getMinecraftServer();
-    		server.getPlayerList().sendPacketToAllPlayers(this.getUpdatePacket());
-    	}
-    }
-	
-    /**
-     * Get the formatted ChatComponent that will be used for the sender's username in chat
-     */
-    @Nullable
-    @Override
-    public ITextComponent getDisplayName()
-    {
-    	if (this.getConfig().currentSpawnInfo != null
-    			&& this.config.currentSpawnInfo.bossAddInfo != null)
-    	{
-    		String display = "";
-    		
-    		if (this.getConfig().spawningBoss)
-    		{
-    			display = TextFormatting.UNDERLINE.toString() + "Spawning: " + TextFormatting.RESET.toString() + "Boss";
-    		}
-    		else
-    		{
-	    		ResourceLocation resourceLocation = new ResourceLocation(this.config.currentSpawnInfo.bossAddInfo.domain, this.config.currentSpawnInfo.bossAddInfo.name);
-	    		Entity entity = EntityList.createEntityByIDFromName(resourceLocation, this.world);
-	    		
-	    		display = TextFormatting.UNDERLINE.toString() + "Spawning: " + TextFormatting.RESET.toString() + entity.getName();
-    		}
-    		
-    		return new TextComponentString(display);
-    	}
-    	
-        return null;
-    }
-	
-	/**
-     * Like the old updateEntity(), except more generic.
-     */
-	@Override
-	public void update()
-	{
-		// When this is a peaceful world, don't allow this process to continue.
-		if (!this.world.isRemote && this.world.getDifficulty() != EnumDifficulty.PEACEFUL)
-		{
-			if (this.config.currentSpawnInfo != null)
-			{
-				if (this.config.spawningBoss)
-				{
-					if (this.config.totalLightningBolts >= 4)
-					{
-						Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos);
-						
-						if (entity == null)
-						{
-							TextComponentString component = new TextComponentString("Unable to summon boss monster due to limited air space in summoning area");
+public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning> {
+  public static final Predicate<EntityPlayerMP> VALID_PLAYER = Predicates.<EntityPlayerMP>and(EntitySelectors.IS_ALIVE,
+      EntitySelectors.withinRange(0.0D, 15.0D, 0.0D, 15.0D));
 
-					        for (EntityPlayerMP player : this.world.getPlayers(EntityPlayerMP.class, VALID_PLAYER))
-					        {
-					        	player.sendMessage(component);
-					        }
-						}
-						
-						this.config.spawningBoss = false;
-						
-						if (this.config.currentSpawnInfo.bossAddInfo == null)
-						{
-							this.config.currentSpawnInfo = null;
-						}
-						
-						this.markDirty();
-					}
-					else if (this.config.ticksUntilNextLightningBolt - 1 <= 0)
-					{
-						EnumFacing facing = EnumFacing.NORTH;
-						
-						switch (this.config.totalLightningBolts)
-						{
-							case 0:
-							{
-								facing = EnumFacing.NORTH;
-								break;
-							}
-							
-							case 1: 
-							{
-								facing = EnumFacing.EAST;
-								break;
-							}
-							
-							case 2: 
-							{
-								facing = EnumFacing.SOUTH;
-								break;
-							}
-							
-							case 3:
-							{
-								facing = EnumFacing.WEST;
-								break;
-							}
-						}
-						
-						BlockPos lightningBoltPos = this.pos.offset(facing, 2);
-						world.addWeatherEffect(new EntityLightningBolt(world, (double)lightningBoltPos.getX(), (double)lightningBoltPos.getY(), (double)lightningBoltPos.getZ(), true));
-						
-						this.config.totalLightningBolts++;
-						this.config.ticksUntilNextLightningBolt = ModRegistry.AlterOfSpawning().tickRate(this.world);
-						
-						// Don't use this class's mark dirty method as it will send too many packets to players.
-						super.markDirty();
-					}
-					else
-					{
-						this.config.ticksUntilNextLightningBolt--;
-						
-						// Don't use this class's mark dirty method as it will send too many packets to players.
-						super.markDirty();
-					}
-				}
-				else if (this.config.currentSpawnInfo.bossAddInfo != null)
-				{
-					this.config.ticksForCurrentSpawn++;
-					
-					if (this.config.ticksForCurrentSpawn >= this.config.currentSpawnInfo.bossAddInfo.spawnFrequency
-							&& this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration > 0)
-					{
-						// We are past time to spawn an add so, decrement the time remaining and spawn an add.
-						this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration = this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration - this.config.ticksForCurrentSpawn;
-						this.config.ticksForCurrentSpawn = 0;
-						
-						// Spawn the entity in this world above this block.
-						Entity entity = this.config.currentSpawnInfo.bossAddInfo.createEntityForWorld(this.world, this.pos.up());
-						
-						if (entity == null)
-						{
-							TextComponentString component = new TextComponentString("Unable to summon additional monster due to limited air space in summoning area");
+  public TileEntityAltarOfSpawning() {
+    super();
+    this.config = new ConfigTileEntityAltarOfSpawning();
+  }
 
-					        for (EntityPlayerMP player : this.world.getPlayers(EntityPlayerMP.class, VALID_PLAYER))
-					        {
-					        	player.sendMessage(component);
-					        }
-						}
-						
-						this.markDirty();
-						
-					}
-					else if (this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration <= 0)
-					{
-						// No longer need to keep the spawn information in this tile entity since no more adds can be spawned.
-						// Just remove it and mark this tile entity as dirty.
-						this.config.currentSpawnInfo = null;
-						
-						this.markDirty();
-					}
-				}
-			}
-		}
-	}
-	
-	public void InitiateSpawning(SpawnInfo spawnInfo, int tickRate)
-	{
-		this.config.spawningBoss = true;
-		this.config.totalLightningBolts = 0;
-		this.config.ticksUntilNextLightningBolt = tickRate;
-		this.config.currentSpawnInfo = spawnInfo;
-		
-		if (this.config.currentSpawnInfo.bossAddInfo != null)
-		{
-			this.config.currentSpawnInfo.bossAddInfo.spawnFrequency = this.config.currentSpawnInfo.bossAddInfo.spawnFrequency * tickRate;
-			this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration = this.config.currentSpawnInfo.bossAddInfo.totalSpawnDuration * tickRate;
-		}
-		
-		this.markDirty();
-	}
+  @Override
+  public void setPos(BlockPos posIn) {
+    this.pos = posIn.toImmutable();
+    this.getConfig().pos = this.pos;
+  }
+
+  /**
+   * For tile entities, ensures the chunk containing the tile entity is saved to
+   * disk later - the game won't think it hasn't changed and skip it.
+   */
+  @Override
+  public void markDirty() {
+    super.markDirty();
+
+    if (!this.world.isRemote) {
+      MinecraftServer server = this.world.getMinecraftServer();
+      server.getPlayerList().sendPacketToAllPlayers(this.getUpdatePacket());
+    }
+  }
+
+  /**
+   * Get the formatted ChatComponent that will be used for the sender's username
+   * in chat
+   */
+  @Nullable
+  @Override
+  public ITextComponent getDisplayName() {
+    if (this.getConfig().currentSpawnInfo != null) {
+      String display = "Spawning Monsters....Enjoy!";
+
+      return new TextComponentString(display);
+    }
+
+    return null;
+  }
+
+  /**
+   * Like the old updateEntity(), except more generic.
+   */
+  @Override
+  public void update() {
+    // When this is a peaceful world, don't allow this process to continue.
+    if (!this.world.isRemote && this.world.getDifficulty() != EnumDifficulty.PEACEFUL
+        && this.config.currentSpawnInfo != null) {
+      if (!this.config.bossSpawned && this.config.preBossMinions.size() == 0) {
+        if (this.config.totalLightningBolts >= 4) {
+          Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos);
+
+          if (entity == null) {
+            TextComponentString component = new TextComponentString(
+                "Unable to summon boss monster due to limited air space in summoning area");
+
+            for (EntityPlayerMP player : this.world.getPlayers(EntityPlayerMP.class, VALID_PLAYER)) {
+              player.sendMessage(component);
+            }
+          }
+
+          this.config.bossSpawned = true;
+
+          // The boss has been spawned; make sure that there are no post-boss minions to
+          // spawn.
+          if (this.config.currentSpawnInfo.bossAddInfo == null) {
+            // There are no more adds to spawn since there were none to begin with.
+            this.config.currentSpawnInfo = null;
+          } else {
+            boolean foundPostBossMinions = false;
+
+            for (BossAddInfo minion : this.config.currentSpawnInfo.bossAddInfo) {
+              // Set the wait timer to be the number of ticks to wait after the boss is
+              // spawned.
+              minion.timeToWaitBeforeSpawn = minion.waitTicksAfterBossSpawn;
+              foundPostBossMinions = true;
+            }
+
+            if (!foundPostBossMinions) {
+              // No more adds to spawn, stop processing.
+              this.config.currentSpawnInfo = null;
+            }
+          }
+
+          this.markDirty();
+        } else if (this.config.ticksUntilNextLightningBolt - 1 <= 0) {
+          EnumFacing facing = EnumFacing.NORTH;
+
+          switch (this.config.totalLightningBolts) {
+            case 0: {
+              facing = EnumFacing.NORTH;
+              break;
+            }
+
+            case 1: {
+              facing = EnumFacing.EAST;
+              break;
+            }
+
+            case 2: {
+              facing = EnumFacing.SOUTH;
+              break;
+            }
+
+            case 3: {
+              facing = EnumFacing.WEST;
+              break;
+            }
+          }
+
+          BlockPos lightningBoltPos = this.pos.offset(facing, 2);
+          world.addWeatherEffect(new EntityLightningBolt(world, (double) lightningBoltPos.getX(),
+              (double) lightningBoltPos.getY(), (double) lightningBoltPos.getZ(), true));
+
+          this.config.totalLightningBolts++;
+          this.config.ticksUntilNextLightningBolt = ModRegistry.AlterOfSpawning().tickRate(this.world);
+
+          // Don't use this class's mark dirty method as it will send too many packets to
+          // players.
+          super.markDirty();
+        } else {
+          this.config.ticksUntilNextLightningBolt--;
+
+          // Don't use this class's mark dirty method as it will send too many packets to
+          // players.
+          super.markDirty();
+        }
+      } else if (this.config.preBossMinions.size() > 0) {
+        // Spawn the pre-boss minions.
+        super.markDirty();
+
+        for (int i = 0; i < this.config.preBossMinions.size(); i++) {
+          BossAddInfo minion = this.config.preBossMinions.get(i);
+
+          if (minion.processMinionSpawning(this.world, this.pos)) {
+            // This minion and all defined waves are done spawning, remove it from the list.
+            this.config.preBossMinions.remove(i);
+            i--;
+          }
+        }
+
+        // Mark this tile entity as dirty after processing the loop.
+        // This *could* cause some monster changes to be lost if the server dies before
+        // the changes can be saved.
+        // But this is more effiecient.
+        this.markDirty();
+      } else if (this.config.currentSpawnInfo.bossAddInfo != null) {
+
+        for (int i = 0; i < this.config.currentSpawnInfo.bossAddInfo.size(); i++) {
+          BossAddInfo minion = this.config.currentSpawnInfo.bossAddInfo.get(i);
+
+          if (minion.processMinionSpawning(this.world, this.pos)) {
+            // This minion and all defined waves are done spawning, remove it from the list.
+            this.config.currentSpawnInfo.bossAddInfo.remove(i);
+            i--;
+          }
+        }
+
+        // Mark this tile entity as dirty after processing the loop.
+        // This *could* cause some monster changes to be lost if the server dies before
+        // the changes can be saved.
+        // But this is more effiecient.
+        this.markDirty();
+      }
+    }
+  }
+
+  public void InitiateSpawning(SpawnInfo spawnInfo, int tickRate) {
+    this.config.totalLightningBolts = 0;
+    this.config.ticksUntilNextLightningBolt = tickRate;
+    this.config.currentSpawnInfo = spawnInfo;
+
+    // Get the pre-boss minions.
+    if (spawnInfo.bossAddInfo != null) {
+      for (int i = 0; i < spawnInfo.bossAddInfo.size(); i++) {
+        BossAddInfo minion = spawnInfo.bossAddInfo.get(i);
+
+        // Determine how many minions to spawn.
+        minion.determineNumberToSpawn();
+
+        if (minion.spawnBeforeBoss) {
+          this.config.preBossMinions.add(minion);
+
+          spawnInfo.bossAddInfo.remove(i);
+          i--;
+        }
+      }
+    }
+
+    // Make sure to mark this tile entity as dirty since it's configuration changed
+    // as part of this processing.
+    this.markDirty();
+  }
 }
