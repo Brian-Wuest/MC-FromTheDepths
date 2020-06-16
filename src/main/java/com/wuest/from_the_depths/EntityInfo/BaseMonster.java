@@ -71,17 +71,27 @@ public abstract class BaseMonster {
           entityLiving.setAlwaysRenderNameTag(this.alwaysShowDisplayName);
         }
 
-        entityLiving.serializeNBT();
-
         // Add a tracking tag to the entity's saved NBT data.
         NBTTagCompound trackingTag = new NBTTagCompound();
-        trackingTag.setBoolean("tracking", true);
 
-        // TODO: Write the drop information directly on the monster so people cannot
-        // change it after spawning.
+        NBTTagList additionalDropList = new NBTTagList();
+
+        if (!this.additionalDrops.isEmpty()) {
+          for (DropInfo dropInfo : this.additionalDrops) {
+            NBTTagCompound dropInfoTagCompound = new NBTTagCompound();
+            dropInfo.writeToNBT(dropInfoTagCompound);
+
+            additionalDropList.appendTag(dropInfoTagCompound);
+          }
+        }
+
+        trackingTag.setTag("additionalDrops", additionalDropList);
+
+        // Write the custom tag to this entity.
         NBTTagCompound entityCompoundTag = entityLiving.getEntityData();
-
         entityCompoundTag.setTag("from_the_depths", trackingTag);
+
+        entityLiving.serializeNBT();
 
         entityLiving.forceSpawn = true;
         entityLiving.rotationYawHead = entityLiving.rotationYaw;

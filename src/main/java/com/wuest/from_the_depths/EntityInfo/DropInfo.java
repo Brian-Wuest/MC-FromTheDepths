@@ -1,11 +1,20 @@
 package com.wuest.from_the_depths.EntityInfo;
 
+import java.util.Random;
+
 import com.wuest.from_the_depths.FromTheDepths;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 public class DropInfo implements INBTSerializable<DropInfo> {
 
+  public static Random ItemDropRandomizer = new Random(0);
   public String item;
   public int minDrops;
   public int maxDrops;
@@ -70,4 +79,35 @@ public class DropInfo implements INBTSerializable<DropInfo> {
     return newInstance;
   }
 
+  public EntityItem createEntityItem(World world, BlockPos pos) {
+    ResourceLocation itemLocation = new ResourceLocation(this.item);
+    int randomvalue = DropInfo.ItemDropRandomizer.nextInt(100);
+
+    if (randomvalue <= this.dropChance && this.maxDrops > 0) {
+      // This drop will be created; determine how many to put into a stack.
+      int amountToDrop = 1;
+
+      if (this.minDrops == this.maxDrops) {
+        amountToDrop = this.maxDrops;
+      } else {
+        Random dropAmountRandomizer = new Random(this.minDrops);
+        amountToDrop = dropAmountRandomizer.nextInt(this.maxDrops);
+      }
+
+      try {
+        Item registryItem = Item.REGISTRY.getObject(itemLocation);
+
+        if (registryItem != null) {
+          ItemStack stack = new ItemStack(registryItem, amountToDrop);
+          return new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+        }
+      } catch (Exception ex) {
+        FromTheDepths.logger.warn(String.format(
+            "An item with registration name [%1] wasn't found. Make sure the domain and item name are spelled correctly. Monster drops not created.",
+            this.item));
+      }
+    }
+
+    return null;
+  }
 }
