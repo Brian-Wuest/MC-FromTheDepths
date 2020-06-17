@@ -2,7 +2,6 @@ package com.wuest.from_the_depths.Items;
 
 import javax.annotation.Nullable;
 
-import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 
@@ -10,7 +9,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.translation.I18n;
 

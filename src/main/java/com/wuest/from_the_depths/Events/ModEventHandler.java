@@ -9,7 +9,6 @@ import com.wuest.from_the_depths.Proxy.ClientProxy;
 import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayerMP;

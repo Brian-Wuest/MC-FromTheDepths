@@ -17,9 +17,7 @@ import com.wuest.from_the_depths.Blocks.BlockAltarOfSpawning;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
-import com.wuest.from_the_depths.Proxy.Messages.PlayerEntityTagMessage;
 import com.wuest.from_the_depths.Proxy.Messages.Handlers.ConfigSyncHandler;
-import com.wuest.from_the_depths.Proxy.Messages.Handlers.PlayerEntityHandler;
 import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
 
 import net.minecraft.block.Block;
@@ -192,8 +190,6 @@ public class ModRegistry {
    */
   public static void RegisterMessages() {
     FromTheDepths.network.registerMessage(ConfigSyncHandler.class, ConfigSyncMessage.class, 1, Side.CLIENT);
-
-    FromTheDepths.network.registerMessage(PlayerEntityHandler.class, PlayerEntityTagMessage.class, 3, Side.CLIENT);
   }
 
   /**
@@ -239,8 +235,6 @@ public class ModRegistry {
       Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
       boolean loadedRecipe = false;
 
-      ArrayList<ResourceLocation> entityInfos = new ArrayList<ResourceLocation>();
-
       for (File file : FromTheDepths.proxy.modDirectory.toFile().listFiles()) {
         if (file.isFile()) {
           Path path = file.toPath();
@@ -285,6 +279,8 @@ public class ModRegistry {
       }
 
       if (loadedRecipe) {
+        // A recipe was added during this process; reset the client-side recipe book if
+        // it's used.
         FMLCommonHandler.instance().resetClientRecipeBook();
       }
     }
