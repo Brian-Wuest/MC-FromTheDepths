@@ -1,17 +1,20 @@
 package com.wuest.from_the_depths.Items;
 
+import com.google.common.base.Strings;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import com.wuest.from_the_depths.ModRegistry;
+import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.Tuple;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
 import java.util.Stack;
@@ -69,6 +72,64 @@ public class ItemTotemOfSpawning extends Item {
 		}
 
 		return ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim() + " (Does Nothing. Do not use.)";
+	}
+
+	/**
+	 * Does something when the item is right-clicked.
+	 */
+	@Override
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+	{
+		if (!worldIn.isRemote)
+		{
+			if (worldIn.getDifficulty() != EnumDifficulty.PEACEFUL)
+			{
+				TileEntity tileEntity = worldIn.getTileEntity(pos);
+
+				if (tileEntity instanceof  TileEntityAltarOfSpawning) {
+					TileEntityAltarOfSpawning tileEntityAltarOfSpawning =  (TileEntityAltarOfSpawning)tileEntity;
+					ItemStack heldStack = player.getHeldItem(hand);
+
+					if (tileEntityAltarOfSpawning.getConfig().currentSpawnInfo != null
+							&& !Strings.isNullOrEmpty(tileEntityAltarOfSpawning.getConfig().currentSpawnInfo.key)) {
+						player.sendMessage(new TextComponentString(
+								"Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all minions to be spawned."));
+						return EnumActionResult.PASS;
+					} else {
+						// Found a totem of spawning and we are not currently spawning a previous set of
+						// monsters. Initiate the spawning of the entity.
+						ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning) heldStack.getItem();
+						SpawnInfo spawnInfo = totemOfSpawning.getSpawnInfoFromItemStack(heldStack);
+
+						if (spawnInfo != null) {
+							if (spawnInfo.bossInfo.isValidEntity(worldIn)) {
+								// Entity was spawned, update the itemstack.
+								if (heldStack.getCount() == 1) {
+									player.inventory.deleteStack(heldStack);
+								} else {
+									heldStack.shrink(1);
+								}
+
+								player.inventoryContainer.detectAndSendChanges();
+
+								// Save off the spawn information for this tile entity since adds need to be
+								// spawned.
+								tileEntityAltarOfSpawning.InitiateSpawning(spawnInfo, 20);
+
+								return EnumActionResult.PASS;
+							} else {
+								player.sendMessage(new TextComponentString("Entity with name of [" + spawnInfo.bossInfo.name
+										+ "] and mod of [" + spawnInfo.bossInfo.domain + "] was not found."));
+							}
+						}
+					}
+				}
+
+				return EnumActionResult.PASS;
+			}
+		}
+
+		return EnumActionResult.FAIL;
 	}
 
 	@Override

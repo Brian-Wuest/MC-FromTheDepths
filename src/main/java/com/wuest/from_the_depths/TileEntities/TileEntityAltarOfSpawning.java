@@ -23,6 +23,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+
 public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning> {
   public static final Predicate<EntityPlayerMP> VALID_PLAYER = Predicates.<EntityPlayerMP>and(EntitySelectors.IS_ALIVE,
       EntitySelectors.withinRange(0.0D, 15.0D, 0.0D, 15.0D));
@@ -226,6 +228,8 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
     this.config.totalLightningBolts = 0;
     this.config.ticksUntilNextLightningBolt = tickRate;
     this.config.currentSpawnInfo = spawnInfo;
+    this.config.bossSpawned = false;
+    this.config.preBossMinions = new ArrayList<>();
 
     // Get the pre-boss minions.
     if (spawnInfo.bossAddInfo != null) {

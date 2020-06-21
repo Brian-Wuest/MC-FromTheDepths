@@ -183,58 +183,6 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
   }
 
   /**
-   * Called when the block is right clicked by a player.
-   */
-  @Override
-  public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand,
-      EnumFacing facing, float hitX, float hitY, float hitZ) {
-    if (!worldIn.isRemote) {
-      ItemStack usedItem = playerIn.getHeldItem(hand);
-
-      if (usedItem != null && !usedItem.isEmpty() && usedItem.getItem() instanceof ItemTotemOfSpawning
-          && worldIn.getDifficulty() != EnumDifficulty.PEACEFUL) {
-        TileEntityAltarOfSpawning tileEntity = this.getLocalTileEntity(worldIn, pos);
-
-        if (tileEntity.getConfig().currentSpawnInfo != null
-            && !Strings.isNullOrEmpty(tileEntity.getConfig().currentSpawnInfo.key)) {
-          playerIn.sendMessage(new TextComponentString(
-              "Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all minions to be spawned."));
-          return true;
-        } else {
-          // Found a totem of spawning and we are not currently spawning a previous set of
-          // mosnters. Initiate the spawning of the entity.
-          ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning) usedItem.getItem();
-          SpawnInfo spawnInfo = totemOfSpawning.getSpawnInfoFromItemStack(usedItem);
-
-          if (spawnInfo != null) {
-            if (spawnInfo.bossInfo.isValidEntity(worldIn)) {
-              // Entity was spawned, update the itemstack.
-              if (usedItem.getCount() == 1) {
-                playerIn.inventory.deleteStack(usedItem);
-              } else {
-                usedItem.shrink(1);
-              }
-
-              playerIn.inventoryContainer.detectAndSendChanges();
-
-              // Save off the spawn information for this tile entity since adds need to be
-              // spawned.
-              tileEntity.InitiateSpawning(spawnInfo, this.tickRate(worldIn));
-
-              return true;
-            } else {
-              playerIn.sendMessage(new TextComponentString("Entity with name of [" + spawnInfo.bossInfo.name
-                  + "] and mod of [" + spawnInfo.bossInfo.domain + "] was not found."));
-            }
-          }
-        }
-      }
-    }
-
-    return false;
-  }
-
-  /**
    * Convert the given metadata into a BlockState for this Block
    */
   @Override
