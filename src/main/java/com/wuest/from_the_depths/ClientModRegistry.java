@@ -11,7 +11,7 @@ public class ClientModRegistry extends ModRegistry
 	
 	public static void RegisterSpecialRenderers()
 	{
-		//ClientModRegistry.AltarOfSpawningRenderer = new TileEntityAltarOfSpawningSpecialRenderer();
-		//ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAltarOfSpawning.class, ClientModRegistry.AltarOfSpawningRenderer);
+		ClientModRegistry.AltarOfSpawningRenderer = new TileEntityAltarOfSpawningSpecialRenderer();
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAltarOfSpawning.class, ClientModRegistry.AltarOfSpawningRenderer);
 	}
 }
