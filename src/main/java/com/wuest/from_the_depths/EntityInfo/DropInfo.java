@@ -81,17 +81,17 @@ public class DropInfo implements INBTSerializable<DropInfo> {
 
   public EntityItem createEntityItem(World world, BlockPos pos) {
     ResourceLocation itemLocation = new ResourceLocation(this.item);
-    int randomvalue = DropInfo.ItemDropRandomizer.nextInt(100);
+    int randomValue = DropInfo.ItemDropRandomizer.nextInt(100);
 
-    if (randomvalue <= this.dropChance && this.maxDrops > 0) {
+    if (randomValue <= this.dropChance && this.maxDrops > 0) {
       // This drop will be created; determine how many to put into a stack.
-      int amountToDrop = 1;
+      int amountToDrop;
 
       if (this.minDrops == this.maxDrops) {
         amountToDrop = this.maxDrops;
       } else {
-        Random dropAmountRandomizer = new Random(this.minDrops);
-        amountToDrop = dropAmountRandomizer.nextInt(this.maxDrops);
+        Random dropAmountRandomized = new Random(this.minDrops);
+        amountToDrop = dropAmountRandomized.nextInt(this.maxDrops);
       }
 
       try {
@@ -103,7 +103,7 @@ public class DropInfo implements INBTSerializable<DropInfo> {
         }
       } catch (Exception ex) {
         FromTheDepths.logger.warn(String.format(
-            "An item with registration name [%1] wasn't found. Make sure the domain and item name are spelled correctly. Monster drops not created.",
+            "An item with registration name [{}] wasn't found. Make sure the domain and item name are spelled correctly. Monster drops not created.",
             this.item));
       }
     }

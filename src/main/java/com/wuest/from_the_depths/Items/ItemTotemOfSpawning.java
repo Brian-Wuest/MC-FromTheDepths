@@ -17,8 +17,6 @@ import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
-import java.util.Stack;
-
 /**
  * @author WuestMan
  */
@@ -78,23 +76,19 @@ public class ItemTotemOfSpawning extends Item {
 	 * Does something when the item is right-clicked.
 	 */
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-	{
-		if (!worldIn.isRemote)
-		{
-			if (worldIn.getDifficulty() != EnumDifficulty.PEACEFUL)
-			{
+	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+		if (!worldIn.isRemote) {
+			if (worldIn.getDifficulty() != EnumDifficulty.PEACEFUL) {
 				TileEntity tileEntity = worldIn.getTileEntity(pos);
 
-				if (tileEntity instanceof  TileEntityAltarOfSpawning) {
-					TileEntityAltarOfSpawning tileEntityAltarOfSpawning =  (TileEntityAltarOfSpawning)tileEntity;
+				if (tileEntity instanceof TileEntityAltarOfSpawning) {
+					TileEntityAltarOfSpawning tileEntityAltarOfSpawning = (TileEntityAltarOfSpawning) tileEntity;
 					ItemStack heldStack = player.getHeldItem(hand);
 
 					if (tileEntityAltarOfSpawning.getConfig().currentSpawnInfo != null
 							&& !Strings.isNullOrEmpty(tileEntityAltarOfSpawning.getConfig().currentSpawnInfo.key)) {
 						player.sendMessage(new TextComponentString(
 								"Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all minions to be spawned."));
-						return EnumActionResult.PASS;
 					} else {
 						// Found a totem of spawning and we are not currently spawning a previous set of
 						// monsters. Initiate the spawning of the entity.
@@ -116,7 +110,7 @@ public class ItemTotemOfSpawning extends Item {
 								// spawned.
 								tileEntityAltarOfSpawning.InitiateSpawning(spawnInfo, 20);
 
-								return EnumActionResult.PASS;
+								return EnumActionResult.SUCCESS;
 							} else {
 								player.sendMessage(new TextComponentString("Entity with name of [" + spawnInfo.bossInfo.name
 										+ "] and mod of [" + spawnInfo.bossInfo.domain + "] was not found."));
@@ -124,8 +118,8 @@ public class ItemTotemOfSpawning extends Item {
 						}
 					}
 				}
-
-				return EnumActionResult.PASS;
+			} else {
+				player.sendMessage(new TextComponentString("The current world difficulty is set to Peaceful. Unable to summon boss or minions."));
 			}
 		}
 
@@ -133,15 +127,13 @@ public class ItemTotemOfSpawning extends Item {
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
-	{
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
 		ItemStack heldStack = playerIn.getHeldItem(handIn);
 		SpawnInfo info = this.getSpawnInfoFromItemStack(heldStack);
 
 		if (info != null) {
 			return new ActionResult<ItemStack>(EnumActionResult.PASS, heldStack);
-		}
-		else {
+		} else {
 			return new ActionResult<ItemStack>(EnumActionResult.FAIL, heldStack);
 		}
 	}
@@ -151,7 +143,7 @@ public class ItemTotemOfSpawning extends Item {
 		String spawn_info = tagCompound.getString("spawn_info");
 
 		if (spawn_info == null || spawn_info.isEmpty()) {
-			spawn_info = ((ItemTotemOfSpawning)stack.getItem()).key;
+			spawn_info = ((ItemTotemOfSpawning) stack.getItem()).key;
 		}
 
 		return this.getSpawnInfoFromKey(spawn_info);
