@@ -30,7 +30,7 @@ public abstract class BaseMonster {
   public String commandToRunAtSpawn;
 
   static {
-    BaseMonster.random = new Random();
+    BaseMonster.random = new Random(0);
   }
 
   public BaseMonster() {
@@ -100,7 +100,7 @@ public abstract class BaseMonster {
         entityLiving.rotationYawHead = entityLiving.rotationYaw;
         entityLiving.renderYawOffset = entityLiving.rotationYaw;
         entityLiving.setPositionAndUpdate(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
-        entityLiving.onInitialSpawn(world.getDifficultyForLocation(new BlockPos(entityLiving)),
+        entityLiving.onInitialSpawn(world.getDifficultyForLocation(new BlockPos(spawnPos)),
             (IEntityLivingData) null);
         world.spawnEntity(entityLiving);
 
@@ -122,11 +122,11 @@ public abstract class BaseMonster {
     BlockPos spawnPos = null;
 
     for (int i = 0; i < 10; i++) {
-      int randomValue = BaseMonster.random.nextInt(100) % 2 == 0 ? -1 : 1;
-      int randomX = (BaseMonster.random.nextInt(4) * randomValue) + (randomValue * 2);
+      int randomValue = this.determineRandomInt(100) % 2 == 0 ? -1 : 1;
+      int randomX = (this.determineRandomInt(6) * randomValue) + (randomValue * 2);
 
-      randomValue = BaseMonster.random.nextInt(100) % 2 == 0 ? -1 : 1;
-      int randomZ = (BaseMonster.random.nextInt(4) * randomValue) + (randomValue * 2);
+      randomValue = this.determineRandomInt(100) % 2 == 0 ? -1 : 1;
+      int randomZ = (this.determineRandomInt(6) * randomValue) + (randomValue * 2);
       spawnPos = new BlockPos(originalPos.getX() + randomX, originalPos.up(1).getY(), originalPos.getZ() + randomZ);
 
       if (world.isAirBlock(spawnPos)) {
@@ -177,6 +177,17 @@ public abstract class BaseMonster {
     }
 
     return null;
+  }
+
+  public int determineRandomInt(int bound) {
+    int randomCounter = BaseMonster.random.nextInt(21);
+    int returnValue = BaseMonster.random.nextInt(bound);
+
+    for (int i = 0; i < randomCounter; i++) {
+      returnValue = BaseMonster.random.nextInt(bound);
+    }
+
+    return returnValue;
   }
 
   public boolean isValidEntity(World world) {
