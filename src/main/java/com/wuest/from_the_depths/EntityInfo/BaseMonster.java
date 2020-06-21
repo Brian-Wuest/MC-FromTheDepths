@@ -17,8 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class BaseMonster {
-
-  public static Random random;
   public String domain;
   public String name;
   public String displayName;
@@ -28,10 +26,6 @@ public abstract class BaseMonster {
   public int timeToWaitBeforeSpawn;
   public ArrayList<DropInfo> additionalDrops;
   public String commandToRunAtSpawn;
-
-  static {
-    BaseMonster.random = new Random(0);
-  }
 
   public BaseMonster() {
     this.maxHealth = -1;
@@ -122,11 +116,11 @@ public abstract class BaseMonster {
     BlockPos spawnPos = null;
 
     for (int i = 0; i < 10; i++) {
-      int randomValue = this.determineRandomInt(100) % 2 == 0 ? -1 : 1;
-      int randomX = (this.determineRandomInt(6) * randomValue) + (randomValue * 2);
+      int randomValue = this.determineRandomInt(100, world) % 2 == 0 ? -1 : 1;
+      int randomX = (this.determineRandomInt(6, world) * randomValue) + (randomValue * 2);
 
-      randomValue = this.determineRandomInt(100) % 2 == 0 ? -1 : 1;
-      int randomZ = (this.determineRandomInt(6) * randomValue) + (randomValue * 2);
+      randomValue = this.determineRandomInt(100, world) % 2 == 0 ? -1 : 1;
+      int randomZ = (this.determineRandomInt(6, world) * randomValue) + (randomValue * 2);
       spawnPos = new BlockPos(originalPos.getX() + randomX, originalPos.up(1).getY(), originalPos.getZ() + randomZ);
 
       if (world.isAirBlock(spawnPos)) {
@@ -179,12 +173,12 @@ public abstract class BaseMonster {
     return null;
   }
 
-  public int determineRandomInt(int bound) {
-    int randomCounter = BaseMonster.random.nextInt(21);
-    int returnValue = BaseMonster.random.nextInt(bound);
+  public int determineRandomInt(int bound, World world) {
+    int randomCounter = world.rand.nextInt(21);
+    int returnValue = 1;
 
     for (int i = 0; i < randomCounter; i++) {
-      returnValue = BaseMonster.random.nextInt(bound);
+      returnValue = world.rand.nextInt(bound);
     }
 
     return returnValue;

@@ -50,18 +50,20 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 	 * This method determines how many adds to spawn. If there are any additional
 	 * waves to spawn; this will also determine their count.
 	 */
-	public void determineNumberToSpawn() {
+	public void determineNumberToSpawn(World world) {
 		this.timeUntilNextSpawn = this.timeToWaitBeforeSpawn;
 
 		if (this.minSpawns != this.maxSpawns) {
-			BaseMonster.random.setSeed(this.minSpawns);
-			this.numberLeftToSpawn = BaseMonster.random.nextInt(this.maxSpawns);
+			this.numberLeftToSpawn = this.determineRandomInt(this.maxSpawns, world);
+			if (this.numberLeftToSpawn < this.minSpawns) {
+				this.numberLeftToSpawn = this.minSpawns;
+			}
 		} else {
 			this.numberLeftToSpawn = this.maxSpawns;
 		}
 
 		if (this.nextWaveOfAdds != null) {
-			this.nextWaveOfAdds.determineNumberToSpawn();
+			this.nextWaveOfAdds.determineNumberToSpawn(world);
 		}
 	}
 

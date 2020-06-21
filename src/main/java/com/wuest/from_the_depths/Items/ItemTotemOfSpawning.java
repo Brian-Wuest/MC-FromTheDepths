@@ -108,7 +108,8 @@ public class ItemTotemOfSpawning extends Item {
 
 								// Save off the spawn information for this tile entity since adds need to be
 								// spawned.
-								tileEntityAltarOfSpawning.InitiateSpawning(spawnInfo, 20);
+								// Make sure to clone the spawn information before initiate spawning.
+								tileEntityAltarOfSpawning.InitiateSpawning(spawnInfo.clone(), 20, worldIn);
 
 								return EnumActionResult.SUCCESS;
 							} else {

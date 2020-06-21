@@ -236,7 +236,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
     this.config.preBossMinions = new ArrayList<>();
   }
 
-  public void InitiateSpawning(SpawnInfo spawnInfo, int tickRate) {
+  public void InitiateSpawning(SpawnInfo spawnInfo, int tickRate, World world) {
     this.resetSpawner();
 
     this.config.ticksUntilNextLightningBolt = tickRate;
@@ -248,7 +248,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
         BossAddInfo minion = spawnInfo.bossAddInfo.get(i);
 
         // Determine how many minions to spawn.
-        minion.determineNumberToSpawn();
+        minion.determineNumberToSpawn(world);
 
         if (minion.spawnBeforeBoss) {
           this.config.preBossMinions.add(minion);

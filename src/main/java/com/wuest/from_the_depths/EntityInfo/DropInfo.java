@@ -13,8 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class DropInfo implements INBTSerializable<DropInfo> {
-
-  public static Random ItemDropRandomizer = new Random(0);
   public String item;
   public int minDrops;
   public int maxDrops;
@@ -81,7 +79,7 @@ public class DropInfo implements INBTSerializable<DropInfo> {
 
   public EntityItem createEntityItem(World world, BlockPos pos) {
     ResourceLocation itemLocation = new ResourceLocation(this.item);
-    int randomValue = DropInfo.ItemDropRandomizer.nextInt(100);
+    int randomValue = world.rand.nextInt(100);
 
     if (randomValue <= this.dropChance && this.maxDrops > 0) {
       // This drop will be created; determine how many to put into a stack.
