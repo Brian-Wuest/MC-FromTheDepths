@@ -124,20 +124,19 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
           // spawn.
           if (this.config.currentSpawnInfo.bossAddInfo == null) {
             // There are no more adds to spawn since there were none to begin with.
-            this.config.currentSpawnInfo = null;
+            this.resetSpawner();
           } else {
             boolean foundPostBossMinions = false;
 
             for (BossAddInfo minion : this.config.currentSpawnInfo.bossAddInfo) {
               // Set the wait timer to be the number of ticks to wait after the boss is
               // spawned.
-              minion.timeToWaitBeforeSpawn = minion.waitTicksAfterBossSpawn;
               foundPostBossMinions = true;
             }
 
             if (!foundPostBossMinions) {
               // No more adds to spawn, stop processing.
-              this.config.currentSpawnInfo = null;
+              this.resetSpawner();
             }
           }
 
@@ -215,6 +214,11 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
           }
         }
 
+        if (this.config.currentSpawnInfo.bossAddInfo.size() == 0) {
+          // All adds have been generated. Reset the spawner so more can be spawned.
+          this.resetSpawner();
+        }
+
         // Mark this tile entity as dirty after processing the loop.
         // This *could* cause some monster changes to be lost if the server dies before
         // the changes can be saved.
@@ -224,12 +228,19 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
     }
   }
 
-  public void InitiateSpawning(SpawnInfo spawnInfo, int tickRate) {
+  public void resetSpawner() {
     this.config.totalLightningBolts = 0;
-    this.config.ticksUntilNextLightningBolt = tickRate;
-    this.config.currentSpawnInfo = spawnInfo;
+    this.config.ticksUntilNextLightningBolt = 100;
+    this.config.currentSpawnInfo = null;
     this.config.bossSpawned = false;
     this.config.preBossMinions = new ArrayList<>();
+  }
+
+  public void InitiateSpawning(SpawnInfo spawnInfo, int tickRate) {
+    this.resetSpawner();
+
+    this.config.ticksUntilNextLightningBolt = tickRate;
+    this.config.currentSpawnInfo = spawnInfo;
 
     // Get the pre-boss minions.
     if (spawnInfo.bossAddInfo != null) {
