@@ -8,8 +8,7 @@
     "maxHealth": 40,
     "attackDamage": 10.5,
     "alwaysShowDisplayName": true,
-    "additionalDrops": [
-      {
+    "additionalDrops": [{
         "item": "minecraft:diamond",
         "minDrops": 1,
         "maxDrops": 4,
@@ -29,13 +28,12 @@
       }
     ]
   },
-  "bossAddInfo": [
-    {
+  "bossAddInfo": [{
       "_comment": "Spawns a bunch of silverfish, after that is done. Wait 10 (200 ticks) seconds and spawn a big slime.",
       "_comment2": "After that spawn a random amount of chickens.",
       "domain": "minecraft",
       "name": "silverfish",
-      "minSpawns": 4,
+      "minSpawns": 1,
       "maxSpawns": 4,
       "timeBetweenSpawns": 100,
       "spawnBeforeBoss": true,
@@ -66,7 +64,7 @@
       "maxHealth": 5,
       "attackDamage": 5,
       "alwaysShowDisplayName": false,
-      "minSpawns": 4,
+      "minSpawns": 1,
       "maxSpawns": 4,
       "timeBetweenSpawns": 40,
       "timeToWaitBeforeSpawn": 300
