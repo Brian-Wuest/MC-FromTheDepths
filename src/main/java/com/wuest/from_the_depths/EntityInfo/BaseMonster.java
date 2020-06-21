@@ -110,7 +110,7 @@ public abstract class BaseMonster {
         entityLiving.playLivingSound();
 
         if (this.commandToRunAtSpawn != null && !this.commandToRunAtSpawn.isEmpty()) {
-
+          world.getMinecraftServer().getCommandManager().executeCommand(commandSender, this.commandToRunAtSpawn);
         }
       }
     }
