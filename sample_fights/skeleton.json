@@ -27,7 +27,8 @@
         "maxDrops": 1,
         "dropChance": 5
       }
-    ]
+    ],
+    "commandToRunAtSpawn": "/weather rain"
   },
   "recipe": {
     "type": "minecraft:crafting_shaped",

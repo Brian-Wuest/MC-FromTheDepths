@@ -31,14 +31,14 @@
   },
   "bossAddInfo": [
     {
-      "_comment": "Spawns a bunch of silverfish, after that is done. Wait 10 seconds and spawn a big slime.",
+      "_comment": "Spawns a bunch of silverfish, after that is done. Wait 10 (200 ticks) seconds and spawn a big slime.",
       "_comment2": "After that spawn a random amount of chickens.",
       "domain": "minecraft",
       "name": "silverfish",
       "minSpawns": 4,
       "maxSpawns": 4,
       "timeBetweenSpawns": 100,
-      "spawnbeforeBoss": true,
+      "spawnBeforeBoss": true,
       "_comment3": "The next wave of adds will start spawning after these adds have been spawned",
       "nextWaveOfAdds": {
         "domain": "minecraft",
@@ -59,7 +59,7 @@
     },
     {
       "_comment": "Spawns some creepers while the boss is around to make the fight crazy.",
-      "_comment2": "They start spawning 15 seconds after the boss spawns.",
+      "_comment2": "They start spawning 15 (300 ticks) seconds after the boss spawns.",
       "domain": "minecraft",
       "name": "creeper",
       "displayName": "Custom Creeper!",
@@ -68,8 +68,8 @@
       "alwaysShowDisplayName": false,
       "minSpawns": 4,
       "maxSpawns": 4,
-      "timeBetweenSpawns": 20,
-      "waitTicksAfterBossSpawn": 300
+      "timeBetweenSpawns": 40,
+      "timeToWaitBeforeSpawn": 300
     }
   ],
   "recipe": {
