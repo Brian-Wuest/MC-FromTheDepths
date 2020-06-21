@@ -8,24 +8,24 @@
     "maxHealth": 40,
     "attackDamage": 10.5,
     "alwaysShowDisplayName": true,
-    "dropInfo": [
+    "additionalDrops": [
       {
         "item": "minecraft:diamond",
         "minDrops": 1,
         "maxDrops": 4,
-        "dropchance": 20
+        "dropChance": 20
       },
       {
         "item": "minecraft:gold_chestplate",
         "minDrops": 1,
         "maxDrops": 1,
-        "dropchance": 15
+        "dropChance": 15
       },
       {
         "item": "minecraft:diamond_sword",
         "minDrops": 1,
         "maxDrops": 1,
-        "dropchance": 5
+        "dropChance": 5
       }
     ]
   },
@@ -71,5 +71,23 @@
       "timeBetweenSpawns": 20,
       "waitTicksAfterBossSpawn": 300
     }
-  ]
+  ],
+  "recipe": {
+    "type": "minecraft:crafting_shaped",
+    "group": "Summon",
+    "pattern": ["aaa", "aaa", "aaa"],
+    "key": {
+      "a": {
+        "item": "minecraft:cobblestone"
+      }
+    },
+    "result": {
+      "item": "from_the_depths:item_totem_of_summoning",
+      "data": 0,
+      "nbt": {
+        "spawn_info": "Custom_Zombie"
+      },
+      "count": 1
+    }
+  }
 }
