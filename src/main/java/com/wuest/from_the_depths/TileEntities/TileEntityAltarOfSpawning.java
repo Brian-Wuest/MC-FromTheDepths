@@ -10,6 +10,7 @@ import com.wuest.from_the_depths.Config.ConfigTileEntityAltarOfSpawning;
 import com.wuest.from_the_depths.EntityInfo.BossAddInfo;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -20,10 +21,37 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.World;
 
 public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning> {
   public static final Predicate<EntityPlayerMP> VALID_PLAYER = Predicates.<EntityPlayerMP>and(EntitySelectors.IS_ALIVE,
       EntitySelectors.withinRange(0.0D, 15.0D, 0.0D, 15.0D));
+
+  /**
+   * The command sender to use when issuing commands when spawning monsters.
+   */
+  public ICommandSender commandSender = new ICommandSender() {
+
+    @Override
+    public MinecraftServer getServer() {
+      return TileEntityAltarOfSpawning.this.world.getMinecraftServer();
+    }
+
+    @Override
+    public String getName() {
+      return "@";
+    }
+
+    @Override
+    public World getEntityWorld() {
+      return TileEntityAltarOfSpawning.this.world;
+    }
+
+    @Override
+    public boolean canUseCommand(int permLevel, String commandName) {
+      return permLevel <= 2;
+    }
+  };
 
   public TileEntityAltarOfSpawning() {
     super();
@@ -76,7 +104,8 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
         && this.config.currentSpawnInfo != null) {
       if (!this.config.bossSpawned && this.config.preBossMinions.size() == 0) {
         if (this.config.totalLightningBolts >= 4) {
-          Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos);
+          Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos,
+              this.commandSender);
 
           if (entity == null) {
             TextComponentString component = new TextComponentString(
@@ -160,7 +189,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
         for (int i = 0; i < this.config.preBossMinions.size(); i++) {
           BossAddInfo minion = this.config.preBossMinions.get(i);
 
-          if (minion.processMinionSpawning(this.world, this.pos)) {
+          if (minion.processMinionSpawning(this.world, this.pos, this.commandSender)) {
             // This minion and all defined waves are done spawning, remove it from the list.
             this.config.preBossMinions.remove(i);
             i--;
@@ -177,7 +206,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
         for (int i = 0; i < this.config.currentSpawnInfo.bossAddInfo.size(); i++) {
           BossAddInfo minion = this.config.currentSpawnInfo.bossAddInfo.get(i);
 
-          if (minion.processMinionSpawning(this.world, this.pos)) {
+          if (minion.processMinionSpawning(this.world, this.pos, this.commandSender)) {
             // This minion and all defined waves are done spawning, remove it from the list.
             this.config.currentSpawnInfo.bossAddInfo.remove(i);
             i--;

@@ -3,6 +3,7 @@ package com.wuest.from_the_depths.EntityInfo;
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
 
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -72,19 +73,19 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
    * 
    * @return True when this minion is done spawning; otherwise false.
    */
-  public boolean processMinionSpawning(World world, BlockPos pos) {
+  public boolean processMinionSpawning(World world, BlockPos pos, ICommandSender commandSender) {
     if (!this.spawning) {
       this.spawning = true;
 
       if (this.numberLeftToSpawn == 0 && this.nextWaveofAdds != null) {
         // This minion is done spawning but there is another wave, process that now.
-        return this.nextWaveofAdds.processMinionSpawning(world, pos);
+        return this.nextWaveofAdds.processMinionSpawning(world, pos, commandSender);
       } else if (this.numberLeftToSpawn == 0) {
         // Spawning is complete and there are no more waves to process.
         return true;
       } else if (this.timeUntilNextSpawn <= 0) {
         // There is something to spawn and we reached the timer; do that now.
-        Entity entity = this.createEntityForWorld(world, pos.up());
+        Entity entity = this.createEntityForWorld(world, pos.up(), commandSender);
 
         if (entity == null) {
           TextComponentString component = new TextComponentString(
@@ -198,6 +199,7 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
     newInstance.spawning = this.spawning;
     newInstance.numberLeftToSpawn = this.numberLeftToSpawn;
     newInstance.timeUntilNextSpawn = this.timeUntilNextSpawn;
+    newInstance.commandToRunAtSpawn = this.commandToRunAtSpawn;
 
     if (this.nextWaveofAdds != null) {
       newInstance.nextWaveofAdds = this.nextWaveofAdds.clone();

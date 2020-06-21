@@ -97,8 +97,8 @@ def parseConfig(File config) {
 
 sourceSets {
   main {
-    java.outputDir = file("bin/main")
-    output.resourcesDir = "bin/main"
+    java.outputDir = file("build/bin/main")
+    output.resourcesDir = "build/bin/main"
   }
   test {
     output.resourcesDir = "build/classes/test"

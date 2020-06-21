@@ -84,7 +84,7 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
         config.totalLightningBolts = tag.getInteger("totalLightningBolts");
         config.ticksUntilNextLightningBolt = tag.getInteger("ticksUntilNextLightningBolt");
 
-        NBTTagList preBossMinionTagList = tag.getTagList("preBossMinions", 9);
+        NBTTagList preBossMinionTagList = tag.getTagList("preBossMinions", 10);
 
         if (!preBossMinionTagList.hasNoTags()) {
           for (int i = 0; i < preBossMinionTagList.tagCount(); i++) {

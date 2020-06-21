@@ -198,13 +198,13 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
         if (tileEntity.getConfig().currentSpawnInfo != null
             && !Strings.isNullOrEmpty(tileEntity.getConfig().currentSpawnInfo.key)) {
           playerIn.sendMessage(new TextComponentString(
-              "Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all adds to be spawned."));
+              "Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all minions to be spawned."));
           return true;
         } else {
           // Found a totem of spawning and we are not currently spawning a previous set of
           // mosnters. Initiate the spawning of the entity.
           ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning) usedItem.getItem();
-          SpawnInfo spawnInfo = totemOfSpawning.spawnInfo;
+          SpawnInfo spawnInfo = totemOfSpawning.getSpawnInfoFromItemStack(usedItem);
 
           if (spawnInfo != null) {
             if (spawnInfo.bossInfo.isValidEntity(worldIn)) {

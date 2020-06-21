@@ -3,6 +3,7 @@ package com.wuest.from_the_depths.EntityInfo;
 import java.util.ArrayList;
 import java.util.Random;
 
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -26,6 +27,7 @@ public abstract class BaseMonster {
   public boolean alwaysShowDisplayName;
   public int timeToWaitBeforeSpawn;
   public ArrayList<DropInfo> additionalDrops;
+  public String commandToRunAtSpawn;
 
   static {
     BaseMonster.random = new Random();
@@ -37,13 +39,14 @@ public abstract class BaseMonster {
     this.alwaysShowDisplayName = false;
     this.additionalDrops = new ArrayList<DropInfo>();
     this.timeToWaitBeforeSpawn = 20;
+    this.commandToRunAtSpawn = "";
   }
 
   public ResourceLocation createResourceLocation() {
     return new ResourceLocation(this.domain, this.name);
   }
 
-  public Entity createEntityForWorld(World world, BlockPos pos) {
+  public Entity createEntityForWorld(World world, BlockPos pos, ICommandSender commandSender) {
     ResourceLocation resourceLocation = this.createResourceLocation();
     Entity entity = EntityList.createEntityByIDFromName(resourceLocation, world);
 
@@ -105,6 +108,10 @@ public abstract class BaseMonster {
             (double) spawnPos.getZ(), true));
 
         entityLiving.playLivingSound();
+
+        if (this.commandToRunAtSpawn != null && !this.commandToRunAtSpawn.isEmpty()) {
+
+        }
       }
     }
 
@@ -203,6 +210,7 @@ public abstract class BaseMonster {
     tag.setFloat("attackDamage", this.attackDamage);
     tag.setBoolean("alwaysShowDisplayName", this.alwaysShowDisplayName);
     tag.setInteger("timeToWaitBeforeSpawn", this.timeToWaitBeforeSpawn);
+    tag.setString("commandToRunAtSpawn", this.commandToRunAtSpawn);
 
     NBTTagList additionalDrops = new NBTTagList();
 
@@ -226,6 +234,7 @@ public abstract class BaseMonster {
     this.attackDamage = tag.getFloat("attackDamage");
     this.alwaysShowDisplayName = tag.getBoolean("alwaysShowDisplayName");
     this.timeToWaitBeforeSpawn = tag.getInteger("timeToWaitBeforeSpawn");
+    this.commandToRunAtSpawn = tag.getString("commandToRunAtSpawn");
 
     if (tag.hasKey("additionalDrops")) {
       this.additionalDrops = new ArrayList<DropInfo>();

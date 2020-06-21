@@ -88,7 +88,7 @@ public class ModEventHandler {
         NBTTagCompound trackingTag = entityCompoundTag.getCompoundTag("from_the_depths");
 
         if (trackingTag.hasKey("additionalDrops")) {
-          NBTTagList additionalDropList = trackingTag.getTagList("additionalDrops", 9);
+          NBTTagList additionalDropList = trackingTag.getTagList("additionalDrops", 10);
 
           if (!additionalDropList.hasNoTags()) {
             for (int i = 0; i < additionalDropList.tagCount(); i++) {

@@ -81,7 +81,7 @@ public class SpawnInfo implements INBTSerializable<SpawnInfo> {
     }
 
     if (nbtData.hasKey("bossAddInfoList")) {
-      NBTTagList bossAddInfo = nbtData.getTagList("bossAddInfoList", 9);
+      NBTTagList bossAddInfo = nbtData.getTagList("bossAddInfoList", 10);
 
       spawnInfo.bossAddInfo = new ArrayList<>();
 
