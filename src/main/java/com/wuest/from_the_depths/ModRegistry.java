@@ -244,27 +244,30 @@ public class ModRegistry {
 						String fileContents = Files.toString(file, StandardCharsets.UTF_8);
 
 						JsonObject json = JsonUtils.fromJson(GSON, fileContents, JsonObject.class, true);
-						JsonObject recipeObject = json.getAsJsonObject("recipe");
-						String informationKey = json.get("key").getAsString();
 
-						if (ModRegistry.SpawnInfosAndItems.containsKey(informationKey)) {
-							Tuple<SpawnInfo, ItemTotemOfSpawning> registeredLink = ModRegistry.SpawnInfosAndItems.get(informationKey);
-							IRecipe recipe = CraftingHelper.getRecipe(recipeObject, ctx);
-							ItemStack recipeOutput = recipe.getRecipeOutput();
+						if (json.has("recipe")) {
+							JsonObject recipeObject = json.getAsJsonObject("recipe");
+							String informationKey = json.get("key").getAsString();
 
-							// Limit recipe registration to ONLY the items which are totems of spawning.
-							if (recipeOutput.getItem() instanceof ItemTotemOfSpawning) {
+							if (ModRegistry.SpawnInfosAndItems.containsKey(informationKey)) {
+								Tuple<SpawnInfo, ItemTotemOfSpawning> registeredLink = ModRegistry.SpawnInfosAndItems.get(informationKey);
+								IRecipe recipe = CraftingHelper.getRecipe(recipeObject, ctx);
+								ItemStack recipeOutput = recipe.getRecipeOutput();
 
-								// Make sure to save the share tag for later usage.
-								recipeOutput.getItem().getNBTShareTag(recipeOutput);
+								// Limit recipe registration to ONLY the items which are totems of spawning.
+								if (recipeOutput.getItem() instanceof ItemTotemOfSpawning) {
 
-								ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
-								loadedRecipe = true;
+									// Make sure to save the share tag for later usage.
+									recipeOutput.getItem().getNBTShareTag(recipeOutput);
+
+									ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
+									loadedRecipe = true;
+								}
+							} else {
+								FromTheDepths.logger.warn(
+										"There is no recipe information for file: {}. This boss will not be able to be spawned unless a recipe is registered through other means.",
+										path.toString());
 							}
-						} else {
-							FromTheDepths.logger.warn(
-									"There is no recipe information for file: {}. This boss will not be able to be spawned unless a recipe is registered through other means.",
-									path.toString());
 						}
 					} catch (JsonParseException e) {
 						FromTheDepths.logger.error("From_The_Depths: Parsing error loading recipe {}. {}", key, e);

@@ -17,6 +17,8 @@ public class DropInfo implements INBTSerializable<DropInfo> {
   public int minDrops;
   public int maxDrops;
   public int dropChance;
+  public int data;
+  public NBTTagCompound nbt;
 
   public DropInfo() {
     super();
@@ -24,6 +26,8 @@ public class DropInfo implements INBTSerializable<DropInfo> {
     this.minDrops = 0;
     this.maxDrops = 0;
     this.dropChance = 5;
+    this.data = 0;
+    this.nbt = null;
   }
 
   @Override
@@ -32,6 +36,11 @@ public class DropInfo implements INBTSerializable<DropInfo> {
     tag.setInteger("minDrops", this.minDrops);
     tag.setInteger("maxDrops", this.maxDrops);
     tag.setInteger("dropChance", this.dropChance);
+    tag.setInteger("data", this.data);
+
+    if (this.nbt != null) {
+      tag.setTag("nbt", this.nbt);
+    }
   }
 
   @Override
@@ -40,6 +49,8 @@ public class DropInfo implements INBTSerializable<DropInfo> {
     this.minDrops = nbtData.getInteger("minDrops");
     this.maxDrops = nbtData.getInteger("maxDrops");
     this.dropChance = nbtData.getInteger("dropChance");
+    this.data = nbtData.getInteger("data");
+    this.nbt = nbtData.getCompoundTag("nbt");
 
     if (this.minDrops < 0) {
       this.minDrops = 0;
@@ -62,6 +73,10 @@ public class DropInfo implements INBTSerializable<DropInfo> {
       FromTheDepths.logger.warn("The drop chance is less than zero; please check yoru files. Setting to five.");
     }
 
+    if (this.data < 0) {
+      this.data = 0;
+    }
+
     return this;
   }
 
@@ -73,13 +88,15 @@ public class DropInfo implements INBTSerializable<DropInfo> {
     newInstance.minDrops = this.minDrops;
     newInstance.maxDrops = this.maxDrops;
     newInstance.dropChance = this.dropChance;
+    newInstance.data = this.data;
+    newInstance.nbt = this.nbt;
 
     return newInstance;
   }
 
   public EntityItem createEntityItem(World world, BlockPos pos) {
     ResourceLocation itemLocation = new ResourceLocation(this.item);
-    int randomValue = world.rand.nextInt(100);
+    int randomValue = BaseMonster.determineRandomInt(100, world);
 
     if (randomValue <= this.dropChance && this.maxDrops > 0) {
       // This drop will be created; determine how many to put into a stack.
@@ -88,15 +105,18 @@ public class DropInfo implements INBTSerializable<DropInfo> {
       if (this.minDrops == this.maxDrops) {
         amountToDrop = this.maxDrops;
       } else {
-        Random dropAmountRandomized = new Random(this.minDrops);
-        amountToDrop = dropAmountRandomized.nextInt(this.maxDrops);
+        amountToDrop = BaseMonster.determineRandomInt(this.maxDrops, world);
+
+        if (amountToDrop <= this.minDrops) {
+          amountToDrop = this.minDrops;
+        }
       }
 
       try {
         Item registryItem = Item.REGISTRY.getObject(itemLocation);
 
         if (registryItem != null) {
-          ItemStack stack = new ItemStack(registryItem, amountToDrop);
+          ItemStack stack = new ItemStack(registryItem, amountToDrop, data);
           return new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), stack);
         }
       } catch (Exception ex) {
