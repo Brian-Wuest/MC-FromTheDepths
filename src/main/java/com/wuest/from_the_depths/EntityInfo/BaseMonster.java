@@ -120,10 +120,6 @@ public abstract class BaseMonster {
 					}
 
 					entityLiving.readEntityFromNBT(serializedEntity);
-					//entityLiving.deserializeNBT(serializedEntity);
-
-					// Custom NBT data was specified. Make sure to update the entity with this information.
-					//entityLiving = (EntityLiving)EntityList.createEntityFromNBT(serializedEntity, world);
 				}
 
 				world.spawnEntity(entityLiving);
@@ -247,8 +243,8 @@ public abstract class BaseMonster {
 		tag.setInteger("timeToWaitBeforeSpawn", this.timeToWaitBeforeSpawn);
 		tag.setString("commandToRunAtSpawn", this.commandToRunAtSpawn);
 
-		if (this.convertedNBT != null) {
-			tag.setString("nbt", this.convertedNBT.toString());
+		if (this.nbt != null) {
+			tag.setString("nbt", this.nbt.toString());
 		}
 
 		NBTTagList additionalDrops = new NBTTagList();
