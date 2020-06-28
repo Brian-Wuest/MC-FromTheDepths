@@ -188,7 +188,8 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 		newInstance.numberLeftToSpawn = this.numberLeftToSpawn;
 		newInstance.timeUntilNextSpawn = this.timeUntilNextSpawn;
 		newInstance.commandToRunAtSpawn = this.commandToRunAtSpawn;
-
+		newInstance.nbt = this.nbt;
+		
 		if (this.nextWaveOfAdds != null) {
 			newInstance.nextWaveOfAdds = this.nextWaveOfAdds.clone();
 		}

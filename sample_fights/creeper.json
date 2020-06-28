@@ -8,8 +8,7 @@
     "maxHealth": 40,
     "attackDamage": 10.5,
     "alwaysShowDisplayName": true,
-    "additionalDrops": [
-      {
+    "additionalDrops": [{
         "item": "minecraft:diamond",
         "minDrops": 1,
         "maxDrops": 4,
@@ -19,13 +18,23 @@
         "item": "minecraft:gold_chestplate",
         "minDrops": 1,
         "maxDrops": 1,
-        "dropChance": 715
+        "dropChance": 71
       },
       {
         "item": "minecraft:diamond_sword",
         "minDrops": 1,
         "maxDrops": 1,
         "dropChance": 75
+      },
+      {
+        "item": "from_the_depths:item_totem_of_summoning",
+        "minDrops": 1,
+        "maxDrops": 1,
+        "dropChance": 100,
+        "_comment": "Provide a drop for the next monster in a sequence of bosses. This is especially helpful to get players to build up to a mega boss!",
+        "nbt": {
+          "spawn_info": "Custom_Skeleton"
+        }
       }
     ]
   },

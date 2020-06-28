@@ -27,7 +27,6 @@ public abstract class BaseMonster {
 	public ArrayList<DropInfo> additionalDrops;
 	public String commandToRunAtSpawn;
 	public JsonObject nbt;
-	protected NBTTagCompound convertedNBT;
 
 	public BaseMonster() {
 		this.maxHealth = -1;
@@ -95,9 +94,6 @@ public abstract class BaseMonster {
 				NBTTagCompound entityCompoundTag = entityLiving.getEntityData();
 				entityCompoundTag.setTag("from_the_depths", trackingTag);
 
-				// Serialize the entity NBT data so it can be updated.
-				NBTTagCompound serializedEntity = entityLiving.serializeNBT();
-
 				entityLiving.forceSpawn = true;
 				entityLiving.rotationYawHead = entityLiving.rotationYaw;
 				entityLiving.renderYawOffset = entityLiving.rotationYaw;
@@ -105,21 +101,26 @@ public abstract class BaseMonster {
 				entityLiving.onInitialSpawn(world.getDifficultyForLocation(new BlockPos(spawnPos)),
 						(IEntityLivingData) null);
 
+				// Serialize the entity NBT data so it can be updated.
+				NBTTagCompound serializedEntity = entityLiving.serializeNBT();
 
 				// This has to be after the "onInitialSpawn" call since some monsters will set properties to random values which need to be set specifically.
 				if (this.nbt != null) {
+					NBTTagCompound compound = null;
 					try {
-						this.convertedNBT = JsonToNBT.getTagFromJson(this.nbt.toString());
+						compound = JsonToNBT.getTagFromJson(this.nbt.toString());
 					}
 					catch (NBTException exception) {
 						FromTheDepths.logger.error(exception);
 					}
 
-					for (String tagKey : this.convertedNBT.getKeySet()) {
-						serializedEntity.setTag(tagKey, this.convertedNBT.getTag(tagKey));
-					}
+					if (compound != null && !compound.hasNoTags()) {
+						for (String tagKey : compound.getKeySet()) {
+							serializedEntity.setTag(tagKey, compound.getTag(tagKey));
+						}
 
-					entityLiving.readEntityFromNBT(serializedEntity);
+						entityLiving = (EntityLiving)EntityList.createEntityFromNBT(serializedEntity,world);
+					}
 				}
 
 				world.spawnEntity(entityLiving);
@@ -272,12 +273,6 @@ public abstract class BaseMonster {
 		this.commandToRunAtSpawn = tag.getString("commandToRunAtSpawn");
 
 		if (tag.hasKey("nbt")) {
-			try {
-				this.convertedNBT = JsonToNBT.getTagFromJson(tag.getString("nbt"));
-			} catch (NBTException exception) {
-              FromTheDepths.logger.error(exception);
-			}
-
 			JsonParser parser = new JsonParser();
 			this.nbt = (JsonObject)parser.parse(tag.getString("nbt"));
 		}

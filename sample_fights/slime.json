@@ -1,0 +1,31 @@
+{
+  "key": "Custom_slime",
+  "bossInfo": {
+    "domain": "minecraft",
+    "name": "slime",
+    "displayName": "Custom Slime Rawr!",
+    "maxHealth": 40,
+    "attackDamage": 10.5,
+    "alwaysShowDisplayName": true,
+    "nbt": {"Size": -1 },
+    "additionalDrops": [{
+        "item": "minecraft:diamond",
+        "minDrops": 1,
+        "maxDrops": 4,
+        "dropChance": 70
+      },
+      {
+        "item": "minecraft:gold_chestplate",
+        "minDrops": 1,
+        "maxDrops": 1,
+        "dropChance": 715
+      },
+      {
+        "item": "minecraft:diamond_sword",
+        "minDrops": 1,
+        "maxDrops": 1,
+        "dropChance": 75
+      }
+    ]
+  }
+}
