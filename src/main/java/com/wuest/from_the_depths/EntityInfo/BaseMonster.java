@@ -27,6 +27,8 @@ public abstract class BaseMonster {
 	public ArrayList<DropInfo> additionalDrops;
 	public String commandToRunAtSpawn;
 	public JsonObject nbt;
+	public SpawnEffectEnum spawnEffect;
+	public boolean shouldSpawnInAir;
 
 	public BaseMonster() {
 		this.maxHealth = -1;
@@ -36,6 +38,8 @@ public abstract class BaseMonster {
 		this.timeToWaitBeforeSpawn = 20;
 		this.commandToRunAtSpawn = "";
 		this.nbt = null;
+		this.spawnEffect = SpawnEffectEnum.LIGHTNING;
+		this.shouldSpawnInAir = false;
 	}
 
 	public ResourceLocation createResourceLocation() {
@@ -243,6 +247,8 @@ public abstract class BaseMonster {
 		tag.setBoolean("alwaysShowDisplayName", this.alwaysShowDisplayName);
 		tag.setInteger("timeToWaitBeforeSpawn", this.timeToWaitBeforeSpawn);
 		tag.setString("commandToRunAtSpawn", this.commandToRunAtSpawn);
+		tag.setString("spawnEffect", this.spawnEffect.getName());
+		tag.setBoolean("shouldSpawnInAir",this.shouldSpawnInAir);
 
 		if (this.nbt != null) {
 			tag.setString("nbt", this.nbt.toString());
@@ -271,6 +277,8 @@ public abstract class BaseMonster {
 		this.alwaysShowDisplayName = tag.getBoolean("alwaysShowDisplayName");
 		this.timeToWaitBeforeSpawn = tag.getInteger("timeToWaitBeforeSpawn");
 		this.commandToRunAtSpawn = tag.getString("commandToRunAtSpawn");
+		this.spawnEffect = SpawnEffectEnum.getFromName(tag.getString("spawnEffect"));
+		this.shouldSpawnInAir = tag.getBoolean("shouldSpawnInAir");
 
 		if (tag.hasKey("nbt")) {
 			JsonParser parser = new JsonParser();
