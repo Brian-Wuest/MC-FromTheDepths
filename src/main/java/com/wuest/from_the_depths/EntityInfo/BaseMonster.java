@@ -38,7 +38,7 @@ public abstract class BaseMonster {
 		this.timeToWaitBeforeSpawn = 20;
 		this.commandToRunAtSpawn = "";
 		this.nbt = null;
-		this.spawnEffect = SpawnEffectEnum.LIGHTNING;
+		this.spawnEffect = SpawnEffectEnum.NONE;
 		this.shouldSpawnInAir = false;
 	}
 
@@ -147,14 +147,19 @@ public abstract class BaseMonster {
 
 	public BlockPos determineSpawnPos(BlockPos originalPos, World world, float height) {
 		BlockPos spawnPos = null;
+		// The +1 is there since we don't count the altar's position.
+		int radius = FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius + 1;
+		int spawningHeight = FromTheDepths.proxy.getServerConfiguration().altarSpawningHeight;
 
 		for (int i = 0; i < 10; i++) {
-			int randomValue = BaseMonster.determineRandomInt(100, world) % 2 == 0 ? -1 : 1;
-			int randomX = (BaseMonster.determineRandomInt(6, world) * randomValue) + (randomValue * 2);
+			int randomX = this.determineSpawnAxisValue(radius,world);
+			int randomZ = this.determineSpawnAxisValue(radius, world);
 
-			randomValue = BaseMonster.determineRandomInt(100, world) % 2 == 0 ? -1 : 1;
-			int randomZ = (BaseMonster.determineRandomInt(6, world) * randomValue) + (randomValue * 2);
-			spawnPos = new BlockPos(originalPos.getX() + randomX, originalPos.up(1).getY(), originalPos.getZ() + randomZ);
+			// Determine if the monster should spawn in the air.
+			// If so make the spawning height equal to the configured area size.
+			int spawnHeight = this.shouldSpawnInAir ? spawningHeight : 1;
+
+			spawnPos = new BlockPos(originalPos.getX() + randomX, originalPos.up(spawnHeight).getY(), originalPos.getZ() + randomZ);
 
 			if (world.isAirBlock(spawnPos)) {
 				boolean enoughSpace = true;
@@ -204,6 +209,14 @@ public abstract class BaseMonster {
 		}
 
 		return null;
+	}
+
+	public int determineSpawnAxisValue(int radius, World world) {
+		int randomValue = BaseMonster.determineRandomInt(100, world) % 2 == 0 ? -1 : 1;
+		int randomAxis = (BaseMonster.determineRandomInt(radius, world) * randomValue) + (randomValue * 2);
+
+		// The radius Blocks is the max for a block position.
+		return Math.abs(randomAxis) > radius ? radius * randomValue : randomAxis;
 	}
 
 	public static int determineRandomInt(int bound, World world) {
