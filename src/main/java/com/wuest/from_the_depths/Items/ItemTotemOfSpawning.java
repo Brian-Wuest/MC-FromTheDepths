@@ -93,11 +93,23 @@ public class ItemTotemOfSpawning extends Item {
 								"Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all minions to be spawned."));
 					} else {
 						// Make sure that there is enough clear space around the altar for spawning.
-						Triple<Boolean, BlockPos, BlockPos> result = Utilities.isSpaceAroundAltarValid(pos, worldIn);
+						Triple<Boolean, BlockPos, BlockPos> result = Utilities.isSpaceAroundAltarAir(pos, worldIn);
 
 						if (!result.getFirst()) {
 							TextComponentString message = new TextComponentString(
 									"Cannot summon monster. The area around the altar must only be air from Block Position ["
+											+ result.getSecond().toString() + "] to Block Position [" + result.getThird()
+											+ "]");
+
+							player.sendMessage(message);
+							return EnumActionResult.FAIL;
+						}
+
+						result = Utilities.isGroundUnderAltarSolid(pos, worldIn);
+
+						if (!result.getFirst()) {
+							TextComponentString message = new TextComponentString(
+									"Cannot summon monster. The ground around the altar must be solid blocks from Block Position ["
 											+ result.getSecond().toString() + "] to Block Position [" + result.getThird()
 											+ "]");
 
