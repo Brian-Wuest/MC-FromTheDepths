@@ -18,10 +18,10 @@ public enum SpawnEffectEnum implements IStringSerializable {
 	}
 
 	public static SpawnEffectEnum getFromName(String name) {
-		SpawnEffectEnum returnValue = SpawnEffectEnum.LIGHTNING;
+		SpawnEffectEnum returnValue = SpawnEffectEnum.NONE;
 
-		if (name.equals(SpawnEffectEnum.NONE.getName())) {
-			returnValue = SpawnEffectEnum.NONE;
+		if (name != null && name.toLowerCase().equals(SpawnEffectEnum.LIGHTNING.getName())) {
+			returnValue = SpawnEffectEnum.LIGHTNING;
 		}
 
 		return returnValue;

@@ -129,8 +129,10 @@ public abstract class BaseMonster {
 
 				world.spawnEntity(entityLiving);
 
-				world.addWeatherEffect(new EntityLightningBolt(world, (double) spawnPos.getX(), (double) spawnPos.getY(),
-						(double) spawnPos.getZ(), true));
+				if (this.spawnEffect == SpawnEffectEnum.LIGHTNING) {
+					world.addWeatherEffect(new EntityLightningBolt(world, (double) spawnPos.getX(), (double) spawnPos.getY(),
+							(double) spawnPos.getZ(), true));
+				}
 
 				entityLiving.playLivingSound();
 
