@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.Base.TileEntityBase;
 import com.wuest.from_the_depths.Config.ConfigTileEntityAltarOfSpawning;
@@ -87,7 +88,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
   @Nullable
   @Override
   public ITextComponent getDisplayName() {
-    if (this.getConfig().currentSpawnInfo != null) {
+    if (this.getConfig().currentSpawnInfo != null && FromTheDepths.proxy.getServerConfiguration().showAltarSpawningText) {
       String display = "Spawning Monsters....Enjoy!";
 
       return new TextComponentString(display);
