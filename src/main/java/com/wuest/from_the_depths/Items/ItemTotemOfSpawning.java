@@ -1,9 +1,11 @@
 package com.wuest.from_the_depths.Items;
 
 import com.google.common.base.Strings;
+import com.wuest.from_the_depths.Base.Triple;
 import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
+import com.wuest.from_the_depths.Utilities;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -90,6 +92,19 @@ public class ItemTotemOfSpawning extends Item {
 						player.sendMessage(new TextComponentString(
 								"Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all minions to be spawned."));
 					} else {
+						// Make sure that there is enough clear space around the altar for spawning.
+						Triple<Boolean, BlockPos, BlockPos> result = Utilities.isSpaceAroundAltarValid(pos, worldIn);
+
+						if (!result.getFirst()) {
+							TextComponentString message = new TextComponentString(
+									"Cannot summon monster. The area around the altar must only be air from Block Position ["
+											+ result.getSecond().toString() + "] to Block Position [" + result.getThird()
+											+ "]");
+
+							player.sendMessage(message);
+							return EnumActionResult.FAIL;
+						}
+
 						// Found a totem of spawning and we are not currently spawning a previous set of
 						// monsters. Initiate the spawning of the entity.
 						ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning) heldStack.getItem();
