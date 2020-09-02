@@ -34,7 +34,7 @@ public class Utilities {
 		int radius = FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius;
 
 		BlockPos corner1 = altarPos.north(radius).east(radius).down();
-		BlockPos corner2 = altarPos.south(radius).west(radius);
+		BlockPos corner2 = altarPos.south(radius).west(radius).down();
 
 		for (BlockPos pos : BlockPos.getAllInBox(corner1,corner2)) {
 			if (pos.getX() == altarPos.getX() && pos.getY() == altarPos.getY() && pos.getZ() == altarPos.getZ()) {
@@ -43,7 +43,7 @@ public class Utilities {
 
 			IBlockState state = world.getBlockState(pos);
 
-			if (!state.isSideSolid(world, pos, EnumFacing.UP)) {
+			if (!state.isBlockNormalCube()) {
 				returnValue = false;
 			}
 		}
