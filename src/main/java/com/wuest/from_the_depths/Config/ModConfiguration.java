@@ -54,11 +54,11 @@ public class ModConfiguration {
 				"Determines if the Altar can be destroyed. server configuration overrides client.");
 
 		FromTheDepths.proxy.proxyConfiguration.altarSpawningRadius = config.getInt(
-				ModConfiguration.altarSpawningRadiusName, ModConfiguration.OPTIONS, 6, 6, 12,
+				ModConfiguration.altarSpawningRadiusName, ModConfiguration.OPTIONS, 6, 6, 32,
 				"The number of blocks around an altar of spawning which must be flat and where monsters can spawn. server configuration overrides client.");
 
 		FromTheDepths.proxy.proxyConfiguration.altarSpawningHeight = config.getInt(
-				ModConfiguration.altarSpawningHeightName, ModConfiguration.OPTIONS, 6, 6, 12,
+				ModConfiguration.altarSpawningHeightName, ModConfiguration.OPTIONS, 6, 6, 16,
 				"The number of blocks above an altar of spawning which must be clear and where flying monsters can spawn. server configuration overrides client.");
 
 		FromTheDepths.proxy.proxyConfiguration.showAltarSpawningText = config.getBoolean(
