@@ -1,8 +1,8 @@
 {
   "homepage": "https://www.curseforge.com/minecraft/mc-mods/from-the-depths",
   "promos": {
-	  "1.12-latest": "1.1.0.9",
-	  "1.12-recommended": "1.1.0.9"
+	  "1.12-latest": "1.2.1.0",
+	  "1.12-recommended": "1.2.1.0"
   },
   "1.12": {
 	  "1.0.0.0": "Initial release.",
@@ -15,6 +15,8 @@
 	  "1.1.0.6": "Fixing a different issue with loading the spawninfo file and adding more logging",
 	  "1.1.0.7": "Fixing issue when the FTD_Summons directory doesn't exist",
 	  "1.1.0.8": "Fixing infinite loop when summoning monsters in Skyblock worlds",
-	  "1.1.0.9": "Adding configuration to allow the Altar to be broken in survival"
+	  "1.1.0.9": "Adding configuration to allow the Altar to be broken in survival",
+	  "1.2.0.0": "Major re-work to the mod. Updated configuration file layout. Please see cursforge site for more information",
+	  "1.2.1.0": "Added options for spawn radius and height. Also added more options for monsters"
   }
 }
