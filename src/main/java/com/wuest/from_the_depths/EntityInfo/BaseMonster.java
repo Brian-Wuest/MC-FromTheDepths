@@ -3,13 +3,14 @@ package com.wuest.from_the_depths.EntityInfo;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wuest.from_the_depths.FromTheDepths;
-import jdk.nashorn.internal.parser.JSONParser;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.effect.EntityLightningBolt;
-import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTException;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -113,8 +114,7 @@ public abstract class BaseMonster {
 					NBTTagCompound compound = null;
 					try {
 						compound = JsonToNBT.getTagFromJson(this.nbt.toString());
-					}
-					catch (NBTException exception) {
+					} catch (NBTException exception) {
 						FromTheDepths.logger.error(exception);
 					}
 
@@ -123,7 +123,7 @@ public abstract class BaseMonster {
 							serializedEntity.setTag(tagKey, compound.getTag(tagKey));
 						}
 
-						entityLiving = (EntityLiving)EntityList.createEntityFromNBT(serializedEntity,world);
+						entityLiving = (EntityLiving) EntityList.createEntityFromNBT(serializedEntity, world);
 					}
 				}
 
@@ -147,12 +147,13 @@ public abstract class BaseMonster {
 
 	public BlockPos determineSpawnPos(BlockPos originalPos, World world, float height) {
 		BlockPos spawnPos = null;
+
 		// The +1 is there since we don't count the altar's position.
 		int radius = FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius + 1;
 		int spawningHeight = FromTheDepths.proxy.getServerConfiguration().altarSpawningHeight;
 
 		for (int i = 0; i < 10; i++) {
-			int randomX = this.determineSpawnAxisValue(radius,world);
+			int randomX = this.determineSpawnAxisValue(radius, world);
 			int randomZ = this.determineSpawnAxisValue(radius, world);
 
 			// Determine if the monster should spawn in the air.
@@ -263,7 +264,7 @@ public abstract class BaseMonster {
 		tag.setInteger("timeToWaitBeforeSpawn", this.timeToWaitBeforeSpawn);
 		tag.setString("commandToRunAtSpawn", this.commandToRunAtSpawn);
 		tag.setString("spawnEffect", this.spawnEffect.getName());
-		tag.setBoolean("shouldSpawnInAir",this.shouldSpawnInAir);
+		tag.setBoolean("shouldSpawnInAir", this.shouldSpawnInAir);
 
 		if (this.nbt != null) {
 			tag.setString("nbt", this.nbt.toString());
@@ -297,7 +298,7 @@ public abstract class BaseMonster {
 
 		if (tag.hasKey("nbt")) {
 			JsonParser parser = new JsonParser();
-			this.nbt = (JsonObject)parser.parse(tag.getString("nbt"));
+			this.nbt = (JsonObject) parser.parse(tag.getString("nbt"));
 		}
 
 		if (tag.hasKey("additionalDrops")) {

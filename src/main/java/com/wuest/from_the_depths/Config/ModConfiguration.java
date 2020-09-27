@@ -22,12 +22,14 @@ public class ModConfiguration {
 	private static String altarSpawningRadiusName = "Altar Spawning Radius";
 	private static String altarSpawningHeightName = "Altar Spawning Height";
 	private static String showAltarSpawningTextName = "Show Altar Spawning Text";
+	private static String enableArenaStyleRestrictionsName = "Enable Arena Style Restrictions";
 
 	// Configuration Options.
 	public boolean allowAltarToBeDestroyed;
 	public int altarSpawningRadius;
 	public int altarSpawningHeight;
 	public boolean showAltarSpawningText;
+	public boolean enableArenaStyleRestrictions;
 
 	public HashMap<String, Boolean> recipeConfiguration;
 
@@ -55,15 +57,19 @@ public class ModConfiguration {
 
 		FromTheDepths.proxy.proxyConfiguration.altarSpawningRadius = config.getInt(
 				ModConfiguration.altarSpawningRadiusName, ModConfiguration.OPTIONS, 6, 6, 32,
-				"The number of blocks around an altar of spawning which must be flat and where monsters can spawn. server configuration overrides client.");
+				"The number of blocks around an altar of spawning where monsters can spawn. server configuration overrides client.");
 
 		FromTheDepths.proxy.proxyConfiguration.altarSpawningHeight = config.getInt(
 				ModConfiguration.altarSpawningHeightName, ModConfiguration.OPTIONS, 6, 6, 16,
-				"The number of blocks above an altar of spawning which must be clear and where flying monsters can spawn. server configuration overrides client.");
+				"The number of blocks above an altar of spawning where flying monsters can spawn. server configuration overrides client.");
 
 		FromTheDepths.proxy.proxyConfiguration.showAltarSpawningText = config.getBoolean(
 				ModConfiguration.showAltarSpawningTextName, ModConfiguration.OPTIONS, true,
 				"Determines if text is shown above the altar of spawning when the altar is processing a totem. server configuration overrides client.");
+
+		FromTheDepths.proxy.proxyConfiguration.enableArenaStyleRestrictions = config.getBoolean(
+				ModConfiguration.enableArenaStyleRestrictionsName, ModConfiguration.OPTIONS, true,
+				"Determines if the area around the altar needs to be solid and flat. server configuration overrides client.");
 
 		// Recipe configuration.
 		for (String key : ModConfiguration.recipeKeys) {
