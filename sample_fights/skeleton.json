@@ -8,6 +8,8 @@
     "maxHealth": 40,
     "attackDamage": 10.5,
     "alwaysShowDisplayName": true,
+    "shouldSpawnInAir": false,
+    "spawnEffect": "lightning",
     "additionalDrops": [
       {
         "item": "minecraft:diamond",
