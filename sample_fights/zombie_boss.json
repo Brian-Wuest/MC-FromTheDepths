@@ -8,6 +8,8 @@
     "maxHealth": 40,
     "attackDamage": 10.5,
     "alwaysShowDisplayName": true,
+    "shouldSpawnInAir": false,
+    "spawnEffect": "lightning",
     "additionalDrops": [{
         "item": "minecraft:diamond",
         "minDrops": 1,
@@ -35,6 +37,8 @@
       "name": "silverfish",
       "minSpawns": 1,
       "maxSpawns": 4,
+      "shouldSpawnInAir": false,
+      "spawnEffect": "lightning",
       "timeBetweenSpawns": 100,
       "spawnBeforeBoss": true,
       "_comment3": "The next wave of adds will start spawning after these adds have been spawned",
@@ -45,6 +49,8 @@
         "maxSpawns": 1,
         "timeToWaitBeforeSpawn": 200,
         "maxHealth": 50,
+        "shouldSpawnInAir": false,
+        "spawnEffect": "lightning",
         "nextWaveOfAdds": {
           "domain": "minecraft",
           "name": "chicken",
@@ -67,7 +73,9 @@
       "minSpawns": 1,
       "maxSpawns": 4,
       "timeBetweenSpawns": 40,
-      "timeToWaitBeforeSpawn": 300
+      "timeToWaitBeforeSpawn": 300,
+      "shouldSpawnInAir": false,
+      "spawnEffect": "lightning"
     }
   ],
   "recipe": {
