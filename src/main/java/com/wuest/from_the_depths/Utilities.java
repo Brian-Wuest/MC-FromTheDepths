@@ -1,6 +1,7 @@
 package com.wuest.from_the_depths;
 
-import com.wuest.from_the_depths.Base.Triple;
+import com.wuest.from_the_depths.base.Triple;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

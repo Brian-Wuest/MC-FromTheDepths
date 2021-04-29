@@ -1,6 +1,6 @@
 package com.wuest.from_the_depths;
 
-import com.wuest.from_the_depths.Proxy.CommonProxy;
+import com.wuest.from_the_depths.proxy.CommonProxy;
 
 import org.apache.logging.log4j.Logger;
 

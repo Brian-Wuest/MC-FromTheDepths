@@ -1,16 +1,25 @@
 package com.wuest.from_the_depths;
 
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.wuest.from_the_depths.Blocks.BlockAltarOfSpawning;
-import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
-import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
-import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
-import com.wuest.from_the_depths.Proxy.Messages.Handlers.ConfigSyncHandler;
-import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
+import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
+import com.wuest.from_the_depths.entityinfo.SpawnInfo;
+import com.wuest.from_the_depths.items.ItemTotemOfSpawning;
+import com.wuest.from_the_depths.proxy.messages.ConfigSyncMessage;
+import com.wuest.from_the_depths.proxy.messages.Handlers.ConfigSyncHandler;
+import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.Item;
@@ -32,14 +41,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
 
 /**
  * This is the mod registry so there is a way to get to all instances of the
