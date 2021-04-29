@@ -1,4 +1,4 @@
-package com.wuest.from_the_depths.proxy.messages.Handlers;
+package com.wuest.from_the_depths.proxy.messages.handlers;
 
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
@@ -37,7 +37,7 @@ public class ConfigSyncHandler implements IMessageHandler<ConfigSyncMessage, IMe
         ((ClientProxy) FromTheDepths.proxy).serverConfiguration = ModConfiguration
             .getFromNBTTagCompound(message.getMessageTag());
 
-        ModConfiguration config = ((ClientProxy) FromTheDepths.proxy).getServerConfiguration();
+        // ModConfiguration config = ((ClientProxy) FromTheDepths.proxy).getServerConfiguration();
 
         BlockAltarOfSpawning.SetBreakableStatus();
       }

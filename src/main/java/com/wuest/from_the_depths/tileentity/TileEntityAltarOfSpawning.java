@@ -123,7 +123,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
 
           // The boss has been spawned; make sure that there are no post-boss minions to
           // spawn.
-          if (this.config.currentSpawnInfo.bossAddInfo == null) {
+          if (this.config.currentSpawnInfo.bossAddInfo == null || this.config.currentSpawnInfo.bossAddInfo.isEmpty()) {
             // There are no more adds to spawn since there were none to begin with.
             this.resetSpawner();
           } else {
@@ -132,6 +132,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
             for (BossAddInfo minion : this.config.currentSpawnInfo.bossAddInfo) {
               // Set the wait timer to be the number of ticks to wait after the boss is
               // spawned.
+              // TODO: what's going on here
               foundPostBossMinions = true;
             }
 

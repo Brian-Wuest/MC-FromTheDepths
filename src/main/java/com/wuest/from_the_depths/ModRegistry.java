@@ -17,10 +17,11 @@ import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.proxy.messages.ConfigSyncMessage;
-import com.wuest.from_the_depths.proxy.messages.Handlers.ConfigSyncHandler;
+import com.wuest.from_the_depths.proxy.messages.handlers.ConfigSyncHandler;
 import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -37,7 +38,6 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -52,22 +52,22 @@ public class ModRegistry {
 	/**
 	 * The ArrayList of mod registered items.
 	 */
-	public static ArrayList<Item> ModItems = new ArrayList<Item>();
+	public static ArrayList<Item> ModItems = new ArrayList<>();
 
 	/**
 	 * The ArrayList of mod registered blocks.
 	 */
-	public static ArrayList<Block> ModBlocks = new ArrayList<Block>();
+	public static ArrayList<Block> ModBlocks = new ArrayList<>();
 
 	/**
 	 * THe ArrayList of mod spawn infos.
 	 */
-	public static ArrayList<SpawnInfo> SpawnInfos = new ArrayList<SpawnInfo>();
+	public static ArrayList<SpawnInfo> SpawnInfos = new ArrayList<>();
 
 	/**
 	 * The hashmap of mod guis.
 	 */
-	public static HashMap<Integer, Class> ModGuis = new HashMap<Integer, Class>();
+	public static HashMap<Integer, Class<? extends Gui>> ModGuis = new HashMap<>();
 
 	/**
 	 * This hashmap links spawn information and item registrations.
@@ -94,6 +94,7 @@ public class ModRegistry {
 	 * @param genericClass The class of item to get from the collection.
 	 * @return Null if the item could not be found otherwise the item found.
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T extends Item> T GetItem(Class<T> genericClass) {
 		for (Item entry : ModRegistry.ModItems) {
 			if (entry.getClass() == genericClass) {
@@ -111,6 +112,7 @@ public class ModRegistry {
 	 * @param genericClass The class of block to get from the collection.
 	 * @return Null if the block could not be found otherwise the block found.
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T extends Block> T GetBlock(Class<T> genericClass) {
 		for (Block entry : ModRegistry.ModBlocks) {
 			if (entry.getClass() == genericClass) {
@@ -134,7 +136,7 @@ public class ModRegistry {
 	 * @return Null if the screen wasn't found, otherwise the screen found.
 	 */
 	public static GuiScreen GetModGuiByID(int id, int x, int y, int z) {
-		for (Entry<Integer, Class> entry : ModRegistry.ModGuis.entrySet()) {
+		for (Entry<Integer, Class<? extends Gui>> entry : ModRegistry.ModGuis.entrySet()) {
 			if (entry.getKey() == id) {
 				try {
 					return (GuiScreen) entry.getValue().getConstructor(int.class, int.class, int.class).newInstance(x, y, z);
@@ -155,13 +157,13 @@ public class ModRegistry {
 			Block block = new BlockAltarOfSpawning("block_altar_of_summoning");
 			ModRegistry.registerBlock(block);
 		} catch (Exception ex) {
-			FMLLog.getLogger().warn(ex.getMessage());
+			FromTheDepths.logger.warn(ex.getMessage());
 		}
 
 		ItemTotemOfSpawning baseTotem = new ItemTotemOfSpawning(null, "item_totem_of_summoning");
 		ModRegistry.registerItem(baseTotem);
 
-		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, "from_the_depths:block_altar_of_summoning");
+		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, new ResourceLocation("from_the_depths:block_altar_of_summoning"));
 
 		for (SpawnInfo spawnInfo : ModRegistry.SpawnInfos) {
 			ItemTotemOfSpawning registeredItem = new ItemTotemOfSpawning(spawnInfo.key, "item_totem_of_summoning");
@@ -251,7 +253,7 @@ public class ModRegistry {
 							String informationKey = json.get("key").getAsString();
 
 							if (ModRegistry.SpawnInfosAndItems.containsKey(informationKey)) {
-								Tuple<SpawnInfo, ItemTotemOfSpawning> registeredLink = ModRegistry.SpawnInfosAndItems.get(informationKey);
+								// Tuple<SpawnInfo, ItemTotemOfSpawning> registeredLink = ModRegistry.SpawnInfosAndItems.get(informationKey);
 								IRecipe recipe = CraftingHelper.getRecipe(recipeObject, ctx);
 								ItemStack recipeOutput = recipe.getRecipeOutput();
 
