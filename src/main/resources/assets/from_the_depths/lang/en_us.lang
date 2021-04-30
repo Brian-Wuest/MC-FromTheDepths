@@ -51,3 +51,11 @@ from_the_depths.gui.brown=Brown
 from_the_depths.gui.green=Green
 from_the_depths.gui.red=Red
 from_the_depths.gui.black=Black
+
+# --- RoTN Edition BEGIN --- #
+from_the_depths.messages.no_boss_totem=No Boss. Doesn't do anything.
+from_the_depths.messages.early_summon=Cannot spawn a monster now as additional monsters are going to be spawned. Please wait for all minions to be spawned.
+from_the_depths.messages.invalid_arena=Cannot summon monster. The area around the altar must only be air in a square radius of %d blocks and height of %d blocks
+from_the_depths.messages.invalid_arena_ground=Cannot summon monster. The ground around the altar must be solid blocks in a square radius of %d blocks
+from_the_depths.messages.boss_entity_not_found=Can't Find Boss Entity with name '%s' in mod '%s'
+from_the_depths.messages.peaceful_mode=The current world difficulty is set to Peaceful. Unable to summon boss or minions

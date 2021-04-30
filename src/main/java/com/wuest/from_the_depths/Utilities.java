@@ -4,9 +4,23 @@ import com.wuest.from_the_depths.base.Triple;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 
 public class Utilities {
+
+	// --- RoTN Edition BEGIN --- //
+
+	/**
+	 * Utility Method to localize an unlocalized translation key from .lang files
+	 * @param unlocalized the translation key
+	 * @return localized Version
+	 */
+	public static String localize(String unlocalized, Object... formatArgs) {
+		return new TextComponentTranslation(unlocalized, formatArgs).getFormattedText();
+	}
+
+	// --- RoTN Edition END --- //
 
 	public static Triple<Boolean, BlockPos, BlockPos> isSpaceAroundAltarAir(BlockPos altarPos, World world) {
 		boolean returnValue = true;
