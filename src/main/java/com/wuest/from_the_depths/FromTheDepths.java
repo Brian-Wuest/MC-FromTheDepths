@@ -33,7 +33,7 @@ public class FromTheDepths {
   /**
    * Says where the client and server 'proxy' code is loaded.
    */
-  @SidedProxy(clientSide = "com.wuest.from_the_depths.Proxy.ClientProxy", serverSide = "com.wuest.from_the_depths.Proxy.CommonProxy")
+  @SidedProxy(clientSide = "com.wuest.from_the_depths.proxy.ClientProxy", serverSide = "com.wuest.from_the_depths.proxy.CommonProxy")
   public static CommonProxy proxy;
 
   /**
