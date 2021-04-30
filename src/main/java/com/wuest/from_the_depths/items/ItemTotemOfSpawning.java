@@ -1,34 +1,31 @@
 package com.wuest.from_the_depths.items;
 
 import com.google.common.base.Strings;
+import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.Utilities;
 import com.wuest.from_the_depths.base.Triple;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author WuestMan
  */
 public class ItemTotemOfSpawning extends Item {
-	public String key = "";
+	public String key;
 
 	public ItemTotemOfSpawning(String key, String name) {
 		super();
@@ -66,24 +63,24 @@ public class ItemTotemOfSpawning extends Item {
 		return stack.getTagCompound();
 	}
 
+	@Nonnull
 	@Override
-	public String getItemStackDisplayName(ItemStack stack) {
+	public String getItemStackDisplayName(@Nonnull ItemStack stack) {
 		SpawnInfo spawnInfo = this.getSpawnInfoFromItemStack(stack);
 
 		if (spawnInfo != null) {
-			String value = ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim() + " ("
-					+ spawnInfo.key + ")";
-			return value;
+			return Utilities.localize(stack.getUnlocalizedName()).trim() + " (" + spawnInfo.key + ")";
 		}
 
-		return ("" + I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack))).trim() + " (Does Nothing. Do not use.)";
+		return Utilities.localize(stack.getUnlocalizedName()).trim() + " (" + Utilities.localize("from_the_depths.messages.no_boss") + ")";
 	}
 
 	/**
 	 * Does something when the item is right-clicked.
 	 */
+	@Nonnull
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+	public EnumActionResult onItemUse(@Nonnull EntityPlayer player, World worldIn, @Nonnull BlockPos pos, @Nonnull EnumHand hand, @Nonnull EnumFacing facing, float hitX, float hitY, float hitZ) {
 		if (!worldIn.isRemote) {
 			if (worldIn.getDifficulty() != EnumDifficulty.PEACEFUL) {
 				TileEntity tileEntity = worldIn.getTileEntity(pos);
@@ -94,18 +91,17 @@ public class ItemTotemOfSpawning extends Item {
 
 					if (tileEntityAltarOfSpawning.getConfig().currentSpawnInfo != null
 							&& !Strings.isNullOrEmpty(tileEntityAltarOfSpawning.getConfig().currentSpawnInfo.key)) {
-						player.sendMessage(new TextComponentString(
-								"Cannot spawn a monster at this time as additional monsters are going to be spawned. Please wait for all minions to be spawned."));
+						player.sendMessage(new TextComponentTranslation("from_the_depths.messages.early_summon"));
 					} else {
 						// Make sure that there is enough clear space around the altar for spawning.
 						Triple<Boolean, BlockPos, BlockPos> result = Utilities.isSpaceAroundAltarAir(pos, worldIn);
 
 						if (!result.getFirst()) {
-							TextComponentString message = new TextComponentString(
-									"Cannot summon monster. The area around the altar must only be air from Block Position ["
-											+ result.getSecond().toString() + "] to Block Position [" + result.getThird()
-											+ "]");
-
+							TextComponentTranslation message = new TextComponentTranslation(
+									"from_the_depths.messages.invalid_arena",
+									FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius,
+									FromTheDepths.proxy.getServerConfiguration().altarSpawningHeight
+							);
 							player.sendMessage(message);
 							return EnumActionResult.FAIL;
 						}
@@ -113,11 +109,10 @@ public class ItemTotemOfSpawning extends Item {
 						result = Utilities.isGroundUnderAltarSolid(pos, worldIn);
 
 						if (!result.getFirst()) {
-							TextComponentString message = new TextComponentString(
-									"Cannot summon monster. The ground around the altar must be solid blocks from Block Position ["
-											+ result.getSecond().toString() + "] to Block Position [" + result.getThird()
-											+ "]");
-
+							TextComponentTranslation message = new TextComponentTranslation(
+									"from_the_depths.messages.invalid_arena_ground",
+									FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius
+							);
 							player.sendMessage(message);
 							return EnumActionResult.FAIL;
 						}
@@ -144,40 +139,37 @@ public class ItemTotemOfSpawning extends Item {
 								tileEntityAltarOfSpawning.InitiateSpawning(spawnInfo.clone(), 20, worldIn);
 
 								return EnumActionResult.SUCCESS;
-							} else {
-								player.sendMessage(new TextComponentString("Entity with name of [" + spawnInfo.bossInfo.name
-										+ "] and mod of [" + spawnInfo.bossInfo.domain + "] was not found."));
-							}
+							} else
+								player.sendMessage(new TextComponentTranslation("from_the_depths.messages.boss_entity_not_found", spawnInfo.bossInfo.name, spawnInfo.bossInfo.domain));
 						}
 					}
 				}
 			} else {
-				player.sendMessage(new TextComponentString("The current world difficulty is set to Peaceful. Unable to summon boss or minions."));
+				player.sendMessage(new TextComponentTranslation("from_the_depths.messages.peaceful_mode"));
 			}
 		}
 
 		return EnumActionResult.FAIL;
 	}
 
+	@Nonnull
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+	public ActionResult<ItemStack> onItemRightClick(@Nonnull World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
 		ItemStack heldStack = playerIn.getHeldItem(handIn);
 		SpawnInfo info = this.getSpawnInfoFromItemStack(heldStack);
 
-		if (info != null) {
-			return new ActionResult<ItemStack>(EnumActionResult.PASS, heldStack);
-		} else {
-			return new ActionResult<ItemStack>(EnumActionResult.FAIL, heldStack);
-		}
+		if (info != null)
+			return new ActionResult<>(EnumActionResult.PASS, heldStack);
+		else
+			return new ActionResult<>(EnumActionResult.FAIL, heldStack);
 	}
 
 	public SpawnInfo getSpawnInfoFromItemStack(ItemStack stack) {
 		NBTTagCompound tagCompound = this.getNBTShareTag(stack);
 		String spawn_info = tagCompound.getString("spawn_info");
 
-		if (spawn_info == null || spawn_info.isEmpty()) {
+		if (spawn_info == null || spawn_info.isEmpty())
 			spawn_info = ((ItemTotemOfSpawning) stack.getItem()).key;
-		}
 
 		return this.getSpawnInfoFromKey(spawn_info);
 	}

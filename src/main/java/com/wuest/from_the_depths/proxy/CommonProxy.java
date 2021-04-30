@@ -29,8 +29,6 @@ public class CommonProxy implements IGuiHandler {
   public static ModConfiguration proxyConfiguration;
 
   public Path modDirectory;
-  public File spawnInfoFile;
-  public Path spawnInfoFilePath;
 
   /*
    * Methods for ClientProxy to Override
