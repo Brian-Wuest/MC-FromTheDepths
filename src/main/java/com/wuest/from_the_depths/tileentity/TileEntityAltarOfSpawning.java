@@ -23,6 +23,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
@@ -111,8 +112,11 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
               this.commandSender);
 
           if (entity == null) {
-            TextComponentString component = new TextComponentString(
-                "Unable to summon boss monster due to limited air space in summoning area");
+            TextComponentTranslation component = new TextComponentTranslation(
+                    "from_the_depths.messages.invalid_arena",
+                    FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius,
+                    FromTheDepths.proxy.getServerConfiguration().altarSpawningHeight
+            );
 
             for (EntityPlayerMP player : this.world.getPlayers(EntityPlayerMP.class, VALID_PLAYER)) {
               player.sendMessage(component);

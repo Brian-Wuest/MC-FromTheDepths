@@ -6,6 +6,9 @@ import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.Utilities;
 import com.wuest.from_the_depths.base.Triple;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
+import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
+import com.wuest.from_the_depths.entityinfo.restrictions.SpawnRestrictionType;
+import com.wuest.from_the_depths.entityinfo.restrictions.SpawnRestrictions;
 import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,6 +23,7 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 
 /**
  * @author WuestMan
@@ -106,7 +110,7 @@ public class ItemTotemOfSpawning extends Item {
 							return EnumActionResult.FAIL;
 						}
 
-						result = Utilities.isGroundUnderAltarSolid(pos, worldIn);
+						result = Utilities.isGroundUnderAltarSolid(pos, worldIn, FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius);
 
 						if (!result.getFirst()) {
 							TextComponentTranslation message = new TextComponentTranslation(
@@ -121,6 +125,10 @@ public class ItemTotemOfSpawning extends Item {
 						// monsters. Initiate the spawning of the entity.
 						ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning) heldStack.getItem();
 						SpawnInfo spawnInfo = totemOfSpawning.getSpawnInfoFromItemStack(heldStack);
+
+						RestrictionBundle bundle = ModRegistry.spawnRestrictions.get(spawnInfo.key);
+						if (!bundle.testAll(worldIn, pos))
+							return EnumActionResult.FAIL;
 
 						if (spawnInfo != null) {
 							if (spawnInfo.bossInfo.isValidEntity(worldIn)) {

@@ -48,9 +48,8 @@ public class Utilities {
 		return new Triple<>(returnValue, corner1, corner2);
 	}
 
-	public static Triple<Boolean, BlockPos, BlockPos> isGroundUnderAltarSolid(BlockPos altarPos, World world) {
+	public static Triple<Boolean, BlockPos, BlockPos> isGroundUnderAltarSolid(BlockPos altarPos, World world, int radius) {
 		boolean returnValue = true;
-		int radius = FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius;
 
 		BlockPos corner1 = altarPos.north(radius).east(radius).down();
 		BlockPos corner2 = altarPos.south(radius).west(radius).down();
