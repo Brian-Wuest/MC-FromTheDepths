@@ -49,6 +49,8 @@ public class CommonProxy implements IGuiHandler {
 
     ModRegistry.RegisterSpawningInfo();
 
+    ModRegistry.registerSpawnRestrictions();
+
     ModRegistry.RegisterModComponents();
 
     FromTheDepths.network = NetworkRegistry.INSTANCE.newSimpleChannel("FTDChannel123");

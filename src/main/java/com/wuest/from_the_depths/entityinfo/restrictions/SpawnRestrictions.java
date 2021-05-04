@@ -1,5 +1,9 @@
 package com.wuest.from_the_depths.entityinfo.restrictions;
 
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import com.wuest.from_the_depths.Utilities;
 import com.wuest.from_the_depths.base.Weather;
 import net.minecraft.util.ResourceLocation;
@@ -8,8 +12,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.IOException;
 import java.util.function.BiPredicate;
 
 /**
@@ -21,8 +25,7 @@ public class SpawnRestrictions {
     public static final BiPredicate<World, Integer[]> DIMENSION = (world, dimensions) -> ArrayUtils.contains(dimensions, world.provider.getDimension());
 
     //World Time of Day
-    public static final BiPredicate<World, Long> TIME_OF_DAY_GREATER = (world, time) -> world.provider.getWorldTime() > time;
-    public static final BiPredicate<World, Long> TIME_OF_DAY_LESS = (world, time) -> world.provider.getWorldTime() < time;
+    public static final BiPredicate<World, DataAndComparator<Long>> TIME_OF_DAY = (world, time) -> time.operator.test(world.provider.getWorldTime(), time.data);
 
     //Weather
     public static final BiPredicate<World, Weather> WEATHER = (world, weather) -> weather.isCurrentState(world.getWorldInfo());
@@ -34,13 +37,32 @@ public class SpawnRestrictions {
     };
 
     // Y Level
-    public static final BiPredicate<BlockPos, Integer> Y_LEVEL_EQUALS = (blockPos, yLevel) -> blockPos.getY() == yLevel;
-    public static final BiPredicate<BlockPos, Integer> Y_LEVEL_GREATER = (blockPos, yLevel) -> blockPos.getY() > yLevel;
-    public static final BiPredicate<BlockPos, Integer> Y_LEVEL_LESS = (blockPos, yLevel) -> blockPos.getY() < yLevel;
+    public static final BiPredicate<BlockPos, DataAndComparator<Integer>> Y_LEVEL = (blockPos, yLevel) -> yLevel.operator.test(blockPos.getY(), yLevel.data);
 
     // Ground Radius
     public static final BiPredicate<Tuple<BlockPos, World>, Integer> GROUND_RADIUS =
             (altarPosWorld, radius) -> Utilities.isGroundUnderAltarSolid(altarPosWorld.getFirst(), altarPosWorld.getSecond(), radius).getFirst();
 
 
+    public static class ResLocTypeAdapter extends TypeAdapter<ResourceLocation> {
+        @Override
+        public void write(JsonWriter out, ResourceLocation value) throws IOException
+        {
+            if (value == null) {
+                out.nullValue();
+                return;
+            }
+            out.value(value.toString());
+        }
+
+        @Override
+        public ResourceLocation read(JsonReader in) throws IOException
+        {
+            if (in.peek() == JsonToken.NULL) {
+                in.nextNull();
+                return null;
+            }
+            return new ResourceLocation(in.nextString());
+        }
+    }
 }

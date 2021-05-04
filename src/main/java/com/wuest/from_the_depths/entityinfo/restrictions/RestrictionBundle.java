@@ -1,39 +1,47 @@
 package com.wuest.from_the_depths.entityinfo.restrictions;
 
-import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.base.Weather;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Arrays;
 
 public class RestrictionBundle {
 
-    public static final String[] OPERATORS = {"==", "!=", ">", "<", ">=", "<="};
+    private Integer[] dimensions;
 
-    private Integer[] dimensions = null;
+    private DataAndComparator<Long> timeOfDay;
 
-    private int timeOfDayOperator = -1;
-    private Long timeOfDay = null;
+    private Weather weather;
 
-    private Weather weather = null;
+    private ResourceLocation[] biomes;
 
-    private ResourceLocation[] biomes = null;
+    private DataAndComparator<Integer> yLevel;
 
-    private int yLevelOperator = -1;
-    private Integer yLevel = null;
+    private int groundRadius;
 
-    private Integer groundRadius = null;
+    public RestrictionBundle()
+    {
+        dimensions = null;
+        timeOfDay = null;
+        weather = null;
+        biomes = null;
+        groundRadius = 0;
+    }
 
-    public void add(SpawnRestrictionType type, Object data, int op)
+    public void add(SpawnRestrictionType type, Object data, String op)
     {
         switch (type) {
             case DIMENSION:
                 dimensions = (Integer[]) data;
                 break;
             case TIME_OF_DAY:
-                timeOfDayOperator = op;
-                timeOfDay = ((Long) data);
+                timeOfDay = new DataAndComparator<>((Long) data, DataAndComparator.Operator.valueOf(op));
                 break;
             case WEATHER:
                 weather = Weather.valueOf(((String) data).toUpperCase());
@@ -45,8 +53,7 @@ public class RestrictionBundle {
                 biomes = biomeRess;
                 break;
             case Y_LEVEL:
-                yLevelOperator = op;
-                yLevel = (Integer) data;
+                yLevel = new DataAndComparator<>((Integer) data, DataAndComparator.Operator.valueOf(op));
                 break;
             case GROUND_RADIUS:
                 groundRadius = (Integer) data;
@@ -54,51 +61,82 @@ public class RestrictionBundle {
         }
     }
 
-    /**
-     * operator > -> true when in-game value is higher than configured value
-     * operator < -> true when in-game value is lower than configured value
-     */
-    public boolean testAll(World world, BlockPos pos) {
+    public Tuple<Boolean, TextComponentTranslation> testAll(World world, BlockPos pos) {
         boolean canStart = true;
+        TextComponentTranslation message = null;
 
         //It's only a bool assignment because it's the first condition and before the boolean base value is always true
-        if (dimensions != null)
+        if (dimensions != null) {
             canStart = SpawnRestrictions.DIMENSION.test(world, dimensions);
 
-        if (timeOfDay != null) {
-            if (timeOfDayOperator == 2)
-                canStart &= SpawnRestrictions.TIME_OF_DAY_GREATER.test(world, timeOfDay);
-            else if (timeOfDayOperator == 3)
-                canStart &= SpawnRestrictions.TIME_OF_DAY_LESS.test(world, timeOfDay);
-            else {
-                canStart &= SpawnRestrictions.TIME_OF_DAY_LESS.test(world, timeOfDay);
-                FromTheDepths.logger.error("Time of Day operator can only be < or >. (Defaulting to < ...)");
+            if (!canStart) {
+                message = new TextComponentTranslation("from_the_depths.restrictions.dimension");
             }
         }
 
+        if (canStart && timeOfDay != null) {
+            canStart = SpawnRestrictions.TIME_OF_DAY.test(world, timeOfDay);
+            if (!canStart)
+                message = new TextComponentTranslation("from_the_depths.restrictions.time_of_day");
+        }
+
+        if (canStart && weather != null) {
+            canStart = SpawnRestrictions.WEATHER.test(world, weather);
+
+            if (!canStart)
+                message = new TextComponentTranslation("from_the_depths.restrictions.weather", weather.name().toLowerCase());
+        }
+
+        if (canStart && biomes != null) {
+            canStart = SpawnRestrictions.BIOME.test(new Tuple<>(pos, world), biomes);
+            if (!canStart) {
+                String biomesString = Arrays.stream(biomes).map(resLoc -> resLoc.getResourcePath().replace("_", "")).reduce("", (s, s2) -> s + ", " + s2);
+                message = new TextComponentTranslation("from_the_depths.restrictions.biomes", biomesString);
+            }
+        }
+
+        if (canStart && yLevel != null) {
+            canStart = SpawnRestrictions.Y_LEVEL.test(pos, yLevel);
+
+            if (!canStart) {
+                String key = "from_the_depths.restrictions.y_level_";
+                if (yLevel.operator == DataAndComparator.Operator.MORE)
+                    key += "higher";
+                else if (yLevel.operator == DataAndComparator.Operator.LESS)
+                    key += "lower";
+                else key += "equals";
+
+                message = new TextComponentTranslation(key, yLevel.data);
+            }
+        }
+
+        if (canStart && groundRadius != 0) {
+            canStart = SpawnRestrictions.GROUND_RADIUS.test(new Tuple<>(pos, world), groundRadius);
+            if (!canStart)
+                message = new TextComponentTranslation("from_the_depths.restrictions.ground_radius", groundRadius);
+        }
+
+        return new Tuple<>(canStart, message);
+    }
+
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder("RestrictionBundle: ");
+
+        if (dimensions != null)
+            builder.append("dimensions=").append(Arrays.toString(dimensions));
+        if (timeOfDay != null)
+            builder.append("| timeOfDay=").append(timeOfDay);
         if (weather != null)
-            canStart &= SpawnRestrictions.WEATHER.test(world, weather);
-
+            builder.append("| weather=").append(weather);
         if (biomes != null)
-            canStart &= SpawnRestrictions.BIOME.test(new Tuple<>(pos, world), biomes);
+            builder.append("| biomes=").append(Arrays.toString(biomes));
+        if (yLevel != null)
+            builder.append("| yLevel=").append(yLevel);
+        if (groundRadius != 0)
+            builder.append("| groundRadius=").append(groundRadius);
 
-        if (yLevel != null) {
-            switch (yLevelOperator) {
-                case 0:
-                    SpawnRestrictions.Y_LEVEL_EQUALS.test(pos, yLevel);
-                    break;
-                case 2:
-                    SpawnRestrictions.Y_LEVEL_GREATER.test(pos, yLevel);
-                    break;
-                case 3:
-                    SpawnRestrictions.Y_LEVEL_LESS.test(pos, yLevel);
-                    break;
-            }
-        }
-
-        if (groundRadius != null)
-            SpawnRestrictions.GROUND_RADIUS.test(new Tuple<>(pos, world), groundRadius);
-
-        return canStart;
+        return builder.toString();
     }
 }

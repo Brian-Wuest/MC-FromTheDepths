@@ -7,8 +7,6 @@ import com.wuest.from_the_depths.Utilities;
 import com.wuest.from_the_depths.base.Triple;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
-import com.wuest.from_the_depths.entityinfo.restrictions.SpawnRestrictionType;
-import com.wuest.from_the_depths.entityinfo.restrictions.SpawnRestrictions;
 import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,12 +16,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
 
 /**
  * @author WuestMan
@@ -126,9 +124,12 @@ public class ItemTotemOfSpawning extends Item {
 						ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning) heldStack.getItem();
 						SpawnInfo spawnInfo = totemOfSpawning.getSpawnInfoFromItemStack(heldStack);
 
-						RestrictionBundle bundle = ModRegistry.spawnRestrictions.get(spawnInfo.key);
-						if (!bundle.testAll(worldIn, pos))
+						RestrictionBundle restrictionBundle = ModRegistry.spawnRestrictions.get(spawnInfo.key);
+						Tuple<Boolean, TextComponentTranslation> testResults = restrictionBundle.testAll(worldIn, pos);
+						if (!testResults.getFirst()) {
+							player.sendMessage(testResults.getSecond());
 							return EnumActionResult.FAIL;
+						}
 
 						if (spawnInfo != null) {
 							if (spawnInfo.bossInfo.isValidEntity(worldIn)) {
