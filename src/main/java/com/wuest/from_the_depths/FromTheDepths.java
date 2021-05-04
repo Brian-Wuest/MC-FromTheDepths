@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
-@Mod(modid = FromTheDepths.MODID, version = FromTheDepths.VERSION, acceptedMinecraftVersions = "[1.12.2]", guiFactory = "com.wuest.from_the_depths.Gui.ConfigGuiFactory", updateJSON = "https://raw.githubusercontent.com/Brian-Wuest/MC-FromTheDepths/master/changeLog.json")
+@Mod(modid = FromTheDepths.MODID, version = FromTheDepths.VERSION, acceptedMinecraftVersions = "[1.12.2]", guiFactory = "com.wuest.from_the_depths.gui.ConfigGuiFactory", updateJSON = "https://raw.githubusercontent.com/Brian-Wuest/MC-FromTheDepths/master/changeLog.json")
 public class FromTheDepths {
   public static final String MODID = "from_the_depths";
   public static final String VERSION = "@VERSION@";
