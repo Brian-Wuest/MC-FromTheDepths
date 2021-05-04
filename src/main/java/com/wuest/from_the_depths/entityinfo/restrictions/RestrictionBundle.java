@@ -34,38 +34,10 @@ public class RestrictionBundle {
         groundRadius = 0;
     }
 
-    public void add(SpawnRestrictionType type, Object data, String op)
-    {
-        switch (type) {
-            case DIMENSION:
-                dimensions = (Integer[]) data;
-                break;
-            case TIME_OF_DAY:
-                timeOfDay = new DataAndComparator<>((Long) data, DataAndComparator.Operator.valueOf(op));
-                break;
-            case WEATHER:
-                weather = Weather.valueOf(((String) data).toUpperCase());
-                break;
-            case BIOME:
-                ResourceLocation[] biomeRess = new ResourceLocation[((String[]) data).length];
-                for (int i = 0; i < ((String[]) data).length; i++)
-                    biomeRess[i] = new ResourceLocation(((String[]) data)[i]);
-                biomes = biomeRess;
-                break;
-            case Y_LEVEL:
-                yLevel = new DataAndComparator<>((Integer) data, DataAndComparator.Operator.valueOf(op));
-                break;
-            case GROUND_RADIUS:
-                groundRadius = (Integer) data;
-                break;
-        }
-    }
-
     public Tuple<Boolean, TextComponentTranslation> testAll(World world, BlockPos pos) {
         boolean canStart = true;
         TextComponentTranslation message = null;
 
-        //It's only a bool assignment because it's the first condition and before the boolean base value is always true
         if (dimensions != null) {
             canStart = SpawnRestrictions.DIMENSION.test(world, dimensions);
 

@@ -3,6 +3,7 @@ package com.wuest.from_the_depths;
 import com.google.common.io.Files;
 import com.google.gson.*;
 import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
+import com.wuest.from_the_depths.config.ResourceLocationTypeAdapter;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
 import com.wuest.from_the_depths.entityinfo.restrictions.SpawnRestrictions;
@@ -241,7 +242,7 @@ public class ModRegistry {
 			for (File file : FromTheDepths.proxy.modDirectory.toFile().listFiles()) {
 				if (file.isFile()) {
 					try {
-						Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new SpawnRestrictions.ResLocTypeAdapter()).create();
+						Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocationTypeAdapter()).create();
 
 						BufferedReader reader = java.nio.file.Files.newBufferedReader(file.toPath());
 						JsonObject json = JsonUtils.fromJson(gson, reader, JsonObject.class, true);
@@ -252,7 +253,7 @@ public class ModRegistry {
 							RestrictionBundle bundle = gson.fromJson(restrictions, RestrictionBundle.class);
 
 							String key = JsonUtils.getString(json, "key");
-							FromTheDepths.logger.info("Registering Spawn info restrictions for " + key + ". Restrictions: " + bundle);
+							//FromTheDepths.logger.info("Registering Spawn info restrictions for " + key + ". Restrictions: " + bundle);
 							spawnRestrictions.put(key, bundle);
 						}
 					} catch (IOException | IllegalArgumentException | JsonSyntaxException exception) {

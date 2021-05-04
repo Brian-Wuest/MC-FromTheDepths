@@ -43,26 +43,4 @@ public class SpawnRestrictions {
     public static final BiPredicate<Tuple<BlockPos, World>, Integer> GROUND_RADIUS =
             (altarPosWorld, radius) -> Utilities.isGroundUnderAltarSolid(altarPosWorld.getFirst(), altarPosWorld.getSecond(), radius).getFirst();
 
-
-    public static class ResLocTypeAdapter extends TypeAdapter<ResourceLocation> {
-        @Override
-        public void write(JsonWriter out, ResourceLocation value) throws IOException
-        {
-            if (value == null) {
-                out.nullValue();
-                return;
-            }
-            out.value(value.toString());
-        }
-
-        @Override
-        public ResourceLocation read(JsonReader in) throws IOException
-        {
-            if (in.peek() == JsonToken.NULL) {
-                in.nextNull();
-                return null;
-            }
-            return new ResourceLocation(in.nextString());
-        }
-    }
 }
