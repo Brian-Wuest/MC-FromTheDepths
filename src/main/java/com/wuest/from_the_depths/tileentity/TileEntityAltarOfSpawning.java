@@ -1,9 +1,5 @@
 package com.wuest.from_the_depths.tileentity;
 
-import java.util.ArrayList;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.wuest.from_the_depths.FromTheDepths;
@@ -12,7 +8,6 @@ import com.wuest.from_the_depths.base.TileEntityBase;
 import com.wuest.from_the_depths.config.ConfigTileEntityAltarOfSpawning;
 import com.wuest.from_the_depths.entityinfo.BossAddInfo;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
-
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
@@ -26,6 +21,9 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning> {
   public static final Predicate<EntityPlayerMP> VALID_PLAYER = Predicates.<EntityPlayerMP>and(EntitySelectors.IS_ALIVE,
@@ -77,6 +75,8 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
     super.markDirty();
 
     if (!this.world.isRemote) {
+      if (config != null && config.currentSpawnInfo != null)
+        System.out.println(config.currentSpawnInfo.bossInfo);
       MinecraftServer server = this.world.getMinecraftServer();
       server.getPlayerList().sendPacketToAllPlayers(this.getUpdatePacket());
     }

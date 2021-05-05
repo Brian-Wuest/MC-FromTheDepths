@@ -8,6 +8,9 @@ import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 
+/**
+ * GSON Type Adapter for the {@link ResourceLocation} class
+ */
 public class ResourceLocationTypeAdapter extends TypeAdapter<ResourceLocation> {
 
     @Override

@@ -126,14 +126,14 @@ public class ItemTotemOfSpawning extends Item {
 						ItemTotemOfSpawning totemOfSpawning = (ItemTotemOfSpawning) heldStack.getItem();
 						SpawnInfo spawnInfo = totemOfSpawning.getSpawnInfoFromItemStack(heldStack);
 
-						RestrictionBundle restrictionBundle = ModRegistry.spawnRestrictions.get(spawnInfo.key);
-						Tuple<Boolean, TextComponentTranslation> testResults = restrictionBundle.testAll(worldIn, pos);
-						if (!testResults.getFirst()) {
-							player.sendMessage(testResults.getSecond());
-							return EnumActionResult.FAIL;
-						}
-
 						if (spawnInfo != null) {
+							RestrictionBundle restrictionBundle = ModRegistry.spawnRestrictions.get(spawnInfo.key);
+							Tuple<Boolean, TextComponentTranslation> testResults = restrictionBundle.testAll(worldIn, pos);
+							if (!testResults.getFirst()) {
+								player.sendMessage(testResults.getSecond());
+								return EnumActionResult.FAIL;
+							}
+
 							if (spawnInfo.bossInfo.isValidEntity(worldIn)) {
 								// Entity was spawned, update the itemstack.
 								if (heldStack.getCount() == 1) {

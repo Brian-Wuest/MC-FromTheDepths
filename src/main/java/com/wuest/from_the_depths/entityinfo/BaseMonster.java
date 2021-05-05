@@ -35,7 +35,7 @@ public abstract class BaseMonster {
 		this.maxHealth = -1;
 		this.attackDamage = -1;
 		this.alwaysShowDisplayName = false;
-		this.additionalDrops = new ArrayList<DropInfo>();
+		this.additionalDrops = new ArrayList<>();
 		this.timeToWaitBeforeSpawn = 20;
 		this.commandToRunAtSpawn = "";
 		this.nbt = null;
@@ -320,4 +320,22 @@ public abstract class BaseMonster {
 		}
 	}
 
+	@Override
+	public String toString()
+	{
+		return "BaseMonster{" +
+				"domain='" + domain + '\'' +
+				", name='" + name + '\'' +
+				", displayName='" + displayName + '\'' +
+				", maxHealth=" + maxHealth +
+				", attackDamage=" + attackDamage +
+				", alwaysShowDisplayName=" + alwaysShowDisplayName +
+				", timeToWaitBeforeSpawn=" + timeToWaitBeforeSpawn +
+				", additionalDrops=" + additionalDrops +
+				", commandToRunAtSpawn='" + commandToRunAtSpawn + '\'' +
+				", nbt=" + nbt +
+				", spawnEffect=" + spawnEffect +
+				", shouldSpawnInAir=" + shouldSpawnInAir +
+				'}';
+	}
 }
