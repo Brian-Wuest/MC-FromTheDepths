@@ -1,7 +1,6 @@
 package com.wuest.from_the_depths;
 
 import com.wuest.from_the_depths.base.Triple;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -40,11 +39,6 @@ public class Utilities {
 			}
 		}
 
-		if (!FromTheDepths.proxy.getServerConfiguration().enableArenaStyleRestrictions) {
-			// When not evaluating arena style restrictions always return true.
-			returnValue = true;
-		}
-
 		return new Triple<>(returnValue, corner1, corner2);
 	}
 
@@ -64,11 +58,6 @@ public class Utilities {
 			if (!state.isBlockNormalCube()) {
 				returnValue = false;
 			}
-		}
-
-		if (!FromTheDepths.proxy.getServerConfiguration().enableArenaStyleRestrictions) {
-			// When not evaluating arena style restrictions always return true.
-			returnValue = true;
 		}
 
 		return new Triple<>(returnValue, corner1, corner2);

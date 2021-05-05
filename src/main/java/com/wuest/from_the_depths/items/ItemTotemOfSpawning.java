@@ -16,7 +16,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
@@ -95,28 +94,31 @@ public class ItemTotemOfSpawning extends Item {
 							&& !Strings.isNullOrEmpty(tileEntityAltarOfSpawning.getConfig().currentSpawnInfo.key)) {
 						player.sendMessage(new TextComponentTranslation("from_the_depths.messages.early_summon"));
 					} else {
-						// Make sure that there is enough clear space around the altar for spawning.
-						Triple<Boolean, BlockPos, BlockPos> result = Utilities.isSpaceAroundAltarAir(pos, worldIn);
 
-						if (!result.getFirst()) {
-							TextComponentTranslation message = new TextComponentTranslation(
-									"from_the_depths.messages.invalid_arena",
-									FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius,
-									FromTheDepths.proxy.getServerConfiguration().altarSpawningHeight
-							);
-							player.sendMessage(message);
-							return EnumActionResult.FAIL;
-						}
+						if (FromTheDepths.proxy.getServerConfiguration().enableArenaStyleRestrictions) {
+							// Make sure that there is enough clear space around the altar for spawning.
+							Triple<Boolean, BlockPos, BlockPos> result = Utilities.isSpaceAroundAltarAir(pos, worldIn);
 
-						result = Utilities.isGroundUnderAltarSolid(pos, worldIn, FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius);
+							if (!result.getFirst()) {
+								TextComponentTranslation message = new TextComponentTranslation(
+										"from_the_depths.messages.invalid_arena",
+										FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius,
+										FromTheDepths.proxy.getServerConfiguration().altarSpawningHeight
+								);
+								player.sendMessage(message);
+								return EnumActionResult.FAIL;
+							}
 
-						if (!result.getFirst()) {
-							TextComponentTranslation message = new TextComponentTranslation(
-									"from_the_depths.messages.invalid_arena_ground",
-									FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius
-							);
-							player.sendMessage(message);
-							return EnumActionResult.FAIL;
+							result = Utilities.isGroundUnderAltarSolid(pos, worldIn, FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius);
+
+							if (!result.getFirst()) {
+								TextComponentTranslation message = new TextComponentTranslation(
+										"from_the_depths.messages.invalid_arena_ground",
+										FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius
+								);
+								player.sendMessage(message);
+								return EnumActionResult.FAIL;
+							}
 						}
 
 						// Found a totem of spawning and we are not currently spawning a previous set of
