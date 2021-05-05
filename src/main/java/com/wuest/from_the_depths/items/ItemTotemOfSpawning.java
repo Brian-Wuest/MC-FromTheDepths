@@ -6,6 +6,7 @@ import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.Utilities;
 import com.wuest.from_the_depths.base.Triple;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
+import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
 import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -93,28 +94,31 @@ public class ItemTotemOfSpawning extends Item {
 							&& !Strings.isNullOrEmpty(tileEntityAltarOfSpawning.getConfig().currentSpawnInfo.key)) {
 						player.sendMessage(new TextComponentTranslation("from_the_depths.messages.early_summon"));
 					} else {
-						// Make sure that there is enough clear space around the altar for spawning.
-						Triple<Boolean, BlockPos, BlockPos> result = Utilities.isSpaceAroundAltarAir(pos, worldIn);
 
-						if (!result.getFirst()) {
-							TextComponentTranslation message = new TextComponentTranslation(
-									"from_the_depths.messages.invalid_arena",
-									FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius,
-									FromTheDepths.proxy.getServerConfiguration().altarSpawningHeight
-							);
-							player.sendMessage(message);
-							return EnumActionResult.FAIL;
-						}
+						if (FromTheDepths.proxy.getServerConfiguration().enableArenaStyleRestrictions) {
+							// Make sure that there is enough clear space around the altar for spawning.
+							Triple<Boolean, BlockPos, BlockPos> result = Utilities.isSpaceAroundAltarAir(pos, worldIn);
 
-						result = Utilities.isGroundUnderAltarSolid(pos, worldIn);
+							if (!result.getFirst()) {
+								TextComponentTranslation message = new TextComponentTranslation(
+										"from_the_depths.messages.invalid_arena",
+										FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius,
+										FromTheDepths.proxy.getServerConfiguration().altarSpawningHeight
+								);
+								player.sendMessage(message);
+								return EnumActionResult.FAIL;
+							}
 
-						if (!result.getFirst()) {
-							TextComponentTranslation message = new TextComponentTranslation(
-									"from_the_depths.messages.invalid_arena_ground",
-									FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius
-							);
-							player.sendMessage(message);
-							return EnumActionResult.FAIL;
+							result = Utilities.isGroundUnderAltarSolid(pos, worldIn, FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius);
+
+							if (!result.getFirst()) {
+								TextComponentTranslation message = new TextComponentTranslation(
+										"from_the_depths.messages.invalid_arena_ground",
+										FromTheDepths.proxy.getServerConfiguration().altarSpawningRadius
+								);
+								player.sendMessage(message);
+								return EnumActionResult.FAIL;
+							}
 						}
 
 						// Found a totem of spawning and we are not currently spawning a previous set of
@@ -123,6 +127,13 @@ public class ItemTotemOfSpawning extends Item {
 						SpawnInfo spawnInfo = totemOfSpawning.getSpawnInfoFromItemStack(heldStack);
 
 						if (spawnInfo != null) {
+							RestrictionBundle restrictionBundle = ModRegistry.spawnRestrictions.get(spawnInfo.key);
+							Tuple<Boolean, TextComponentTranslation> testResults = restrictionBundle.testAll(worldIn, pos);
+							if (!testResults.getFirst()) {
+								player.sendMessage(testResults.getSecond());
+								return EnumActionResult.FAIL;
+							}
+
 							if (spawnInfo.bossInfo.isValidEntity(worldIn)) {
 								// Entity was spawned, update the itemstack.
 								if (heldStack.getCount() == 1) {

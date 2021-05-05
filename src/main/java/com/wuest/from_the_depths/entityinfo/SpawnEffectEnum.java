@@ -1,10 +1,13 @@
 package com.wuest.from_the_depths.entityinfo;
 
+import com.google.gson.annotations.SerializedName;
 import net.minecraft.util.IStringSerializable;
 
 public enum SpawnEffectEnum implements IStringSerializable {
 
+	@SerializedName(value = "none", alternate = {"NONE", "None"})
 	NONE("none"),
+	@SerializedName(value = "lightning", alternate = {"LIGHTNING", "Lightning"})
 	LIGHTNING("lightning");
 
 	private final String name;

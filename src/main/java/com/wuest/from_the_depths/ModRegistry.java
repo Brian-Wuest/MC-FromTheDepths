@@ -1,25 +1,15 @@
 package com.wuest.from_the_depths;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import com.google.common.io.Files;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.google.gson.*;
 import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
+import com.wuest.from_the_depths.config.ResourceLocationTypeAdapter;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
+import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
 import com.wuest.from_the_depths.items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.proxy.messages.ConfigSyncMessage;
 import com.wuest.from_the_depths.proxy.messages.handlers.ConfigSyncHandler;
 import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -41,6 +31,17 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This is the mod registry so there is a way to get to all instances of the
@@ -73,6 +74,11 @@ public class ModRegistry {
 	 * This hashmap links spawn information and item registrations.
 	 */
 	public static HashMap<String, Tuple<SpawnInfo, ItemTotemOfSpawning>> SpawnInfosAndItems = new HashMap<>();
+
+	/**
+	 * A hashmap that links SpawnInfo Strings with Restriction collections
+	 */
+	public static Map<String, RestrictionBundle> spawnRestrictions = new HashMap<>();
 
 	/**
 	 * The identifier for the ChickenCoop GUI.
@@ -220,6 +226,36 @@ public class ModRegistry {
 						} catch (Exception e) {
 							FromTheDepths.logger.error("From_The_Depths: Error loading spawn information {}. {}", path.toString(), e);
 						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Loads spawn restrictions from json configuration
+	 */
+	public static void registerSpawnRestrictions() {
+		if (FromTheDepths.proxy.modDirectory.toFile().exists()) {
+			for (File file : FromTheDepths.proxy.modDirectory.toFile().listFiles()) {
+				if (file.isFile()) {
+					try {
+						Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocationTypeAdapter()).create();
+
+						BufferedReader reader = java.nio.file.Files.newBufferedReader(file.toPath());
+						JsonObject json = JsonUtils.fromJson(gson, reader, JsonObject.class, true);
+
+						if (JsonUtils.hasField(json, "restrictions")) {
+							JsonObject restrictions = JsonUtils.getJsonObject(json, "restrictions");
+
+							RestrictionBundle bundle = gson.fromJson(restrictions, RestrictionBundle.class);
+
+							String key = JsonUtils.getString(json, "key");
+							//FromTheDepths.logger.info("Registering Spawn info restrictions for " + key + ". Restrictions: " + bundle);
+							spawnRestrictions.put(key, bundle);
+						}
+					} catch (IOException | IllegalArgumentException | JsonSyntaxException exception) {
+						FromTheDepths.logger.error("From_The_Depths: Error Loading Spawn Restrictions: {}. {}", file.getPath(), exception);
 					}
 				}
 			}
