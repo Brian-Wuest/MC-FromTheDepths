@@ -6,7 +6,6 @@ import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
 import com.wuest.from_the_depths.config.ResourceLocationTypeAdapter;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
-import com.wuest.from_the_depths.entityinfo.restrictions.SpawnRestrictions;
 import com.wuest.from_the_depths.items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.proxy.messages.ConfigSyncMessage;
 import com.wuest.from_the_depths.proxy.messages.handlers.ConfigSyncHandler;
@@ -32,7 +31,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.BufferedReader;
 import java.io.File;

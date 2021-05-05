@@ -4,10 +4,8 @@ import com.wuest.from_the_depths.base.Weather;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 
