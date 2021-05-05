@@ -38,10 +38,24 @@ minecraft {
 }
 
 repositories {
+    maven {
+        name = "Progwml6 maven"
+        url = "http://dvs1.progwml6.com/files/maven"
+    }
+
+    maven {
+        url "https://www.cursemaven.com"
+    }
 }
 
 dependencies {
+    //Compile against the JEI API but do not include it at runtime
+    compileOnly 'mezz.jei:jei_1.12.2:4.15.+:api'
 
+    //At runtime, use the full JEI jar
+    runtimeOnly 'mezz.jei:jei_1.12.2:4.15.+'
+
+    implementation "curse.maven:sereneseasons-291874:2799213"
 }
 
 processResources {
