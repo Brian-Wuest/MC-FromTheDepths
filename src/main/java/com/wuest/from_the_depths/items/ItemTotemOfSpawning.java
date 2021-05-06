@@ -19,6 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 
@@ -128,10 +129,12 @@ public class ItemTotemOfSpawning extends Item {
 
 						if (spawnInfo != null) {
 							RestrictionBundle restrictionBundle = ModRegistry.spawnRestrictions.get(spawnInfo.key);
-							Tuple<Boolean, TextComponentTranslation> testResults = restrictionBundle.testAll(worldIn, pos);
-							if (!testResults.getFirst()) {
-								player.sendMessage(testResults.getSecond());
-								return EnumActionResult.FAIL;
+							if (restrictionBundle != null) {
+								Pair<Boolean, TextComponentTranslation> testResults = restrictionBundle.testAll(spawnInfo.key, worldIn, pos);
+								if (!testResults.getLeft()) {
+									player.sendMessage(testResults.getRight());
+									return EnumActionResult.FAIL;
+								}
 							}
 
 							if (spawnInfo.bossInfo.isValidEntity(worldIn)) {

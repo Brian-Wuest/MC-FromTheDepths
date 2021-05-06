@@ -1,14 +1,22 @@
 package com.wuest.from_the_depths.entityinfo.restrictions;
 
 import com.wuest.from_the_depths.base.Weather;
+import com.wuest.from_the_depths.integration.SSHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
 
+/**
+ * Bundles all restriction types together (excluding Serene Season restrictions that are tested in {@link SSHelper#testSeasonRestrictions(String, World)})
+ * @author Davoleo
+ * @implNote Fields are not final because I don't know if GSON can serialize them correctly if they are :P
+ */
+@SuppressWarnings("FieldMayBeFinal")
 public class RestrictionBundle {
 
     private Integer[] dimensions;
@@ -32,7 +40,7 @@ public class RestrictionBundle {
         groundRadius = 0;
     }
 
-    public Tuple<Boolean, TextComponentTranslation> testAll(World world, BlockPos pos) {
+    public Pair<Boolean, TextComponentTranslation> testAll(String spawnKey, World world, BlockPos pos) {
         boolean canStart = true;
         TextComponentTranslation message = null;
 
@@ -86,7 +94,15 @@ public class RestrictionBundle {
                 message = new TextComponentTranslation("from_the_depths.restrictions.ground_radius", groundRadius);
         }
 
-        return new Tuple<>(canStart, message);
+        if (canStart) {
+            Pair<Boolean, String> resultAndCorrectSeason = SSHelper.testSeasonRestrictions(spawnKey, world);
+            canStart = resultAndCorrectSeason.getLeft();
+            String correctSeason = resultAndCorrectSeason.getRight();
+            if (!canStart)
+                message = new TextComponentTranslation("from_the_depths.restrictions.season", correctSeason);
+        }
+
+        return Pair.of(canStart, message);
     }
 
     @Override

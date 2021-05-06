@@ -69,3 +69,4 @@ from_the_depths.restrictions.y_level_lower=The boss can only be spawned deeper u
 from_the_depths.restrictions.y_level_higher=The boss can only be spawned higher than a Y level of %d.
 from_the_depths.restrictions.y_level_equals=The boss can only be at the exact height of %d.
 from_the_depths.restrictions.ground_radius=This boss needs a flat ground area of %d blocks radius.
+from_the_depths.restrictions.season=This boss can only be spawned during %s season.
