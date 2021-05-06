@@ -56,7 +56,11 @@
     "biomes": [
       "minecraft:plains"
     ],
-    "groundRadius": 12
+    "groundRadius": 12,
+    "sereneSeasons": {
+      "season": "summer",
+      "subSeason": "mid"
+    }
   },
   "recipe": {
     "type": "minecraft:crafting_shaped",

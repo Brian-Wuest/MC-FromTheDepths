@@ -32,6 +32,11 @@
     ],
     "commandToRunAtSpawn": "/weather rain"
   },
+  "restrictions": {
+    "sereneSeasons": {
+      "season": "AUTUMN"
+    }
+  },
   "recipe": {
     "type": "minecraft:crafting_shaped",
     "group": "Summon",
