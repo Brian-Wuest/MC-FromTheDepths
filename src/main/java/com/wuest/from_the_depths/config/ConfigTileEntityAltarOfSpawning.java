@@ -1,16 +1,15 @@
 package com.wuest.from_the_depths.config;
 
-import java.util.ArrayList;
-
 import com.google.common.base.Strings;
 import com.wuest.from_the_depths.base.BaseConfig;
 import com.wuest.from_the_depths.entityinfo.BossAddInfo;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.ArrayList;
 
 /**
  * This is the configuration class for the drafter tile entity. This is what
@@ -87,7 +86,7 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
 
         NBTTagList preBossMinionTagList = tag.getTagList("preBossMinions", 10);
 
-        if (!preBossMinionTagList.hasNoTags()) {
+        if (!preBossMinionTagList.isEmpty()) {
           for (int i = 0; i < preBossMinionTagList.tagCount(); i++) {
             NBTTagCompound bossAddInfoCompound = preBossMinionTagList.getCompoundTagAt(i);
             BossAddInfo bossAddInfo = new BossAddInfo();

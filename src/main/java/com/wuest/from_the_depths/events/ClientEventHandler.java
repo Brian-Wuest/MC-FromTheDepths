@@ -3,7 +3,6 @@ package com.wuest.from_the_depths.events;
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.proxy.ClientProxy;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -113,7 +112,7 @@ public class ClientEventHandler {
    * @param item The item to register.
    */
   public static void regItem(Item item) {
-    ClientEventHandler.regItem(item, 0, item.getUnlocalizedName().substring(5));
+    ClientEventHandler.regItem(item, 0, item.getTranslationKey().substring(5));
   }
 
   /**

@@ -1,12 +1,9 @@
 package com.wuest.from_the_depths.blocks;
 
-import java.util.Random;
-
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.base.TileBlockBase;
 import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
-
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
@@ -18,17 +15,15 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nonnull;
+import java.util.Random;
 
 /**
  * 
@@ -103,14 +98,17 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
     return false;
   }
 
-  @SideOnly(Side.CLIENT)
+  @Nonnull
   @Override
-  public BlockRenderLayer getBlockLayer() {
+  public BlockRenderLayer getRenderLayer()
+  {
     return BlockRenderLayer.CUTOUT;
   }
 
+  @SuppressWarnings("deprecation")
+  @Nonnull
   @Override
-  public EnumBlockRenderType getRenderType(IBlockState state) {
+  public EnumBlockRenderType getRenderType(@Nonnull IBlockState state) {
     return EnumBlockRenderType.MODEL;
   }
 
@@ -178,9 +176,11 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
   /**
    * Convert the given metadata into a BlockState for this Block
    */
+  @SuppressWarnings("deprecation")
+  @Nonnull
   @Override
   public IBlockState getStateFromMeta(int meta) {
-    EnumFacing enumfacing = EnumFacing.getFront(meta);
+    EnumFacing enumfacing = EnumFacing.byIndex(meta);
 
     if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
       enumfacing = EnumFacing.NORTH;

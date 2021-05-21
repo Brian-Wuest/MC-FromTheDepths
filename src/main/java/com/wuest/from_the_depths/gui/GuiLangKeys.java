@@ -1,14 +1,14 @@
 package com.wuest.from_the_depths.gui;
 
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.EnumFacing;
+
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.util.EnumFacing;
 
 /**
  * This class contains the keys for the language files.
@@ -188,7 +188,7 @@ public class GuiLangKeys
 	
 	public static String translateDye(EnumDyeColor dyeColor)
 	{
-		return GuiLangKeys.translateString("from_the_depths.gui." + dyeColor.getUnlocalizedName());
+		return GuiLangKeys.translateString("from_the_depths.gui." + dyeColor.getTranslationKey());
 	}
 	
 	/**

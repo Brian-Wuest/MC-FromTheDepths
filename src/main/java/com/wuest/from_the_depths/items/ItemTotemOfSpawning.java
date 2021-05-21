@@ -43,7 +43,7 @@ public class ItemTotemOfSpawning extends Item {
 			ModRegistry.setItemName(this, name);
 		}
 
-		this.setUnlocalizedName("from_the_depths:" + name);
+		this.setTranslationKey("from_the_depths:" + name);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class ItemTotemOfSpawning extends Item {
 	 */
 	@Override
 	public NBTTagCompound getNBTShareTag(ItemStack stack) {
-		if (stack.getTagCompound() == null || stack.getTagCompound().hasNoTags()) {
+		if (stack.getTagCompound() == null || stack.getTagCompound().isEmpty()) {
 			// Make sure to serialize the NBT for this stack so the information is pushed to
 			// the client and the appropriate Icon is displayed for this stack.
 			stack.setTagCompound(stack.serializeNBT());
@@ -71,10 +71,10 @@ public class ItemTotemOfSpawning extends Item {
 		SpawnInfo spawnInfo = this.getSpawnInfoFromItemStack(stack);
 
 		if (spawnInfo != null) {
-			return Utilities.localize(stack.getUnlocalizedName()).trim() + " (" + spawnInfo.key + ")";
+			return Utilities.localize(stack.getTranslationKey()).trim() + " (" + spawnInfo.key + ")";
 		}
 
-		return Utilities.localize(stack.getUnlocalizedName()).trim() + " (" + Utilities.localize("from_the_depths.messages.no_boss") + ")";
+		return Utilities.localize(stack.getTranslationKey()).trim() + " (" + Utilities.localize("from_the_depths.messages.no_boss") + ")";
 	}
 
 	/**

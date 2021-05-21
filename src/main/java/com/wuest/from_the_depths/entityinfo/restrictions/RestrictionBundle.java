@@ -68,7 +68,7 @@ public class RestrictionBundle {
         if (canStart && biomes != null) {
             canStart = SpawnRestrictions.BIOME.test(new Tuple<>(pos, world), biomes);
             if (!canStart) {
-                String biomesString = Arrays.stream(biomes).map(resLoc -> resLoc.getResourcePath().replace("_", "")).reduce("", (s, s2) -> s + ", " + s2);
+                String biomesString = Arrays.stream(biomes).map(resLoc -> resLoc.getPath().replace("_", "")).reduce("", (s, s2) -> s + ", " + s2);
                 message = new TextComponentTranslation("from_the_depths.restrictions.biomes", biomesString);
             }
         }
