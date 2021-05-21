@@ -10,6 +10,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
+import java.util.List;
+
 public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAddInfo> {
 	public int minSpawns;
 	public int maxSpawns;
@@ -72,18 +74,20 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 	 *
 	 * @return True when this minion is done spawning; otherwise false.
 	 */
-	public boolean processMinionSpawning(World world, BlockPos pos, ICommandSender commandSender) {
+	public boolean processMinionSpawning(World world, BlockPos pos, ICommandSender commandSender, List<Integer> entities) {
 		this.spawning = true;
 
 		if (this.numberLeftToSpawn == 0 && this.nextWaveOfAdds != null) {
 			// This minion is done spawning but there is another wave, process that now.
-			return this.nextWaveOfAdds.processMinionSpawning(world, pos, commandSender);
+			return this.nextWaveOfAdds.processMinionSpawning(world, pos, commandSender, entities);
 		} else if (this.numberLeftToSpawn == 0) {
 			// Spawning is complete and there are no more waves to process.
 			return true;
 		} else if (this.timeUntilNextSpawn <= 0) {
 			// There is something to spawn and we reached the timer; do that now.
 			Entity entity = this.createEntityForWorld(world, pos.up(), commandSender);
+			entities.add(entity.getEntityId());
+			//System.out.println("added " + entity.getDisplayName().getFormattedText() + " to the list");
 
 			if (entity == null) {
 				TextComponentString component = new TextComponentString(
