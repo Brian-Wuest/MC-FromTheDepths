@@ -22,14 +22,16 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+@SuppressWarnings("Guava")
 public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning> {
-  public static final Predicate<EntityPlayerMP> VALID_PLAYER = Predicates.<EntityPlayerMP>and(EntitySelectors.IS_ALIVE,
-      EntitySelectors.withinRange(0.0D, 15.0D, 0.0D, 15.0D));
+
+  private Predicate<EntityPlayerMP> validPlayer = input -> false;
 
   private final List<Integer> entities = new LinkedList<>();
 
@@ -43,18 +45,20 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
       return TileEntityAltarOfSpawning.this.world.getMinecraftServer();
     }
 
+    @Nonnull
     @Override
     public String getName() {
       return "@";
     }
 
+    @Nonnull
     @Override
     public World getEntityWorld() {
       return TileEntityAltarOfSpawning.this.world;
     }
 
     @Override
-    public boolean canUseCommand(int permLevel, String commandName) {
+    public boolean canUseCommand(int permLevel, @Nonnull String commandName) {
       return permLevel <= 2;
     }
   };
@@ -68,6 +72,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
   public void setPos(BlockPos posIn) {
     this.pos = posIn.toImmutable();
     this.getConfig().pos = this.pos;
+    validPlayer = Predicates.and(EntitySelectors.IS_ALIVE, EntitySelectors.withinRange(pos.getX(), pos.getY(), pos.getZ(), 15.0D));
   }
 
   /**
@@ -115,9 +120,9 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
         entities.removeIf(id -> world.getEntityByID(id) == null);
 
       if (!this.config.bossSpawned && this.config.preBossMinions.size() == 0) {
+
         if (this.config.totalLightningBolts >= 4) {
-          Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos,
-              this.commandSender);
+          Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos, validPlayer, this.commandSender);
           entities.add(entity.getEntityId());
           //System.out.println("added " + entity.getDisplayName().getFormattedText() + " to the list");
 
@@ -128,9 +133,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
                     FromTheDepths.proxy.getServerConfiguration().altarSpawningHeight
             );
 
-            for (EntityPlayerMP player : this.world.getPlayers(EntityPlayerMP.class, VALID_PLAYER)) {
-              player.sendMessage(component);
-            }
+            this.world.getPlayers(EntityPlayerMP.class, validPlayer).forEach(player -> player.sendMessage(component));
           }
 
           this.config.bossSpawned = true;
@@ -183,8 +186,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
           }
 
           BlockPos lightningBoltPos = this.pos.offset(facing, 2);
-          world.addWeatherEffect(new EntityLightningBolt(world, (double) lightningBoltPos.getX(),
-              (double) lightningBoltPos.getY(), (double) lightningBoltPos.getZ(), true));
+          world.addWeatherEffect(new EntityLightningBolt(world, lightningBoltPos.getX(), lightningBoltPos.getY(), lightningBoltPos.getZ(), true));
 
           this.config.totalLightningBolts++;
           this.config.ticksUntilNextLightningBolt = ModRegistry.AlterOfSpawning().tickRate(this.world);
@@ -265,6 +267,10 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
 
     this.config.ticksUntilNextLightningBolt = tickRate;
     this.config.currentSpawnInfo = spawnInfo;
+
+    //No entity has been spawned yet -> Boss Spawn Warning Message
+    TextComponentString warningMessage = new TextComponentString(config.currentSpawnInfo.bossInfo.warningMessage);
+    this.world.getPlayers(EntityPlayerMP.class, validPlayer).forEach(player -> player.sendMessage(warningMessage));
 
     // Get the pre-boss minions.
     if (spawnInfo.bossAddInfo != null) {

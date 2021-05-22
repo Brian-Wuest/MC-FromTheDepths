@@ -1,9 +1,5 @@
 package com.wuest.from_the_depths.entityinfo.restrictions;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import com.wuest.from_the_depths.Utilities;
 import com.wuest.from_the_depths.base.Weather;
 import net.minecraft.util.ResourceLocation;
@@ -13,7 +9,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.io.IOException;
 import java.util.function.BiPredicate;
 
 /**

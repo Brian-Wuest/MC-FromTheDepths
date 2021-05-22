@@ -1,11 +1,12 @@
 package com.wuest.from_the_depths.entityinfo;
 
+import com.google.common.base.Predicates;
 import com.wuest.from_the_depths.FromTheDepths;
-import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
@@ -85,7 +86,7 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 			return true;
 		} else if (this.timeUntilNextSpawn <= 0) {
 			// There is something to spawn and we reached the timer; do that now.
-			Entity entity = this.createEntityForWorld(world, pos.up(), commandSender);
+			Entity entity = this.createEntityForWorld(world, pos.up(), null, commandSender);
 			entities.add(entity.getEntityId());
 			//System.out.println("added " + entity.getDisplayName().getFormattedText() + " to the list");
 
@@ -93,7 +94,8 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 				TextComponentString component = new TextComponentString(
 						"Unable to summon additional monster due to limited air space in summoning area");
 
-				for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class, TileEntityAltarOfSpawning.VALID_PLAYER)) {
+				for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class,
+						Predicates.and(EntitySelectors.IS_ALIVE, EntitySelectors.withinRange(pos.getX(), pos.getY(), pos.getZ(), 15)))) {
 					player.sendMessage(component);
 				}
 			}
