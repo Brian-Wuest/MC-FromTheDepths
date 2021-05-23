@@ -1,6 +1,6 @@
 item.from_the_depths:item_chicken_coop.name=Chicken Coop
-item.from_the_depths:item_totem_of_summoning.name=Totem of Summoning
-item.from_the_depths:item_totem_of_summoning=Totem of Summoning
+item.from_the_depths:totem.name=Totem
+item.from_the_depths:totem=Totem
 
 tile.from_the_depths:block_compressed_stone.block_double_compressed_stone.name=Double Compressed Stone
 tile.from_the_depths:block_half_granite_slab.name=Granite Slab

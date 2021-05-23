@@ -1,6 +1,6 @@
 {
   "_comment": "Spawn some pre-boss monsters then the boss, then some creepers.",
-  "key": "Custom_Creeper",
+  "key": "custom_creeper",
   "bossInfo": {
     "domain": "minecraft",
     "name": "creeper",
@@ -10,6 +10,8 @@
     "alwaysShowDisplayName": true,
     "shouldSpawnInAir": false,
     "spawnEffect": "lightning",
+    "warningMessage": "§otest warning message, §rcolor reset",
+    "spawnedMessage": "§lwhile(true) -> URL.open(http://vtuber.group)",
     "additionalDrops": [{
       "item": "minecraft:diamond",
       "minDrops": 1,
@@ -29,7 +31,7 @@
         "dropChance": 75
       },
       {
-        "item": "from_the_depths:item_totem_of_summoning",
+        "item": "from_the_depths:totem",
         "minDrops": 1,
         "maxDrops": 1,
         "dropChance": 100,
@@ -41,25 +43,8 @@
     ]
   },
   "restrictions": {
-    "dimensions": [
-      -1
-    ],
-    "timeOfDay": {
-      "data": 12000,
-      "operator": "LESS"
-    },
-    "yLevel": {
-      "data": 40,
-      "operator": "MORE"
-    },
-    "weather": "RAIN",
-    "biomes": [
-      "minecraft:plains"
-    ],
-    "groundRadius": 12,
     "sereneSeasons": {
-      "season": "summer",
-      "subSeason": "mid"
+      "season": "autumn"
     }
   },
   "recipe": {
@@ -73,7 +58,7 @@
       }
     },
     "result": {
-      "item": "from_the_depths:item_totem_of_summoning",
+      "item": "from_the_depths:totem",
       "data": 0,
       "nbt": {
         "spawn_info": "Custom_Creeper"

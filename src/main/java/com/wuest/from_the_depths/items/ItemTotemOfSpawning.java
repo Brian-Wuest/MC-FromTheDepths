@@ -8,7 +8,6 @@ import com.wuest.from_the_depths.base.Triple;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
 import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -22,6 +21,8 @@ import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * @author WuestMan
@@ -33,7 +34,7 @@ public class ItemTotemOfSpawning extends Item {
 		super();
 
 		this.key = key;
-		this.setCreativeTab(CreativeTabs.MATERIALS);
+		this.setCreativeTab(FromTheDepths.CREATIVE_TAB);
 
 		if (key != null && !key.isEmpty()) {
 			String registryName = name + "_"
@@ -71,7 +72,10 @@ public class ItemTotemOfSpawning extends Item {
 		SpawnInfo spawnInfo = this.getSpawnInfoFromItemStack(stack);
 
 		if (spawnInfo != null) {
-			return Utilities.localize(stack.getTranslationKey()).trim() + " (" + spawnInfo.key + ")";
+			//All non-word characters + the underscore
+			String[] splitKey = spawnInfo.key.split("\\W|_");
+			String processedKey = Arrays.stream(splitKey).map(Utilities::capitalize).collect(Collectors.joining(" "));
+			return Utilities.localize(stack.getTranslationKey()).trim() + " (" + processedKey + ")";
 		}
 
 		return Utilities.localize(stack.getTranslationKey()).trim() + " (" + Utilities.localize("from_the_depths.messages.no_boss") + ")";

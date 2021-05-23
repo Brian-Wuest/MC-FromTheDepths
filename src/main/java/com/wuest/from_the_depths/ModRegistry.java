@@ -3,7 +3,8 @@ package com.wuest.from_the_depths;
 import com.google.common.io.Files;
 import com.google.gson.*;
 import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
-import com.wuest.from_the_depths.config.ResourceLocationTypeAdapter;
+import com.wuest.from_the_depths.davoleo.ResourceLocationTypeAdapter;
+import com.wuest.from_the_depths.davoleo.TotemTextureLoader;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
 import com.wuest.from_the_depths.integration.SSHelper;
@@ -167,15 +168,23 @@ public class ModRegistry {
 			FromTheDepths.logger.warn(ex.getMessage());
 		}
 
-		ItemTotemOfSpawning baseTotem = new ItemTotemOfSpawning(null, "item_totem_of_summoning");
+		ItemTotemOfSpawning baseTotem = new ItemTotemOfSpawning(null, "totem");
 		ModRegistry.registerItem(baseTotem);
 
 		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, new ResourceLocation("from_the_depths:block_altar_of_summoning"));
 
 		for (SpawnInfo spawnInfo : ModRegistry.SpawnInfos) {
-			ItemTotemOfSpawning registeredItem = new ItemTotemOfSpawning(spawnInfo.key, "item_totem_of_summoning");
+			ItemTotemOfSpawning registeredItem = new ItemTotemOfSpawning(spawnInfo.key, "totem");
 			ModRegistry.registerItem(registeredItem);
 			ModRegistry.SpawnInfosAndItems.put(spawnInfo.key, new Tuple<>(spawnInfo, registeredItem));
+
+			//Generate Custom ItemModel
+			try {
+				TotemTextureLoader.generateItemModels(spawnInfo.key);
+			}
+			catch (IOException e) {
+				FromTheDepths.logger.warn(e.getMessage());
+			}
 		}
 	}
 
@@ -187,7 +196,7 @@ public class ModRegistry {
 	}
 
 	/**
-	 * This is where the mod messages are registered.
+	 * This is where the mod packets are registered.
 	 */
 	public static void RegisterMessages() {
 		FromTheDepths.network.registerMessage(ConfigSyncHandler.class, ConfigSyncMessage.class, 1, Side.CLIENT);

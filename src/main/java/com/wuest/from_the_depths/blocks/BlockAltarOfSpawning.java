@@ -12,7 +12,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
@@ -45,7 +44,7 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
    */
   public BlockAltarOfSpawning(String name) {
     super(BlockMaterial);
-    this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
+    this.setCreativeTab(FromTheDepths.CREATIVE_TAB);
     this.setSoundType(SoundType.STONE);
 
     this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));

@@ -2,6 +2,8 @@ package com.wuest.from_the_depths.events;
 
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
+import com.wuest.from_the_depths.davoleo.TotemTextureLoader;
+import com.wuest.from_the_depths.items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.proxy.ClientProxy;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -10,6 +12,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -112,7 +115,19 @@ public class ClientEventHandler {
    * @param item The item to register.
    */
   public static void regItem(Item item) {
-    ClientEventHandler.regItem(item, 0, item.getTranslationKey().substring(5));
+
+    if (item instanceof ItemTotemOfSpawning) {
+      ItemTotemOfSpawning totem = ((ItemTotemOfSpawning) item);
+
+      if (totem.key != null && FromTheDepths.proxy.modDirectory.resolve("textures/" + totem.key + ".png").toFile().exists()) {
+        FromTheDepths.logger.info("Boss with name: " + totem.key + " got custom texture");
+        ClientEventHandler.regItem(item, 0, TotemTextureLoader.DOMAIN + ':' + totem.key);
+      }
+      else {
+        FromTheDepths.logger.info("Boss with name: " + totem.key + " got default texture");
+        ClientEventHandler.regItem(item, 0, FromTheDepths.MODID + ":item_totem_of_summoning");
+      }
+    }
   }
 
   /**
@@ -123,7 +138,7 @@ public class ClientEventHandler {
    * @param blockName the name of the block.
    */
   public static void regItem(Item item, int metaData, String blockName) {
-    ModelResourceLocation location = new ModelResourceLocation(blockName, "inventory");
+    ModelResourceLocation location = new ModelResourceLocation(new ResourceLocation(blockName), "inventory");
     // System.out.println("Registering Item: " + location.getResourceDomain() + "["
     // + location.getResourcePath() + "]");
 

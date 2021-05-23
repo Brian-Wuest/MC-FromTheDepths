@@ -1,6 +1,6 @@
 {
   "_comment": "Spawn some pre-boss monsters then the boss, then some creepers.",
-  "key": "Custom_Skeleton",
+  "key": "custom_skeleton",
   "bossInfo": {
     "domain": "minecraft",
     "name": "skeleton",
@@ -10,6 +10,8 @@
     "alwaysShowDisplayName": true,
     "shouldSpawnInAir": false,
     "spawnEffect": "lightning",
+    "warningMessage": "§n§fyou feel like you're going to have a §cbad §ftime",
+    "spawnedMessage": "§fThe Spoopy Scary Skeleton has been §ksummoned",
     "additionalDrops": [
       {
         "item": "minecraft:diamond",
@@ -29,12 +31,12 @@
         "maxDrops": 1,
         "dropChance": 5
       }
-    ],
-    "commandToRunAtSpawn": "/weather rain"
+    ]
   },
   "restrictions": {
     "sereneSeasons": {
-      "season": "AUTUMN"
+      "season": "summer",
+      "subSeason": "mid"
     }
   },
   "recipe": {
@@ -48,7 +50,7 @@
       }
     },
     "result": {
-      "item": "from_the_depths:item_totem_of_summoning",
+      "item": "from_the_depths:totem",
       "data": 0,
       "nbt": {
         "spawn_info": "Custom_Skeleton"

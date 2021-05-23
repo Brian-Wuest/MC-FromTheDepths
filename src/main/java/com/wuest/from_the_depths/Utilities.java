@@ -19,6 +19,18 @@ public class Utilities {
 		return new TextComponentTranslation(unlocalized, formatArgs).getFormattedText();
 	}
 
+	/**
+	 * @param string The String to capitalize
+	 * @return {@code string} with the first letter uppercased.
+	 */
+	public static String capitalize(String string) {
+		if (Character.isUpperCase(string.charAt(0)))
+			return string;
+
+		char uppercased = Character.toUpperCase(string.charAt(0));
+		return uppercased + string.substring(1);
+	}
+
 	// --- RoTN Edition END --- //
 
 	public static Triple<Boolean, BlockPos, BlockPos> isSpaceAroundAltarAir(BlockPos altarPos, World world) {

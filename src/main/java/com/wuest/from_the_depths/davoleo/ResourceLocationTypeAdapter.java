@@ -1,4 +1,4 @@
-package com.wuest.from_the_depths.config;
+package com.wuest.from_the_depths.davoleo;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
