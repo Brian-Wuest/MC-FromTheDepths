@@ -1,13 +1,12 @@
 package com.wuest.from_the_depths.config;
 
-import java.util.HashMap;
-import java.util.Map.Entry;
-
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.proxy.CommonProxy;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.config.Configuration;
+
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 /**
  * This class is used to hold the mod configuration.
@@ -25,6 +24,7 @@ public class ModConfiguration {
 	private static String altarSpawningHeightName = "Altar Spawning Height";
 	private static String showAltarSpawningTextName = "Show Altar Spawning Text";
 	private static String enableArenaStyleRestrictionsName = "Enable Arena Style Restrictions";
+	private static String canSpawnMultipleBossesName = "Allow Spawning of multiple bosses";
 
 	// Configuration Options.
 	public boolean allowAltarToBeDestroyed;
@@ -32,6 +32,7 @@ public class ModConfiguration {
 	public int altarSpawningHeight;
 	public boolean showAltarSpawningText;
 	public boolean enableArenaStyleRestrictions;
+	public boolean canSpawnMultipleBosses;
 
 	public HashMap<String, Boolean> recipeConfiguration;
 
@@ -41,7 +42,7 @@ public class ModConfiguration {
 	public static String[] recipeKeys = new String[]{arenaStructureKey,};
 
 	public ModConfiguration() {
-		this.recipeConfiguration = new HashMap<String, Boolean>();
+		this.recipeConfiguration = new HashMap<>();
 	}
 
 	public static void syncConfig() {
@@ -73,6 +74,11 @@ public class ModConfiguration {
 				ModConfiguration.enableArenaStyleRestrictionsName, ModConfiguration.OPTIONS, true,
 				"Determines if the area around the altar needs to be solid and flat. server configuration overrides client.");
 
+		CommonProxy.proxyConfiguration.canSpawnMultipleBosses = config.getBoolean(
+				ModConfiguration.canSpawnMultipleBossesName, ModConfiguration.OPTIONS, true,
+				"Specifies whether a player can summon multiple bosses at the same time"
+		);
+
 		// Recipe configuration.
 		for (String key : ModConfiguration.recipeKeys) {
 			boolean value = config.getBoolean(key, RecipeOptions, true,
@@ -92,6 +98,7 @@ public class ModConfiguration {
 		tag.setInteger(ModConfiguration.altarSpawningRadiusName, this.altarSpawningRadius);
 		tag.setInteger(ModConfiguration.altarSpawningHeightName, this.altarSpawningHeight);
 		tag.setBoolean(ModConfiguration.showAltarSpawningTextName, this.showAltarSpawningText);
+		tag.setBoolean(ModConfiguration.canSpawnMultipleBossesName, this.canSpawnMultipleBosses);
 
 		for (Entry<String, Boolean> entry : this.recipeConfiguration.entrySet()) {
 			tag.setBoolean(entry.getKey(), entry.getValue());
@@ -107,6 +114,7 @@ public class ModConfiguration {
 		config.altarSpawningHeight = tag.getInteger(ModConfiguration.altarSpawningHeightName);
 		config.altarSpawningRadius = tag.getInteger(ModConfiguration.altarSpawningRadiusName);
 		config.showAltarSpawningText = tag.getBoolean(ModConfiguration.showAltarSpawningTextName);
+		config.canSpawnMultipleBosses = tag.getBoolean(ModConfiguration.canSpawnMultipleBossesName);
 
 		for (String key : ModConfiguration.recipeKeys) {
 			config.recipeConfiguration.put(key, tag.getBoolean(key));

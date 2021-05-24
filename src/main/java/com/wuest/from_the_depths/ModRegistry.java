@@ -6,6 +6,7 @@ import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
 import com.wuest.from_the_depths.config.ResourceLocationTypeAdapter;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
+import com.wuest.from_the_depths.integration.SSHelper;
 import com.wuest.from_the_depths.items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.proxy.messages.ConfigSyncMessage;
 import com.wuest.from_the_depths.proxy.messages.handlers.ConfigSyncHandler;
@@ -248,9 +249,15 @@ public class ModRegistry {
 						if (JsonUtils.hasField(json, "restrictions")) {
 							JsonObject restrictions = JsonUtils.getJsonObject(json, "restrictions");
 
+							String key = JsonUtils.getString(json, "key");
+
+							if (SSHelper.isSereneSeasonLoaded.getAsBoolean() && restrictions.has("sereneSeasons")) {
+								JsonObject seasonObj = JsonUtils.getJsonObject(restrictions, "sereneSeasons");
+								SSHelper.addSeasonRestriction(key, seasonObj);
+							}
+
 							RestrictionBundle bundle = gson.fromJson(restrictions, RestrictionBundle.class);
 
-							String key = JsonUtils.getString(json, "key");
 							//FromTheDepths.logger.info("Registering Spawn info restrictions for " + key + ". Restrictions: " + bundle);
 							spawnRestrictions.put(key, bundle);
 						}
@@ -395,7 +402,7 @@ public class ModRegistry {
 	public static void setItemName(Item item, String itemName) {
 		if (itemName != null) {
 			item.setRegistryName("from_the_depths:" + itemName);
-			item.setUnlocalizedName(item.getRegistryName().toString());
+			item.setTranslationKey(item.getRegistryName().toString());
 		}
 	}
 
@@ -408,7 +415,7 @@ public class ModRegistry {
 	 */
 	public static void setBlockName(Block block, String blockName) {
 		block.setRegistryName(blockName);
-		block.setUnlocalizedName(block.getRegistryName().toString());
+		block.setTranslationKey(block.getRegistryName().toString());
 	}
 
 	/**

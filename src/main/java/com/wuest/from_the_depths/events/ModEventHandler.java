@@ -8,7 +8,6 @@ import com.wuest.from_the_depths.entityinfo.DropInfo;
 import com.wuest.from_the_depths.proxy.ClientProxy;
 import com.wuest.from_the_depths.proxy.CommonProxy;
 import com.wuest.from_the_depths.proxy.messages.ConfigSyncMessage;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -91,7 +90,7 @@ public class ModEventHandler {
         if (trackingTag.hasKey("additionalDrops")) {
           NBTTagList additionalDropList = trackingTag.getTagList("additionalDrops", 10);
 
-          if (!additionalDropList.hasNoTags()) {
+          if (!additionalDropList.isEmpty()) {
             for (int i = 0; i < additionalDropList.tagCount(); i++) {
               NBTTagCompound dropInfoTag = additionalDropList.getCompoundTagAt(i);
               DropInfo dropInfo = new DropInfo();

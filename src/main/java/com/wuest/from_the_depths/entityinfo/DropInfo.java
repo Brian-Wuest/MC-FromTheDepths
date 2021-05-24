@@ -3,7 +3,6 @@ package com.wuest.from_the_depths.entityinfo;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wuest.from_the_depths.FromTheDepths;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -132,7 +131,7 @@ public class DropInfo implements INBTSerializable<DropInfo> {
 							FromTheDepths.logger.error(exception);
 						}
 
-						if (compound != null && !compound.hasNoTags()) {
+						if (compound != null && !compound.isEmpty()) {
 						  stack.setTagCompound(compound);
 						}
 					}
