@@ -12,6 +12,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.UUID;
 
 public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAddInfo> {
 	public int minSpawns;
@@ -75,7 +76,7 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 	 *
 	 * @return True when this minion is done spawning; otherwise false.
 	 */
-	public boolean processMinionSpawning(World world, BlockPos pos, ICommandSender commandSender, List<Integer> entities) {
+	public boolean processMinionSpawning(World world, BlockPos pos, ICommandSender commandSender, List<UUID> entities) {
 		this.spawning = true;
 
 		if (this.numberLeftToSpawn == 0 && this.nextWaveOfAdds != null) {
@@ -87,7 +88,7 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 		} else if (this.timeUntilNextSpawn <= 0) {
 			// There is something to spawn and we reached the timer; do that now.
 			Entity entity = this.createEntityForWorld(world, pos.up(), null, commandSender);
-			entities.add(entity.getEntityId());
+			entities.add(entity.getUniqueID());
 			//System.out.println("added " + entity.getDisplayName().getFormattedText() + " to the list");
 
 			if (entity == null) {

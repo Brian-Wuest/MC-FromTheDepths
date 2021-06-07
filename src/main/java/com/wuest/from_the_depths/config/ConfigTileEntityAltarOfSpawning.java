@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  * This is the configuration class for the drafter tile entity. This is what
@@ -25,6 +26,8 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
   public int totalLightningBolts;
   public int ticksUntilNextLightningBolt;
   public ArrayList<BossAddInfo> preBossMinions;
+  public ArrayList<UUID> aliveMonsterIds;
+  public boolean idle;
 
   public ConfigTileEntityAltarOfSpawning() {
     super();
@@ -57,6 +60,11 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
       }
 
       tag.setTag("preBossMinions", tagList);
+
+      NBTTagList idList = new NBTTagList();
+      this.aliveMonsterIds.forEach(uuid -> idList.appendTag(NBTUtil.createUUIDTag(uuid)));
+      tag.setTag("aliveMonsterIds", idList);
+      tag.setBoolean("idle", idle);
     }
 
     compound.setTag("configTag", tag);
@@ -90,10 +98,19 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
           for (int i = 0; i < preBossMinionTagList.tagCount(); i++) {
             NBTTagCompound bossAddInfoCompound = preBossMinionTagList.getCompoundTagAt(i);
             BossAddInfo bossAddInfo = new BossAddInfo();
-            this.preBossMinions.add(bossAddInfo.loadFromNBTData(bossAddInfoCompound));
+            config.preBossMinions.add(bossAddInfo.loadFromNBTData(bossAddInfoCompound));
           }
         }
       }
+
+      NBTTagList aliveIdList = tag.getTagList("aliveMonsterIds", 10);
+      for (int i = 0; i < aliveIdList.tagCount(); i++)
+      {
+        UUID id = NBTUtil.getUUIDFromTag(aliveIdList.getCompoundTagAt(i));
+        config.aliveMonsterIds.add(id);
+      }
+
+      config.idle = tag.getBoolean("idle");
     }
 
     return config;
@@ -101,7 +118,8 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
 
   public void Initialize() {
     this.pos = new BlockPos(0, 0, 0);
-    this.preBossMinions = new ArrayList<BossAddInfo>();
+    this.preBossMinions = new ArrayList<>();
     this.currentSpawnInfo = null;
+    this.aliveMonsterIds = new ArrayList<>();
   }
 }
