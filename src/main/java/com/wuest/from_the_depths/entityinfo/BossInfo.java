@@ -35,6 +35,7 @@ public class BossInfo extends BaseMonster implements INBTSerializable<BossInfo> 
     newInstance.shouldSpawnInAir = this.shouldSpawnInAir;
     newInstance.warningMessage = this.warningMessage;
     newInstance.spawnedMessage = this.spawnedMessage;
+    newInstance.idleTimeBeforeDespawning = this.idleTimeBeforeDespawning;
 
     for (DropInfo info : this.additionalDrops) {
       newInstance.additionalDrops.add(info.clone());

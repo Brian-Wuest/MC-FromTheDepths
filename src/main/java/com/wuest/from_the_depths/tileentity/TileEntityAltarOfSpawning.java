@@ -21,19 +21,16 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 @SuppressWarnings("Guava")
 public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAltarOfSpawning> {
 
   private Predicate<EntityPlayerMP> validPlayer = input -> false;
-
-  private final List<Integer> entities = new LinkedList<>();
 
   /**
    * The command sender to use when issuing commands when spawning monsters.
@@ -116,14 +113,18 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
     if (!this.world.isRemote && this.world.getDifficulty() != EnumDifficulty.PEACEFUL
         && this.config.currentSpawnInfo != null) {
 
-      if (!entities.isEmpty())
-        entities.removeIf(id -> world.getEntityByID(id) == null);
+      if (!config.aliveMonsterIds.isEmpty())
+        config.aliveMonsterIds.removeIf(id -> {
+          Entity entity = ((WorldServer)world).getEntityFromUuid(id);
+          return entity == null || entity.isDead;
+        });
 
       if (!this.config.bossSpawned && this.config.preBossMinions.size() == 0) {
 
         if (this.config.totalLightningBolts >= 4) {
+          //Spawn the actual boss
           Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos, validPlayer, this.commandSender);
-          entities.add(entity.getEntityId());
+          config.aliveMonsterIds.add(entity.getUniqueID());
           //System.out.println("added " + entity.getDisplayName().getFormattedText() + " to the list");
 
           if (entity == null) {
@@ -137,6 +138,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
           }
 
           this.config.bossSpawned = true;
+          this.markDirty();
 
           // The boss has been spawned; make sure that there are no post-boss minions to
           // spawn.
@@ -208,7 +210,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
         for (int i = 0; i < this.config.preBossMinions.size(); i++) {
           BossAddInfo minion = this.config.preBossMinions.get(i);
 
-          if (minion.processMinionSpawning(this.world, this.pos, this.commandSender, this.entities)) {
+          if (minion.processMinionSpawning(this.world, this.pos, this.commandSender, this.config.aliveMonsterIds)) {
             // This minion and all defined waves are done spawning, remove it from the list.
             this.config.preBossMinions.remove(i);
             i--;
@@ -225,7 +227,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
         for (int i = 0; i < this.config.currentSpawnInfo.bossAddInfo.size(); i++) {
           BossAddInfo minion = this.config.currentSpawnInfo.bossAddInfo.get(i);
 
-          if (minion.processMinionSpawning(this.world, this.pos, this.commandSender, this.entities)) {
+          if (minion.processMinionSpawning(this.world, this.pos, this.commandSender, this.config.aliveMonsterIds)) {
             // This minion and all defined waves are done spawning, remove it from the list.
             this.config.currentSpawnInfo.bossAddInfo.remove(i);
             i--;
@@ -235,10 +237,6 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
         // All adds have been generated. Reset the spawner so more can be spawned.
         if (this.config.currentSpawnInfo.bossAddInfo.size() == 0) {
           this.resetSpawner();
-          //avoid calling markDirty every time if there are no minions to spawn
-          //but the spawner shouldn't be reset to block players from spawning multiple bosses
-          if (config.currentSpawnInfo != null && !FromTheDepths.proxy.getServerConfiguration().canSpawnMultipleBosses)
-            return;
         }
 
         // Mark this tile entity as dirty after processing the loop.
@@ -251,7 +249,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
   }
 
   public void resetSpawner() {
-    if (!FromTheDepths.proxy.getServerConfiguration().canSpawnMultipleBosses && !entities.isEmpty())
+    if (!FromTheDepths.proxy.getServerConfiguration().canSpawnMultipleBosses && !config.aliveMonsterIds.isEmpty())
       return;
 
     this.config.totalLightningBolts = 0;
