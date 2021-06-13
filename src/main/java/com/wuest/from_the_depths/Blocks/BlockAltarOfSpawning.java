@@ -112,7 +112,7 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
 
   @SideOnly(Side.CLIENT)
   @Override
-  public BlockRenderLayer getBlockLayer() {
+  public BlockRenderLayer getRenderLayer() {
     return BlockRenderLayer.CUTOUT;
   }
 
@@ -187,7 +187,7 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
    */
   @Override
   public IBlockState getStateFromMeta(int meta) {
-    EnumFacing enumfacing = EnumFacing.getFront(meta);
+    EnumFacing enumfacing = EnumFacing.byIndex(meta);
 
     if (enumfacing.getAxis() == EnumFacing.Axis.Y) {
       enumfacing = EnumFacing.NORTH;

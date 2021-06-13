@@ -118,7 +118,7 @@ public abstract class BaseMonster {
 						FromTheDepths.logger.error(exception);
 					}
 
-					if (compound != null && !compound.hasNoTags()) {
+					if (compound != null && !compound.isEmpty()) {
 						for (String tagKey : compound.getKeySet()) {
 							serializedEntity.setTag(tagKey, compound.getTag(tagKey));
 						}
@@ -306,7 +306,7 @@ public abstract class BaseMonster {
 
 			NBTTagList dropList = tag.getTagList("additionalDrops", 10);
 
-			if (!dropList.hasNoTags()) {
+			if (!dropList.isEmpty()) {
 				for (int i = 0; i < dropList.tagCount(); i++) {
 					NBTTagCompound dropInfoTag = dropList.getCompoundTagAt(i);
 					DropInfo dropInfo = new DropInfo();

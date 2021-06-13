@@ -356,7 +356,7 @@ public class ModRegistry {
 	public static void setItemName(Item item, String itemName) {
 		if (itemName != null) {
 			item.setRegistryName("from_the_depths:" + itemName);
-			item.setUnlocalizedName(item.getRegistryName().toString());
+			item.setTranslationKey(item.getRegistryName().toString());
 		}
 	}
 
@@ -369,7 +369,7 @@ public class ModRegistry {
 	 */
 	public static void setBlockName(Block block, String blockName) {
 		block.setRegistryName(blockName);
-		block.setUnlocalizedName(block.getRegistryName().toString());
+		block.setTranslationKey(block.getRegistryName().toString());
 	}
 
 	/**

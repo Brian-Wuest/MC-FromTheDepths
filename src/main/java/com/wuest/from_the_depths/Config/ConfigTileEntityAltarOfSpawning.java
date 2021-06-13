@@ -86,7 +86,7 @@ public class ConfigTileEntityAltarOfSpawning extends BaseConfig {
 
         NBTTagList preBossMinionTagList = tag.getTagList("preBossMinions", 10);
 
-        if (!preBossMinionTagList.hasNoTags()) {
+        if (!preBossMinionTagList.isEmpty()) {
           for (int i = 0; i < preBossMinionTagList.tagCount(); i++) {
             NBTTagCompound bossAddInfoCompound = preBossMinionTagList.getCompoundTagAt(i);
             BossAddInfo bossAddInfo = new BossAddInfo();

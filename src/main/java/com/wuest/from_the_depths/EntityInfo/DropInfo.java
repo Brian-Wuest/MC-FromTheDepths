@@ -131,7 +131,7 @@ public class DropInfo implements INBTSerializable<DropInfo> {
 							FromTheDepths.logger.error(exception);
 						}
 
-						if (compound != null && !compound.hasNoTags()) {
+						if (compound != null && !compound.isEmpty()) {
 						  stack.setTagCompound(compound);
 						}
 					}

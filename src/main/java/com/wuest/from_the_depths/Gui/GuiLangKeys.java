@@ -197,7 +197,7 @@ public class GuiLangKeys
 	
 	public static String translateDye(EnumDyeColor dyeColor)
 	{
-		return GuiLangKeys.translateString("from_the_depths.gui." + dyeColor.getUnlocalizedName());
+		return GuiLangKeys.translateString("from_the_depths.gui." + dyeColor.getTranslationKey());
 	}
 	
 	/**

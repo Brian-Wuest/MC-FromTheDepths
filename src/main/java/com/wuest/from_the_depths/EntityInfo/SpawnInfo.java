@@ -85,7 +85,7 @@ public class SpawnInfo implements INBTSerializable<SpawnInfo> {
 
       spawnInfo.bossAddInfo = new ArrayList<>();
 
-      if (!bossAddInfo.hasNoTags()) {
+      if (!bossAddInfo.isEmpty()) {
         for (int i = 0; i < bossAddInfo.tagCount(); i++) {
           NBTTagCompound addInfoTag = bossAddInfo.getCompoundTagAt(i);
           BossAddInfo addInfo = new BossAddInfo();

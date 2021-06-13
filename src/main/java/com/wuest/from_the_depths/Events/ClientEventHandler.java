@@ -113,7 +113,7 @@ public class ClientEventHandler {
    * @param item The item to register.
    */
   public static void regItem(Item item) {
-    ClientEventHandler.regItem(item, 0, item.getUnlocalizedName().substring(5));
+    ClientEventHandler.regItem(item, 0, item.getTranslationKey().substring(5));
   }
 
   /**
