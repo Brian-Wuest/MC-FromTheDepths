@@ -263,6 +263,12 @@ public abstract class BaseMonster {
 		tag.setBoolean("alwaysShowDisplayName", this.alwaysShowDisplayName);
 		tag.setInteger("timeToWaitBeforeSpawn", this.timeToWaitBeforeSpawn);
 		tag.setString("commandToRunAtSpawn", this.commandToRunAtSpawn);
+
+		// Make sure the spawnEffect is set.
+		if (this.spawnEffect == null) {
+			this.spawnEffect = SpawnEffectEnum.NONE;
+		}
+
 		tag.setString("spawnEffect", this.spawnEffect.getName());
 		tag.setBoolean("shouldSpawnInAir", this.shouldSpawnInAir);
 
