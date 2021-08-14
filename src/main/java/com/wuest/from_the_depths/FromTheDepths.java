@@ -1,12 +1,17 @@
 package com.wuest.from_the_depths;
 
+import com.wuest.from_the_depths.davoleo.TotemTextureLoader;
 import com.wuest.from_the_depths.proxy.CommonProxy;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -15,6 +20,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 @Mod(modid = FromTheDepths.MODID, version = FromTheDepths.VERSION, acceptedMinecraftVersions = "[1.12.2]", guiFactory = "com.wuest.from_the_depths.gui.ConfigGuiFactory", updateJSON = "https://raw.githubusercontent.com/Brian-Wuest/MC-FromTheDepths/master/changeLog.json")
 public class FromTheDepths {
@@ -59,9 +65,20 @@ public class FromTheDepths {
     }
   };
 
+  public static TotemTextureLoader totemTextureLoader;
+
   static {
     FromTheDepths.isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().toString()
         .contains("-agentlib:jdwp");
+
+    if (FMLCommonHandler.instance().getSide().isClient())
+    {
+      //Add Totem Textures Loader
+      List<IResourcePack> defaultReosurcePacks =
+              ObfuscationReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "field_110449_ao");
+      totemTextureLoader = new TotemTextureLoader();
+      defaultReosurcePacks.add(totemTextureLoader);
+    }
   }
 
   /**

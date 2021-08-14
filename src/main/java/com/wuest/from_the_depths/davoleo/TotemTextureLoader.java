@@ -2,6 +2,7 @@ package com.wuest.from_the_depths.davoleo;
 
 import com.google.gson.JsonObject;
 import com.wuest.from_the_depths.FromTheDepths;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.IMetadataSection;
 import net.minecraft.client.resources.data.MetadataSerializer;
@@ -15,6 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Set;
 
@@ -23,6 +25,15 @@ public class TotemTextureLoader implements IResourcePack, IResourceType {
 
     public static final String DOMAIN = "from_the_depths_totem";
     private final IResourcePack fromTheDepthsRP = FMLClientHandler.instance().getResourcePackFor(FromTheDepths.MODID);
+
+    private final Path modDirectory;
+
+    public TotemTextureLoader() {
+        modDirectory = Minecraft.getMinecraft().gameDir.toPath().resolve("config" + File.separatorChar + "FTD_Summons");
+        Path subDir = modDirectory.resolve("textures");
+        subDir.toFile().mkdirs();
+        subDir.resolveSibling("models/item").toFile().mkdirs();
+    }
 
     public static void generateItemModels(String bossKey) throws IOException {
         File modelFile = FromTheDepths.proxy.modDirectory.resolve("models/item/" + bossKey + ".json").toFile();
@@ -60,7 +71,7 @@ public class TotemTextureLoader implements IResourcePack, IResourceType {
     @Override
     public boolean resourceExists(ResourceLocation location)
     {
-        return FromTheDepths.proxy.modDirectory.resolve(location.getPath()).toFile().exists();
+        return modDirectory.resolve(location.getPath()).toFile().exists();
     }
 
     @Nonnull
