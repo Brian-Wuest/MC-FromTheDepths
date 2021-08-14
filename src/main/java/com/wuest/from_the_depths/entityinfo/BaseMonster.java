@@ -5,7 +5,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wuest.from_the_depths.FromTheDepths;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -36,6 +39,7 @@ public abstract class BaseMonster {
 	public boolean shouldSpawnInAir;
 	public String warningMessage;
 	public String spawnedMessage;
+	public int idleTimeBeforeDespawning;
 
 	public BaseMonster() {
 		this.maxHealth = -1;
@@ -49,6 +53,7 @@ public abstract class BaseMonster {
 		this.shouldSpawnInAir = false;
 		this.warningMessage = "";
 		this.spawnedMessage = "";
+		this.idleTimeBeforeDespawning = -1;
 	}
 
 	public ResourceLocation createResourceLocation() {
@@ -88,7 +93,7 @@ public abstract class BaseMonster {
 				}
 
 				// Add a tracking tag to the entity's saved NBT data.
-				NBTTagCompound trackingTag = new NBTTagCompound();
+				NBTTagCompound fromTheDepthsTag = new NBTTagCompound();
 
 				NBTTagList additionalDropList = new NBTTagList();
 
@@ -101,18 +106,23 @@ public abstract class BaseMonster {
 					}
 				}
 
-				trackingTag.setTag("additionalDrops", additionalDropList);
+				fromTheDepthsTag.setTag("additionalDrops", additionalDropList);
+
+				if (!fromTheDepthsTag.hasKey("timeUntilDespawn") && this.idleTimeBeforeDespawning > 0) {
+					fromTheDepthsTag.setInteger("timeUntilDespawn", this.idleTimeBeforeDespawning);
+					fromTheDepthsTag.setLong("tilePos", pos.toLong());
+				}
 
 				// Write the custom tag to this entity.
 				NBTTagCompound entityCompoundTag = entityLiving.getEntityData();
-				entityCompoundTag.setTag("from_the_depths", trackingTag);
+				entityCompoundTag.setTag("from_the_depths", fromTheDepthsTag);
 
 				entityLiving.forceSpawn = true;
 				entityLiving.rotationYawHead = entityLiving.rotationYaw;
 				entityLiving.renderYawOffset = entityLiving.rotationYaw;
 				entityLiving.setPositionAndUpdate(spawnPos.getX(), spawnPos.getY(), spawnPos.getZ());
 				entityLiving.onInitialSpawn(world.getDifficultyForLocation(new BlockPos(spawnPos)),
-						(IEntityLivingData) null);
+						null);
 
 				// Serialize the entity NBT data so it can be updated.
 				NBTTagCompound serializedEntity = entityLiving.serializeNBT();
@@ -138,8 +148,7 @@ public abstract class BaseMonster {
 				world.spawnEntity(entityLiving);
 
 				if (this.spawnEffect == SpawnEffectEnum.LIGHTNING) {
-					world.addWeatherEffect(new EntityLightningBolt(world, (double) spawnPos.getX(), (double) spawnPos.getY(),
-							(double) spawnPos.getZ(), true));
+					world.addWeatherEffect(new EntityLightningBolt(world, spawnPos.getX(), spawnPos.getY(), spawnPos.getZ(), true));
 				}
 
 				//Boss Spawned Message | if the predicate is not null it means we're spawning the actual boss and not minions
@@ -282,6 +291,7 @@ public abstract class BaseMonster {
 		tag.setBoolean("shouldSpawnInAir", this.shouldSpawnInAir);
 		tag.setString("warningMessage", this.warningMessage);
 		tag.setString("spawnedMessage", this.spawnedMessage);
+		tag.setInteger("idlingSecondsBeforeDespawn", this.idleTimeBeforeDespawning);
 
 		if (this.nbt != null) {
 			tag.setString("nbt", this.nbt.toString());
@@ -314,6 +324,7 @@ public abstract class BaseMonster {
 		this.shouldSpawnInAir = tag.getBoolean("shouldSpawnInAir");
 		this.warningMessage = tag.getString("warningMessage");
 		this.spawnedMessage = tag.getString("spawnedMessage");
+		this.idleTimeBeforeDespawning = tag.getInteger("idlingSecondsBeforeDespawn");
 
 		if (tag.hasKey("nbt")) {
 			JsonParser parser = new JsonParser();

@@ -122,6 +122,7 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
       if (!this.config.bossSpawned && this.config.preBossMinions.size() == 0) {
 
         if (this.config.totalLightningBolts >= 4) {
+          //Spawn the actual boss
           Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos, validPlayer, this.commandSender);
           config.aliveMonsterIds.add(entity.getUniqueID());
           //System.out.println("added " + entity.getDisplayName().getFormattedText() + " to the list");
