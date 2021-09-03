@@ -20,7 +20,7 @@ import java.util.function.BooleanSupplier;
  * (trying to keep the mod as an Optional Soft Dependency)
  * @author Davoleo
  */
-public class SSHelper {
+public class SereneSeasonHelper {
 
     public static final BooleanSupplier isSereneSeasonLoaded = () -> Loader.isModLoaded("sereneseasons");
     public static Map<String, Pair<Season, Season.SubSeason>> seasonRestrictions = new HashMap<>();
@@ -52,7 +52,7 @@ public class SSHelper {
     }
 
     /**
-     * Adds a season restriction in the form of a Pair of seasons to the {@link SSHelper#seasonRestrictions} map
+     * Adds a season restriction in the form of a Pair of seasons to the {@link SereneSeasonHelper#seasonRestrictions} map
      * @param spawnKey The boss key this season restriction is bound to.
      * @param seasonObj The season restriction information (directly from the JSON)
      * @throws JsonSyntaxException when the "season" attribute is not present

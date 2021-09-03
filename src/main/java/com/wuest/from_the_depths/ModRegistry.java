@@ -7,7 +7,7 @@ import com.wuest.from_the_depths.davoleo.ResourceLocationTypeAdapter;
 import com.wuest.from_the_depths.davoleo.TotemTextureLoader;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
-import com.wuest.from_the_depths.integration.SSHelper;
+import com.wuest.from_the_depths.integration.SereneSeasonHelper;
 import com.wuest.from_the_depths.items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.proxy.messages.ConfigSyncMessage;
 import com.wuest.from_the_depths.proxy.messages.handlers.ConfigSyncHandler;
@@ -260,9 +260,9 @@ public class ModRegistry {
 
 							String key = JsonUtils.getString(json, "key");
 
-							if (SSHelper.isSereneSeasonLoaded.getAsBoolean() && restrictions.has("sereneSeasons")) {
+							if (SereneSeasonHelper.isSereneSeasonLoaded.getAsBoolean() && restrictions.has("sereneSeasons")) {
 								JsonObject seasonObj = JsonUtils.getJsonObject(restrictions, "sereneSeasons");
-								SSHelper.addSeasonRestriction(key, seasonObj);
+								SereneSeasonHelper.addSeasonRestriction(key, seasonObj);
 							}
 
 							RestrictionBundle bundle = gson.fromJson(restrictions, RestrictionBundle.class);

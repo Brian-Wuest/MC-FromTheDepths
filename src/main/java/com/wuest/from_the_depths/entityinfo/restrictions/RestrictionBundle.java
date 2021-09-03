@@ -1,7 +1,7 @@
 package com.wuest.from_the_depths.entityinfo.restrictions;
 
 import com.wuest.from_the_depths.base.Weather;
-import com.wuest.from_the_depths.integration.SSHelper;
+import com.wuest.from_the_depths.integration.SereneSeasonHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
@@ -12,7 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.Arrays;
 
 /**
- * Bundles all restriction types together (excluding Serene Season restrictions that are tested in {@link SSHelper#testSeasonRestrictions(String, World)})
+ * Bundles all restriction types together (excluding Serene Season restrictions that are tested in {@link SereneSeasonHelper#testSeasonRestrictions(String, World)})
  * @author Davoleo
  * @implNote Fields are not final because I don't know if GSON can serialize them correctly if they are :P
  */
@@ -95,7 +95,7 @@ public class RestrictionBundle {
         }
 
         if (canStart) {
-            Pair<Boolean, String> resultAndCorrectSeason = SSHelper.testSeasonRestrictions(spawnKey, world);
+            Pair<Boolean, String> resultAndCorrectSeason = SereneSeasonHelper.testSeasonRestrictions(spawnKey, world);
             canStart = resultAndCorrectSeason.getLeft();
             String correctSeason = resultAndCorrectSeason.getRight();
             if (!canStart)
