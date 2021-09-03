@@ -27,10 +27,11 @@ public class SereneSeasonHelper {
 
     private static final BiPredicate<Pair<Season, Season.SubSeason>, World> SEASON_SPAWN_RESTRICTION = (season, world) -> {
         ISeasonState worldSeason = SeasonHelper.getSeasonState(world);
-        if (season.getRight() == null)
+        if (season.getRight() == null) {
             return worldSeason.getSeason() == season.getLeft();
-        else
+        } else {
             return worldSeason.getSeason() == season.getLeft() && worldSeason.getSubSeason() == season.getRight();
+        }
     };
 
     /**
@@ -72,21 +73,24 @@ public class SereneSeasonHelper {
      */
     public static Pair<Boolean, String> testSeasonRestrictions(String spawnKey, World world) {
         //Return true if Serene Seasons is not installed
-        if (!isSereneSeasonLoaded.getAsBoolean())
+        if (!isSereneSeasonLoaded.getAsBoolean()) {
             return Pair.of(true, null);
+        }
 
         Pair<Season, Season.SubSeason> seasonPair = seasonRestrictions.get(spawnKey);
 
         //Return true if no season restrictions are specified
-        if (seasonPair == null)
+        if (seasonPair == null) {
             return Pair.of(true, null);
+        }
 
         String correctSeason;
         //Save the correct
-        if (seasonPair.getRight() != null)
+        if (seasonPair.getRight() != null) {
             correctSeason = seasonPair.getRight().toString().replace('_', ' ').toLowerCase();
-        else
+        } else {
             correctSeason = seasonPair.getLeft().toString().toLowerCase();
+        }
 
         //Test the SEASON predicate
         boolean result = SEASON_SPAWN_RESTRICTION.test(seasonRestrictions.get(spawnKey), world);

@@ -54,15 +54,17 @@ public class RestrictionBundle {
 
         if (canStart && timeOfDay != null) {
             canStart = SpawnRestrictions.TIME_OF_DAY.test(world, timeOfDay);
-            if (!canStart)
+            if (!canStart) {
                 message = new TextComponentTranslation("from_the_depths.restrictions.time_of_day");
+            }
         }
 
         if (canStart && weather != null) {
             canStart = SpawnRestrictions.WEATHER.test(world, weather);
 
-            if (!canStart)
+            if (!canStart) {
                 message = new TextComponentTranslation("from_the_depths.restrictions.weather", weather.name().toLowerCase());
+            }
         }
 
         if (canStart && biomes != null) {
@@ -90,16 +92,18 @@ public class RestrictionBundle {
 
         if (canStart && groundRadius != 0) {
             canStart = SpawnRestrictions.GROUND_RADIUS.test(new Tuple<>(pos, world), groundRadius);
-            if (!canStart)
+            if (!canStart) {
                 message = new TextComponentTranslation("from_the_depths.restrictions.ground_radius", groundRadius);
+            }
         }
 
         if (canStart) {
             Pair<Boolean, String> resultAndCorrectSeason = SereneSeasonHelper.testSeasonRestrictions(spawnKey, world);
             canStart = resultAndCorrectSeason.getLeft();
             String correctSeason = resultAndCorrectSeason.getRight();
-            if (!canStart)
+            if (!canStart) {
                 message = new TextComponentTranslation("from_the_depths.restrictions.season", correctSeason);
+            }
         }
 
         return Pair.of(canStart, message);
@@ -110,18 +114,24 @@ public class RestrictionBundle {
     {
         StringBuilder builder = new StringBuilder("RestrictionBundle: ");
 
-        if (dimensions != null)
+        if (dimensions != null) {
             builder.append("dimensions=").append(Arrays.toString(dimensions));
-        if (timeOfDay != null)
+        }
+        if (timeOfDay != null) {
             builder.append("| timeOfDay=").append(timeOfDay);
-        if (weather != null)
+        }
+        if (weather != null) {
             builder.append("| weather=").append(weather);
-        if (biomes != null)
+        }
+        if (biomes != null) {
             builder.append("| biomes=").append(Arrays.toString(biomes));
-        if (yLevel != null)
+        }
+        if (yLevel != null) {
             builder.append("| yLevel=").append(yLevel);
-        if (groundRadius != 0)
+        }
+        if (groundRadius != 0) {
             builder.append("| groundRadius=").append(groundRadius);
+        }
 
         return builder.toString();
     }
