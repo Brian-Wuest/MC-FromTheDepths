@@ -109,6 +109,7 @@ sourceSets {
     }
 }
 
+// Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
         attributes([
@@ -123,6 +124,8 @@ jar {
     }
 }
 
+// Example configuration to allow publishing using the maven-publish task
+// This is the preferred method to reobfuscate your jar file
 jar.finalizedBy('reobfJar')
 
 publishing {
@@ -159,10 +162,9 @@ processResources {
 task processSource(type: Sync) {
     from sourceSets.main.java
     inputs.property 'version', version
-    filter { String line -> line.replaceAll("@VERSION@", "${mod_version}") }
+    filter { String line -> line.replaceAll("@VERSION@", "${config.mod_version}") }
     into "$buildDir/src"
 }
-
 compileJava {
     source = processSource.outputs
 }

@@ -98,6 +98,7 @@ public class BlockAltarOfSpawning extends TileBlockBase<TileEntityAltarOfSpawnin
   }
 
   @Nonnull
+  @SideOnly(Side.CLIENT)
   @Override
   public BlockRenderLayer getRenderLayer()
   {
