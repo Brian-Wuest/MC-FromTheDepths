@@ -1,40 +1,79 @@
 buildscript {
     repositories {
-        mavenCentral()
-        maven { url = 'https://jitpack.io' }
         maven { url = 'https://maven.minecraftforge.net' }
+        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-//        classpath('com.github.DStrand1:ForgeGradle:FG_2.3-SNAPSHOT') {
-//            changing = true
-//        }
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
 // Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'idea'
+apply plugin: 'java'
 
-group = "com.wuest.from_the_depths" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
+group = "com.wuest.from_the_depths"
 archivesBaseName = "FromTheDepths"
 version = "${mod_version}"
 
-sourceCompatibility = targetCompatibility = '1.8'
-compileJava {
-    sourceCompatibility = targetCompatibility = '1.8'
-}
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = '1.8'
+
+// Make sure to delete the temporary sources folder before build.
+// This way any build-time modifications are always done.
+project.delete(files('build/src'))
 
 minecraft {
-    version = "$forge_version"
-    runDir = 'run'
-	mappings("snapshot_$forge_snapshot")
+
+	mappings(channel: 'snapshot', version: "${forge_snapshot}")
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
 
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+        }
+
+        server {
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'from_the_depths', '--all', '--output', file('src/generated/resources/')
+
+        }
+    }
 }
 
 repositories {
@@ -49,6 +88,8 @@ repositories {
 }
 
 dependencies {
+    minecraft "net.minecraftforge:forge:${forge_version}"
+
     //Compile against the JEI API but do not include it at runtime
     compileOnly 'mezz.jei:jei_1.12.2:4.15.+:api'
 
@@ -58,17 +99,70 @@ dependencies {
     implementation "curse.maven:sereneseasons-291874:2799213"
 }
 
+sourceSets {
+    main {
+        java.outputDir = file('build/bin/main')
+        output.resourcesDir = file('build/bin/main')
+    }
+    test {
+        output.resourcesDir = 'build/classes/test'
+    }
+}
+
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "from_the_depths",
+            "Specification-Vendor": "WuestMan",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"WuestMan",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+// This task will update the mcmod.info file with the mod version.
 processResources {
-
+    // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
+    // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        // replace version and mcversion
+        expand 'version': project.version
     }
-
+    // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
     }
+}
+
+// This task will sync the target folder (build/src) with the source folder (src/main/java)
+// It will then update the version string with the mod's version.
+task processSource(type: Sync) {
+    from sourceSets.main.java
+    inputs.property 'version', version
+    filter { String line -> line.replaceAll("@VERSION@", "${mod_version}") }
+    into "$buildDir/src"
+}
+
+compileJava {
+    source = processSource.outputs
 }
