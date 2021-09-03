@@ -162,7 +162,7 @@ processResources {
 task processSource(type: Sync) {
     from sourceSets.main.java
     inputs.property 'version', version
-    filter { String line -> line.replaceAll("@VERSION@", "${config.mod_version}") }
+    filter { String line -> line.replaceAll("@VERSION@", mod_version) }
     into "$buildDir/src"
 }
 compileJava {
