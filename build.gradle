@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net' }
         jcenter()
         mavenCentral()
     }
@@ -21,22 +21,19 @@ idea {
     }
 }
 
-// Load configuration options from the properties file.
-ext.configFile = file('gradle.properties')
-ext.config = parseConfig(configFile)
+group = "com.wuest.from_the_depths"
+archivesBaseName = "FromTheDepths"
+version = "${mod_version}"
 
-version = "${config.mod_version}"
-group = "com.wuest.from_the_depths" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "from_the_depths"
-
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = '1.8'
 
 // Make sure to delete the temporary sources folder before build.
 // This way any build-time modifications are always done.
 project.delete(files('build/src'))
 
 minecraft {
-	mappings channel: 'snapshot', version: "${config.forge_snapshot}"
+
+	mappings(channel: 'snapshot', version: "${forge_snapshot}")
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -63,8 +60,8 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
         }
-		
-		data {
+
+        data {
             workingDirectory project.file('run')
 
             // Recommended logging data for a userdev environment
@@ -79,26 +76,37 @@ minecraft {
     }
 }
 
-dependencies {
-    minecraft 'net.minecraftforge:forge:' + "${config.forge_version}"
-}
+repositories {
+    maven {
+        name = "Progwml6 maven"
+        url = "http://dvs1.progwml6.com/files/maven"
+    }
 
-def parseConfig(File config) {
-    config.withReader {
-        def prop = new Properties()
-        prop.load(it)
-        return (new ConfigSlurper().parse(prop))
+    maven {
+        url "https://www.cursemaven.com"
     }
 }
 
+dependencies {
+    minecraft "net.minecraftforge:forge:${forge_version}"
+
+    //Compile against the JEI API but do not include it at runtime
+    compileOnly 'mezz.jei:jei_1.12.2:4.15.+:api'
+
+    //At runtime, use the full JEI jar
+    runtimeOnly 'mezz.jei:jei_1.12.2:4.15.+'
+
+    implementation "curse.maven:sereneseasons-291874:2799213"
+}
+
 sourceSets {
-  main {
-    java.outputDir = file("build/bin/main")
-    output.resourcesDir = "build/bin/main"
-  }
-  test {
-    output.resourcesDir = "build/classes/test"
-  }
+    main {
+        java.outputDir = file('build/bin/main')
+        output.resourcesDir = file('build/bin/main')
+    }
+    test {
+        output.resourcesDir = 'build/classes/test'
+    }
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -154,7 +162,7 @@ processResources {
 task processSource(type: Sync) {
     from sourceSets.main.java
     inputs.property 'version', version
-    filter { String line -> line.replaceAll("@VERSION@", "${config.mod_version}") }
+    filter { String line -> line.replaceAll("@VERSION@", mod_version) }
     into "$buildDir/src"
 }
 compileJava {

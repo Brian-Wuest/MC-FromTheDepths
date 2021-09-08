@@ -1,17 +1,19 @@
 package com.wuest.from_the_depths;
 
 import com.google.common.io.Files;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.wuest.from_the_depths.Blocks.BlockAltarOfSpawning;
-import com.wuest.from_the_depths.EntityInfo.SpawnInfo;
-import com.wuest.from_the_depths.Items.ItemTotemOfSpawning;
-import com.wuest.from_the_depths.Proxy.Messages.ConfigSyncMessage;
-import com.wuest.from_the_depths.Proxy.Messages.Handlers.ConfigSyncHandler;
-import com.wuest.from_the_depths.TileEntities.TileEntityAltarOfSpawning;
+import com.google.gson.*;
+import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
+import com.wuest.from_the_depths.davoleo.ResourceLocationTypeAdapter;
+import com.wuest.from_the_depths.davoleo.TotemTextureLoader;
+import com.wuest.from_the_depths.entityinfo.SpawnInfo;
+import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
+import com.wuest.from_the_depths.integration.SereneSeasonHelper;
+import com.wuest.from_the_depths.items.ItemTotemOfSpawning;
+import com.wuest.from_the_depths.proxy.messages.ConfigSyncMessage;
+import com.wuest.from_the_depths.proxy.messages.handlers.ConfigSyncHandler;
+import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -28,17 +30,19 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.CraftingHelper.ShapedPrimer;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 /**
@@ -51,27 +55,32 @@ public class ModRegistry {
 	/**
 	 * The ArrayList of mod registered items.
 	 */
-	public static ArrayList<Item> ModItems = new ArrayList<Item>();
+	public static ArrayList<Item> ModItems = new ArrayList<>();
 
 	/**
 	 * The ArrayList of mod registered blocks.
 	 */
-	public static ArrayList<Block> ModBlocks = new ArrayList<Block>();
+	public static ArrayList<Block> ModBlocks = new ArrayList<>();
 
 	/**
 	 * THe ArrayList of mod spawn infos.
 	 */
-	public static ArrayList<SpawnInfo> SpawnInfos = new ArrayList<SpawnInfo>();
+	public static ArrayList<SpawnInfo> SpawnInfos = new ArrayList<>();
 
 	/**
 	 * The hashmap of mod guis.
 	 */
-	public static HashMap<Integer, Class> ModGuis = new HashMap<Integer, Class>();
+	public static HashMap<Integer, Class<? extends Gui>> ModGuis = new HashMap<>();
 
 	/**
 	 * This hashmap links spawn information and item registrations.
 	 */
 	public static HashMap<String, Tuple<SpawnInfo, ItemTotemOfSpawning>> SpawnInfosAndItems = new HashMap<>();
+
+	/**
+	 * A hashmap that links SpawnInfo Strings with Restriction collections
+	 */
+	public static Map<String, RestrictionBundle> spawnRestrictions = new HashMap<>();
 
 	/**
 	 * The identifier for the ChickenCoop GUI.
@@ -93,6 +102,7 @@ public class ModRegistry {
 	 * @param genericClass The class of item to get from the collection.
 	 * @return Null if the item could not be found otherwise the item found.
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T extends Item> T GetItem(Class<T> genericClass) {
 		for (Item entry : ModRegistry.ModItems) {
 			if (entry.getClass() == genericClass) {
@@ -110,6 +120,7 @@ public class ModRegistry {
 	 * @param genericClass The class of block to get from the collection.
 	 * @return Null if the block could not be found otherwise the block found.
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T extends Block> T GetBlock(Class<T> genericClass) {
 		for (Block entry : ModRegistry.ModBlocks) {
 			if (entry.getClass() == genericClass) {
@@ -133,7 +144,7 @@ public class ModRegistry {
 	 * @return Null if the screen wasn't found, otherwise the screen found.
 	 */
 	public static GuiScreen GetModGuiByID(int id, int x, int y, int z) {
-		for (Entry<Integer, Class> entry : ModRegistry.ModGuis.entrySet()) {
+		for (Entry<Integer, Class<? extends Gui>> entry : ModRegistry.ModGuis.entrySet()) {
 			if (entry.getKey() == id) {
 				try {
 					return (GuiScreen) entry.getValue().getConstructor(int.class, int.class, int.class).newInstance(x, y, z);
@@ -154,18 +165,26 @@ public class ModRegistry {
 			Block block = new BlockAltarOfSpawning("block_altar_of_summoning");
 			ModRegistry.registerBlock(block);
 		} catch (Exception ex) {
-			FMLLog.getLogger().warn(ex.getMessage());
+			FromTheDepths.logger.warn(ex.getMessage());
 		}
 
-		ItemTotemOfSpawning baseTotem = new ItemTotemOfSpawning(null, "item_totem_of_summoning");
+		ItemTotemOfSpawning baseTotem = new ItemTotemOfSpawning(null, "totem");
 		ModRegistry.registerItem(baseTotem);
 
-		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, "from_the_depths:block_altar_of_summoning");
+		GameRegistry.registerTileEntity(TileEntityAltarOfSpawning.class, new ResourceLocation("from_the_depths:block_altar_of_summoning"));
 
 		for (SpawnInfo spawnInfo : ModRegistry.SpawnInfos) {
-			ItemTotemOfSpawning registeredItem = new ItemTotemOfSpawning(spawnInfo.key, "item_totem_of_summoning");
+			ItemTotemOfSpawning registeredItem = new ItemTotemOfSpawning(spawnInfo.key, "totem");
 			ModRegistry.registerItem(registeredItem);
 			ModRegistry.SpawnInfosAndItems.put(spawnInfo.key, new Tuple<>(spawnInfo, registeredItem));
+
+			//Generate Custom ItemModel
+			try {
+				TotemTextureLoader.generateItemModels(spawnInfo.key);
+			}
+			catch (IOException e) {
+				FromTheDepths.logger.warn(e.getMessage());
+			}
 		}
 	}
 
@@ -177,7 +196,7 @@ public class ModRegistry {
 	}
 
 	/**
-	 * This is where the mod messages are registered.
+	 * This is where the mod packets are registered.
 	 */
 	public static void RegisterMessages() {
 		FromTheDepths.network.registerMessage(ConfigSyncHandler.class, ConfigSyncMessage.class, 1, Side.CLIENT);
@@ -224,6 +243,42 @@ public class ModRegistry {
 	}
 
 	/**
+	 * Loads spawn restrictions from json configuration
+	 */
+	public static void registerSpawnRestrictions() {
+		if (FromTheDepths.proxy.modDirectory.toFile().exists()) {
+			for (File file : FromTheDepths.proxy.modDirectory.toFile().listFiles()) {
+				if (file.isFile()) {
+					try {
+						Gson gson = new GsonBuilder().registerTypeAdapter(ResourceLocation.class, new ResourceLocationTypeAdapter()).create();
+
+						BufferedReader reader = java.nio.file.Files.newBufferedReader(file.toPath());
+						JsonObject json = JsonUtils.fromJson(gson, reader, JsonObject.class, true);
+
+						if (JsonUtils.hasField(json, "restrictions")) {
+							JsonObject restrictions = JsonUtils.getJsonObject(json, "restrictions");
+
+							String key = JsonUtils.getString(json, "key");
+
+							if (SereneSeasonHelper.isSereneSeasonLoaded.getAsBoolean() && restrictions.has("sereneSeasons")) {
+								JsonObject seasonObj = JsonUtils.getJsonObject(restrictions, "sereneSeasons");
+								SereneSeasonHelper.addSeasonRestriction(key, seasonObj);
+							}
+
+							RestrictionBundle bundle = gson.fromJson(restrictions, RestrictionBundle.class);
+
+							//FromTheDepths.logger.info("Registering Spawn info restrictions for " + key + ". Restrictions: " + bundle);
+							spawnRestrictions.put(key, bundle);
+						}
+					} catch (IOException | IllegalArgumentException | JsonSyntaxException exception) {
+						FromTheDepths.logger.error("From_The_Depths: Error Loading Spawn Restrictions: {}. {}", file.getPath(), exception);
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * This method is used to register totem of summoning recipes.
 	 */
 	public static void RegisterTotemOfSummoningRecipes() {
@@ -250,7 +305,7 @@ public class ModRegistry {
 							String informationKey = json.get("key").getAsString();
 
 							if (ModRegistry.SpawnInfosAndItems.containsKey(informationKey)) {
-								Tuple<SpawnInfo, ItemTotemOfSpawning> registeredLink = ModRegistry.SpawnInfosAndItems.get(informationKey);
+								// Tuple<SpawnInfo, ItemTotemOfSpawning> registeredLink = ModRegistry.SpawnInfosAndItems.get(informationKey);
 								IRecipe recipe = CraftingHelper.getRecipe(recipeObject, ctx);
 								ItemStack recipeOutput = recipe.getRecipeOutput();
 
