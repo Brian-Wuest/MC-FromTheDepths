@@ -2,7 +2,7 @@ package com.wuest.from_the_depths.events;
 
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
-import com.wuest.from_the_depths.davoleo.TotemTextureLoader;
+import com.wuest.from_the_depths.resource_loader.TotemTextureLoader;
 import com.wuest.from_the_depths.items.ItemTotemOfSpawning;
 import com.wuest.from_the_depths.proxy.ClientProxy;
 import net.minecraft.block.Block;

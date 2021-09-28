@@ -1,6 +1,6 @@
 package com.wuest.from_the_depths;
 
-import com.wuest.from_the_depths.davoleo.TotemTextureLoader;
+import com.wuest.from_the_depths.resource_loader.TotemTextureLoader;
 import com.wuest.from_the_depths.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourcePack;

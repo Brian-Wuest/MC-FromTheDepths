@@ -1,4 +1,4 @@
-package com.wuest.from_the_depths.davoleo;
+package com.wuest.from_the_depths.resource_loader;
 
 import com.google.gson.JsonObject;
 import com.wuest.from_the_depths.FromTheDepths;

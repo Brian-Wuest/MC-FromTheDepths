@@ -1,4 +1,4 @@
-package com.wuest.from_the_depths.davoleo;
+package com.wuest.from_the_depths.resource_loader;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -20,6 +20,7 @@ public class ResourceLocationTypeAdapter extends TypeAdapter<ResourceLocation> {
             out.nullValue();
             return;
         }
+
         out.value(value.toString());
     }
 
@@ -30,6 +31,7 @@ public class ResourceLocationTypeAdapter extends TypeAdapter<ResourceLocation> {
             in.nextNull();
             return null;
         }
+
         return new ResourceLocation(in.nextString());
     }
 
