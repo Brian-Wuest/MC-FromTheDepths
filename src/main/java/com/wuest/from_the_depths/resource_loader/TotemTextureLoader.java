@@ -48,8 +48,7 @@ public class TotemTextureLoader implements IResourcePack, IResourceType {
 
             BufferedWriter writer = new BufferedWriter(new FileWriter(modelFile));
             writer.close();
-        }
-        else {
+        } else {
             FromTheDepths.logger.warn("Warning: Item Model File for boss " + bossKey + " couldn't be generated!");
         }
     }
@@ -57,49 +56,42 @@ public class TotemTextureLoader implements IResourcePack, IResourceType {
     @SuppressWarnings("NullableProblems")
     @Nullable
     @Override
-    public InputStream getInputStream(ResourceLocation location) throws IOException
-    {
+    public InputStream getInputStream(ResourceLocation location) throws IOException {
         if (resourceExists(location)) {
             File file = FromTheDepths.proxy.modDirectory.resolve(location.getPath()).toFile();
             return new FileInputStream(file);
-        }
-        else {
+        } else {
             return fromTheDepthsRP.getInputStream(new ResourceLocation(FromTheDepths.MODID, "textures/items/item_totem_of_summoning.png"));
         }
     }
 
     @Override
-    public boolean resourceExists(ResourceLocation location)
-    {
+    public boolean resourceExists(ResourceLocation location) {
         return modDirectory.resolve(location.getPath()).toFile().exists();
     }
 
     @Nonnull
     @Override
-    public Set<String> getResourceDomains()
-    {
+    public Set<String> getResourceDomains() {
         return Collections.singleton(DOMAIN);
     }
 
     @Nullable
     @Override
-    public <T extends IMetadataSection> T getPackMetadata(MetadataSerializer metadataSerializer, String metadataSectionName) throws IOException
-    {
+    public <T extends IMetadataSection> T getPackMetadata(MetadataSerializer metadataSerializer, String metadataSectionName) throws IOException {
         return null;
     }
 
     @Nonnull
     @Override
-    public BufferedImage getPackImage() throws IOException
-    {
+    public BufferedImage getPackImage() throws IOException {
         InputStream stream = fromTheDepthsRP.getInputStream(new ResourceLocation(FromTheDepths.MODID, "textures/items/item_totem_of_summoning.png"));
         return ImageIO.read(stream);
     }
 
     @Nonnull
     @Override
-    public String getPackName()
-    {
+    public String getPackName() {
         return "Totem Texture Loader";
     }
 }

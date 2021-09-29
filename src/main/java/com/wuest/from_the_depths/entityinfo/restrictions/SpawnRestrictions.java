@@ -11,21 +11,18 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.function.BiPredicate;
 
-/**
- * @author Davoleo
- */
 public class SpawnRestrictions {
 
-    //Current Dimension
+    // Current Dimension
     public static final BiPredicate<World, Integer[]> DIMENSION = (world, dimensions) -> ArrayUtils.contains(dimensions, world.provider.getDimension());
 
-    //World Time of Day
+    // World Time of Day
     public static final BiPredicate<World, DataAndComparator<Long>> TIME_OF_DAY = (world, time) -> time.operator.test(world.provider.getWorldTime(), time.data);
 
     //Weather
     public static final BiPredicate<World, Weather> WEATHER = (world, weather) -> weather.isCurrentState(world.getWorldInfo());
 
-    //Biome
+    // Biome
     public static final BiPredicate<Tuple<BlockPos, World>, ResourceLocation[]> BIOME = (blockPosWorldPair, biomes) -> {
         Biome biome = blockPosWorldPair.getSecond().provider.getBiomeForCoords(blockPosWorldPair.getFirst());
         return ArrayUtils.contains(biomes, biome.getRegistryName());

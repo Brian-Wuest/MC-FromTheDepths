@@ -31,10 +31,11 @@ public class RestrictionBundle {
 
     public RestrictionBundle()
     {
-        dimensions = null;
-        timeOfDay = null;
-        weather = null;
-        biomes = null;
+        this.dimensions = null;
+        this.timeOfDay = null;
+        this.weather = null;
+        this.biomes = null;
+        this.yLevel = null;
         groundRadius = 0;
     }
 
@@ -42,67 +43,65 @@ public class RestrictionBundle {
         boolean canStart = true;
         TextComponentTranslation message = null;
 
-        if (dimensions != null) {
-            canStart = SpawnRestrictions.DIMENSION.test(world, dimensions);
+        if (this.dimensions != null) {
+            canStart = SpawnRestrictions.DIMENSION.test(world, this.dimensions);
 
             if (!canStart) {
                 message = new TextComponentTranslation("from_the_depths.restrictions.dimension");
             }
         }
 
-        if (canStart && timeOfDay != null) {
-            canStart = SpawnRestrictions.TIME_OF_DAY.test(world, timeOfDay);
+        if (canStart && this.timeOfDay != null) {
+            canStart = SpawnRestrictions.TIME_OF_DAY.test(world, this.timeOfDay);
             if (!canStart) {
                 message = new TextComponentTranslation("from_the_depths.restrictions.time_of_day");
             }
         }
 
-        if (canStart && weather != null) {
-            canStart = SpawnRestrictions.WEATHER.test(world, weather);
+        if (canStart && this.weather != null) {
+            canStart = SpawnRestrictions.WEATHER.test(world, this.weather);
 
             if (!canStart) {
                 message = new TextComponentTranslation("from_the_depths.restrictions.weather", weather.name().toLowerCase());
             }
         }
 
-        if (canStart && biomes != null) {
-            canStart = SpawnRestrictions.BIOME.test(new Tuple<>(pos, world), biomes);
+        if (canStart && this.biomes != null) {
+            canStart = SpawnRestrictions.BIOME.test(new Tuple<>(pos, world), this.biomes);
+
             if (!canStart) {
-                String biomesString = Arrays.stream(biomes).map(resLoc -> resLoc.getPath().replace("_", "")).reduce("", (s, s2) -> s + ", " + s2);
+                String biomesString = Arrays.stream(this.biomes).map(resLoc -> resLoc.getPath().replace("_", "")).reduce("", (s, s2) -> s + ", " + s2);
                 message = new TextComponentTranslation("from_the_depths.restrictions.biomes", biomesString);
             }
         }
 
-        if (canStart && yLevel != null) {
-            canStart = SpawnRestrictions.Y_LEVEL.test(pos, yLevel);
+        if (canStart && this.yLevel != null) {
+            canStart = SpawnRestrictions.Y_LEVEL.test(pos, this.yLevel);
 
             if (!canStart) {
                 String key = "from_the_depths.restrictions.y_level_";
-                if (yLevel.operator == DataAndComparator.Operator.MORE)
-                    key += "higher";
-                else if (yLevel.operator == DataAndComparator.Operator.LESS)
-                    key += "lower";
-                else key += "equals";
 
-                message = new TextComponentTranslation(key, yLevel.data);
+                if (this.yLevel.operator == DataAndComparator.Operator.MORE) {
+                    key += "higher";
+                }
+                else if (this.yLevel.operator == DataAndComparator.Operator.LESS) {
+                    key += "lower";
+                }
+                else {
+                    key += "equals";
+                }
+
+                message = new TextComponentTranslation(key, this.yLevel.data);
             }
         }
 
-        if (canStart && groundRadius != 0) {
-            canStart = SpawnRestrictions.GROUND_RADIUS.test(new Tuple<>(pos, world), groundRadius);
+        if (canStart && this.groundRadius != 0) {
+            canStart = SpawnRestrictions.GROUND_RADIUS.test(new Tuple<>(pos, world), this.groundRadius);
+
             if (!canStart) {
                 message = new TextComponentTranslation("from_the_depths.restrictions.ground_radius", groundRadius);
             }
         }
-
-/*        if (canStart) {
-            Pair<Boolean, String> resultAndCorrectSeason = SereneSeasonHelper.testSeasonRestrictions(spawnKey, world);
-            canStart = resultAndCorrectSeason.getLeft();
-            String correctSeason = resultAndCorrectSeason.getRight();
-            if (!canStart) {
-                message = new TextComponentTranslation("from_the_depths.restrictions.season", correctSeason);
-            }
-        }*/
 
         return Pair.of(canStart, message);
     }
@@ -112,23 +111,28 @@ public class RestrictionBundle {
     {
         StringBuilder builder = new StringBuilder("RestrictionBundle: ");
 
-        if (dimensions != null) {
-            builder.append("dimensions=").append(Arrays.toString(dimensions));
+        if (this.dimensions != null) {
+            builder.append("dimensions=").append(Arrays.toString(this.dimensions));
         }
-        if (timeOfDay != null) {
-            builder.append("| timeOfDay=").append(timeOfDay);
+
+        if (this.timeOfDay != null) {
+            builder.append("| timeOfDay=").append(this.timeOfDay);
         }
-        if (weather != null) {
-            builder.append("| weather=").append(weather);
+
+        if (this.weather != null) {
+            builder.append("| weather=").append(this.weather);
         }
-        if (biomes != null) {
-            builder.append("| biomes=").append(Arrays.toString(biomes));
+
+        if (this.biomes != null) {
+            builder.append("| biomes=").append(Arrays.toString(this.biomes));
         }
-        if (yLevel != null) {
-            builder.append("| yLevel=").append(yLevel);
+
+        if (this.yLevel != null) {
+            builder.append("| yLevel=").append(this.yLevel);
         }
-        if (groundRadius != 0) {
-            builder.append("| groundRadius=").append(groundRadius);
+
+        if (this.groundRadius != 0) {
+            builder.append("| groundRadius=").append(this.groundRadius);
         }
 
         return builder.toString();

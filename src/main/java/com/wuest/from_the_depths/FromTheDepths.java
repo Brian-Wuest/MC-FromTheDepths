@@ -107,7 +107,7 @@ public class FromTheDepths {
    * @param event The event from forge.
    */
   @EventHandler
-  public void postinit(FMLPostInitializationEvent event) {
-    FromTheDepths.proxy.postinit(event);
+  public void postInit(FMLPostInitializationEvent event) {
+    FromTheDepths.proxy.postInit(event);
   }
 }

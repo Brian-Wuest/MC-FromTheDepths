@@ -14,8 +14,7 @@ import java.io.IOException;
 public class ResourceLocationTypeAdapter extends TypeAdapter<ResourceLocation> {
 
     @Override
-    public void write(JsonWriter out, ResourceLocation value) throws IOException
-    {
+    public void write(JsonWriter out, ResourceLocation value) throws IOException {
         if (value == null) {
             out.nullValue();
             return;
@@ -25,8 +24,7 @@ public class ResourceLocationTypeAdapter extends TypeAdapter<ResourceLocation> {
     }
 
     @Override
-    public ResourceLocation read(JsonReader in) throws IOException
-    {
+    public ResourceLocation read(JsonReader in) throws IOException {
         if (in.peek() == JsonToken.NULL) {
             in.nextNull();
             return null;

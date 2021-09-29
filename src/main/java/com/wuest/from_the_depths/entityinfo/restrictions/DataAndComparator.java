@@ -6,16 +6,22 @@ public class DataAndComparator<D extends Comparable<D>> {
     public D data;
     public Operator operator;
 
-    public DataAndComparator()
-    {
-        data = null;
-        operator = null;
+    public DataAndComparator() {
+        this.data = null;
+        this.operator = null;
     }
 
-    public DataAndComparator(D data, Operator operator)
-    {
+    public DataAndComparator(D data, Operator operator) {
         this.data = data;
         this.operator = operator;
+    }
+
+    @Override
+    public String toString() {
+        return "DataAndComparator{" +
+                "data=" + data +
+                ", operator=" + operator +
+                '}';
     }
 
     /**
@@ -26,31 +32,29 @@ public class DataAndComparator<D extends Comparable<D>> {
 
         @SerializedName(value = "EQUALS", alternate = {"equals", "Equals", "="})
         EQUALS,
+
         @SerializedName(value = "LESS", alternate = {"less", "Less", "<"})
         LESS,
+
         @SerializedName(value = "MORE", alternate = {"more", "More", "Greater", "GREATER", "greater", ">"})
         MORE;
 
         public <T extends Comparable<T>> boolean test(T data, T data2) {
             switch (this) {
-                case EQUALS:
+                case EQUALS: {
                     return data == data2;
-                case LESS:
+                }
+
+                case LESS: {
                     return data.compareTo(data2) < 0;
-                case MORE:
+                }
+
+                case MORE: {
                     return data.compareTo(data2) > 0;
+                }
             }
 
             return false;
         }
-    }
-
-    @Override
-    public String toString()
-    {
-        return "DataAndComparator{" +
-                "data=" + data +
-                ", operator=" + operator +
-                '}';
     }
 }

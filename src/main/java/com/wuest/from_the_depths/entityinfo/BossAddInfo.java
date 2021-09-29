@@ -31,7 +31,6 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 
 		this.minSpawns = 0;
 		this.maxSpawns = 0;
-		this.timeBetweenSpawns = 100;
 		this.spawnBeforeBoss = false;
 		this.timeBetweenSpawns = 20;
 		this.nextWaveOfAdds = null;
@@ -89,27 +88,14 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 			// There is something to spawn and we reached the timer; do that now.
 			Entity entity = this.createEntityForWorld(world, pos.up(), null, commandSender);
 			entities.add(entity.getUniqueID());
-			//System.out.println("added " + entity.getDisplayName().getFormattedText() + " to the list");
-
-			if (entity == null) {
-				TextComponentString component = new TextComponentString(
-						"Unable to summon additional monster due to limited air space in summoning area");
-
-				for (EntityPlayerMP player : world.getPlayers(EntityPlayerMP.class,
-						Predicates.and(EntitySelectors.IS_ALIVE, EntitySelectors.withinRange(pos.getX(), pos.getY(), pos.getZ(), 15)))) {
-					player.sendMessage(component);
-				}
-			}
 
 			// Decrement the number left to spawn and update the timer for the next spawn.
 			this.numberLeftToSpawn--;
 			this.timeUntilNextSpawn = this.timeBetweenSpawns;
 
-			if (this.numberLeftToSpawn == 0 && this.nextWaveOfAdds == null) {
-				// This minion is done spawning and there are no more waves, tell the calling
-				// method that this one is done.
-				return true;
-			}
+			// This minion is done spawning and there are no more waves, tell the calling
+			// method that this one is done.
+			return this.numberLeftToSpawn == 0 && this.nextWaveOfAdds == null;
 		} else {
 			// Not time yet to spawn; just decrement the timer.
 			this.timeUntilNextSpawn--;
@@ -150,7 +136,7 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 
 		if (this.minSpawns < 0) {
 			FromTheDepths.logger.warn(
-					String.format("The mininum number of spawns ({}) for monster {} is not valid, setting to default of zero",
+					String.format("The minimum number of spawns ({}) for monster {} is not valid, setting to default of zero",
 							this.minSpawns, this.name));
 		}
 
