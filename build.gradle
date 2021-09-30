@@ -38,7 +38,7 @@ project.delete(files('build/src'))
 minecraft {
     mappings channel: 'snapshot', version: "${config.forge_snapshot}"
 
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     // Default run configurations.
     // These can be tweaked, removed, or duplicated as needed.
@@ -79,8 +79,16 @@ minecraft {
     }
 }
 
+repositories {
+    maven {
+        url "https://www.cursemaven.com"
+    }
+}
+
 dependencies {
     minecraft 'net.minecraftforge:forge:' + "${config.forge_version}"
+
+    implementation "curse.maven:sereneseasons-291874:2799213"
 }
 
 def parseConfig(File config) {

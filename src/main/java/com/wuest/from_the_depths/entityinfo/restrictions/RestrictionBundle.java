@@ -103,6 +103,15 @@ public class RestrictionBundle {
             }
         }
 
+        if (canStart) {
+            Pair<Boolean, String> resultAndCorrectSeason = SereneSeasonHelper.testSeasonRestrictions(spawnKey, world);
+            canStart = resultAndCorrectSeason.getLeft();
+            String correctSeason = resultAndCorrectSeason.getRight();
+            if (!canStart) {
+                message = new TextComponentTranslation("from_the_depths.restrictions.season", correctSeason);
+            }
+        }
+
         return Pair.of(canStart, message);
     }
 

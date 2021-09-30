@@ -3,6 +3,7 @@ package com.wuest.from_the_depths;
 import com.google.common.io.Files;
 import com.google.gson.*;
 import com.wuest.from_the_depths.blocks.BlockAltarOfSpawning;
+import com.wuest.from_the_depths.entityinfo.restrictions.SereneSeasonHelper;
 import com.wuest.from_the_depths.resource_loader.ResourceLocationTypeAdapter;
 import com.wuest.from_the_depths.resource_loader.TotemTextureLoader;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
@@ -260,10 +261,10 @@ public class ModRegistry {
 
 							String key = JsonUtils.getString(json, "key");
 
-							/*if (SereneSeasonHelper.isSereneSeasonLoaded.getAsBoolean() && restrictions.has("sereneSeasons")) {
+							if (SereneSeasonHelper.isSereneSeasonLoaded.getAsBoolean() && restrictions.has("sereneSeasons")) {
 								JsonObject seasonObj = JsonUtils.getJsonObject(restrictions, "sereneSeasons");
 								SereneSeasonHelper.addSeasonRestriction(key, seasonObj);
-							}*/
+							}
 
 							RestrictionBundle bundle = gson.fromJson(restrictions, RestrictionBundle.class);
 
