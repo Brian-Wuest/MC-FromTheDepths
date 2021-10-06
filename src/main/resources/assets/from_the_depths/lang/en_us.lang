@@ -1,3 +1,5 @@
+itemGroup.from_the_depths=From The Depths
+
 item.from_the_depths:item_chicken_coop.name=Chicken Coop
 item.from_the_depths:totem.name=Totem
 item.from_the_depths:totem=Totem
@@ -8,7 +10,6 @@ tile.from_the_depths:block_altar_of_summoning.name=Altar of Summoning
 
 from_the_depths.gui.starter.tab.general=General
 from_the_depths.gui.starter.tab.config=Config
-
 
 from_the_depths.wall.block.type.oak=Oak
 from_the_depths.wall.block.type.spruce=Spruce
@@ -52,7 +53,6 @@ from_the_depths.gui.green=Green
 from_the_depths.gui.red=Red
 from_the_depths.gui.black=Black
 
-# --- RoTN Edition BEGIN --- #
 # Misc Chat Status Messages
 from_the_depths.messages.no_boss=No Boss. Doesn't do anything.
 from_the_depths.messages.early_summon=Cannot spawn a monster now, try again later.
@@ -60,6 +60,7 @@ from_the_depths.messages.invalid_arena=Cannot summon monster. The area around th
 from_the_depths.messages.invalid_arena_ground=Cannot summon monster. The ground around the altar must be solid blocks in a square radius of %d blocks
 from_the_depths.messages.boss_entity_not_found=Can't Find Boss Entity with name '%s' in mod '%s'
 from_the_depths.messages.peaceful_mode=The current world difficulty is set to Peaceful. Unable to summon boss or minions
+
 # Chat Restrictions tests status messages
 from_the_depths.restrictions.dimension=The boss can't be spawned in this dimension.
 from_the_depths.restrictions.time_of_day=The boss can't be spawned during this time of the day.

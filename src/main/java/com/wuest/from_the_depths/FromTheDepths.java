@@ -56,7 +56,7 @@ public class FromTheDepths {
 
   public static Logger logger;
 
-  public static final CreativeTabs CREATIVE_TAB = new CreativeTabs("fromTheDepths") {
+  public static final CreativeTabs CREATIVE_TAB = new CreativeTabs("from_the_depths") {
     @Nonnull
     @Override
     public ItemStack createIcon()
