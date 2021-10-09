@@ -85,7 +85,7 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 			// Spawning is complete and there are no more waves to process.
 			return true;
 		} else if (this.timeUntilNextSpawn <= 0) {
-			// There is something to spawn and we reached the timer; do that now.
+			// There is something to spawn, and we reached the timer; do that now.
 			Entity entity = this.createEntityForWorld(world, pos.up(), null, commandSender);
 			entities.add(entity.getUniqueID());
 
@@ -104,6 +104,7 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 		return false;
 	}
 
+	@Override
 	public void writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
 
@@ -131,7 +132,7 @@ public class BossAddInfo extends BaseMonster implements INBTSerializable<BossAdd
 		this.timeBetweenSpawns = tag.getInteger("timeBetweenSpawns");
 		this.spawnBeforeBoss = tag.getBoolean("spawnBeforeBoss");
 		this.spawning = tag.getBoolean("spawning");
-		this.numberLeftToSpawn = tag.getInteger("numberLeftTospawn");
+		this.numberLeftToSpawn = tag.getInteger("numberLeftToSpawn");
 		this.timeUntilNextSpawn = tag.getInteger("timeUntilNextSpawn");
 
 		if (this.minSpawns < 0) {

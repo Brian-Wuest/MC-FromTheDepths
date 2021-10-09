@@ -93,6 +93,12 @@ public abstract class BaseMonster {
                 if (this.attackDamage > 0) {
                     IAttributeInstance entityAttribute = entityLiving.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
 
+                    if (entityAttribute == null) {
+                        // Add the attribute to the entity.
+                        entityLiving.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+                        entityAttribute = entityLiving.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+                    }
+
 					entityAttribute.setBaseValue(this.attackDamage);
 				}
 

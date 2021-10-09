@@ -89,7 +89,7 @@ public class SpawnInfo implements INBTSerializable<SpawnInfo> {
                 for (int i = 0; i < bossAddInfo.tagCount(); i++) {
                     NBTTagCompound addInfoTag = bossAddInfo.getCompoundTagAt(i);
                     BossAddInfo addInfo = new BossAddInfo();
-                    addInfo.loadFromNBT(addInfoTag);
+                    addInfo.loadFromNBTData(addInfoTag);
 
                     spawnInfo.bossAddInfo.add(addInfo);
                 }

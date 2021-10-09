@@ -8,6 +8,7 @@ public class BossInfo extends BaseMonster implements INBTSerializable<BossInfo> 
         super();
     }
 
+    @Override
     public void writeToNBT(NBTTagCompound tag) {
         super.writeToNBT(tag);
     }

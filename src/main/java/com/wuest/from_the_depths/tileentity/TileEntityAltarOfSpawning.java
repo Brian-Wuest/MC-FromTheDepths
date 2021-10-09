@@ -13,6 +13,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
@@ -78,6 +79,8 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
      */
     @Override
     public void markDirty() {
+        this.saveTagData();
+
         super.markDirty();
 
         if (!this.world.isRemote) {
@@ -118,7 +121,6 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
                 });
 
             if (!this.config.bossSpawned && this.config.preBossMinions.size() == 0) {
-
                 if (this.config.totalLightningBolts >= 4) {
                     //Spawn the actual boss
                     Entity entity = this.config.currentSpawnInfo.bossInfo.createEntityForWorld(this.world, this.pos, validPlayer, this.commandSender);
@@ -177,12 +179,14 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
                     // Don't use this class's mark dirty method as it will send too many packets to
                     // players.
                     super.markDirty();
+                    this.saveTagData();
                 } else {
                     this.config.ticksUntilNextLightningBolt--;
 
                     // Don't use this class's mark dirty method as it will send too many packets to
                     // players.
                     super.markDirty();
+                    this.saveTagData();
                 }
             } else if (this.config.preBossMinions.size() > 0) {
                 // Spawn the pre-boss minions.
