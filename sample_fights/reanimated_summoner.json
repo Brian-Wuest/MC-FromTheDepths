@@ -1,0 +1,83 @@
+{
+	"key": "Reanimated_Summoner",
+	"bossInfo": {
+		"domain": "minecraft",
+		"name": "skeleton",
+		"displayName": "Reanimated Summoner",
+		"maxHealth": 40,
+		"attackDamage": 10,
+		"alwaysShowDisplayName": true,
+		"shouldSpawnInAir": false,
+		"nbt": {
+			"ArmorItems": [{
+				"Count": 1,
+				"id": "minecraft:leather_boots",
+				"tag": {
+					"ench": [{
+						"id": 4,
+						"lvl": 2
+					}]
+				}
+			}]
+		},
+		"spawnEffect": "lightning",
+		"additionalDrops": [{
+				"item": "minecraft:bone",
+				"minDrops": 1,
+				"maxDrops": 4,
+				"dropChance": 100
+			},
+			{
+				"item": "minecraft:skull",
+				"minDrops": 1,
+				"maxDrops": 1,
+				"dropChance": 10
+			}
+		]
+	},
+	"bossAddInfo": [{
+		"domain": "minecraft",
+		"name": "zombie",
+		"maxHealth": 10,
+		"attackDamage": 1.5,
+		"minSpawns": 1,
+		"maxSpawns": 1,
+		"shouldSpawnInAir": false,
+		"spawnEffect": "none",
+		"timeBetweenSpawns": 100,
+		"spawnBeforeBoss": true,
+		"nbt": {
+			"ActiveEffects": [{
+				"Id": 2,
+				"Amplifier": 1,
+				"Duration": 999999
+			}, {
+				"Id": 12,
+				"Amplifier": 0,
+				"Duration": 999999
+			}]
+		},
+		"nextWaveOfAdds": {
+			"domain": "minecraft",
+			"name": "skeleton",
+			"maxHealth": 5,
+			"attackDamage": 1,
+			"minSpawns": 1,
+			"maxSpawns": 1,
+			"timeToWaitBeforeSpawn": 200,
+			"shouldSpawnInAir": false,
+			"spawnEffect": "none",
+			"nbt": {
+				"ActiveEffects": [{
+					"Id": 1,
+					"Amplifier": 1,
+					"Duration": 999999
+				}, {
+					"Id": 12,
+					"Amplifier": 0,
+					"Duration": 999999
+				}]
+			}
+		}
+	}]
+}

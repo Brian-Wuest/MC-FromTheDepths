@@ -31,12 +31,12 @@
     ]
   },
   "bossAddInfo": [{
-      "_comment": "Spawns a bunch of silverfish, after that is done. Wait 10 (200 ticks) seconds and spawn a big slime.",
+      "_comment": "Spawns a bunch of skeleton, after that is done. Wait 10 (200 ticks) seconds and spawn a big slime.",
       "_comment2": "After that spawn a random amount of chickens.",
       "domain": "minecraft",
-      "name": "silverfish",
+      "name": "skeleton",
       "minSpawns": 1,
-      "maxSpawns": 4,
+      "maxSpawns": 1,
       "shouldSpawnInAir": false,
       "spawnEffect": "lightning",
       "timeBetweenSpawns": 100,
@@ -45,6 +45,7 @@
       "nextWaveOfAdds": {
         "domain": "minecraft",
         "name": "slime",
+        "displayName": "Slime after skelly",
         "minSpawns": 1,
         "maxSpawns": 1,
         "timeToWaitBeforeSpawn": 200,
@@ -66,7 +67,7 @@
       "_comment2": "They start spawning 15 (300 ticks) seconds after the boss spawns.",
       "domain": "minecraft",
       "name": "creeper",
-      "displayName": "Custom Creeper!",
+      "displayName": "Creeper after boss",
       "maxHealth": 5,
       "attackDamage": 5,
       "alwaysShowDisplayName": false,
@@ -88,7 +89,7 @@
       }
     },
     "result": {
-      "item": "from_the_depths:item_totem_of_summoning",
+      "item": "from_the_depths:totem_custom_zombie",
       "data": 0,
       "nbt": {
         "spawn_info": "Custom_Zombie"

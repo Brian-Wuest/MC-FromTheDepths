@@ -29,13 +29,13 @@
         "dropChance": 75
       },
       {
-        "item": "from_the_depths:item_totem_of_summoning",
+        "item": "from_the_depths:totem_custom_skeleton",
         "minDrops": 1,
         "maxDrops": 1,
         "dropChance": 100,
         "_comment": "Provide a drop for the next monster in a sequence of bosses. This is especially helpful to get players to build up to a mega boss!",
         "nbt": {
-          "spawn_info": "Custom_Skeleton"
+          "spawn_info": "custom_skeleton"
         }
       }
     ]
@@ -51,7 +51,7 @@
       }
     },
     "result": {
-      "item": "from_the_depths:item_totem_of_summoning",
+      "item": "from_the_depths:totem_custom_creeper",
       "data": 0,
       "nbt": {
         "spawn_info": "Custom_Creeper"
