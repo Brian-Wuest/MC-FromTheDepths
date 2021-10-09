@@ -1,6 +1,7 @@
 package com.wuest.from_the_depths.entityinfo;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.wuest.from_the_depths.FromTheDepths;
@@ -160,10 +161,10 @@ public abstract class BaseMonster {
                     world.addWeatherEffect(new EntityLightningBolt(world, spawnPos.getX(), spawnPos.getY(), spawnPos.getZ(), true));
                 }
 
-                //Boss Spawned Message | if the predicate is not null it means we're spawning the actual boss and not minions
-                if (playerValid != null) {
+                // Boss Spawned Message | if the predicate is not null it means we're spawning the actual boss and not minions
+                if (playerValid != null && !Strings.isNullOrEmpty(this.spawnedMessage)) {
                     world.getPlayers(EntityPlayerMP.class, playerValid).forEach(player ->
-                            player.sendMessage(new TextComponentString(this.spawnedMessage))
+                            player.sendMessage(new TextComponentString(this.spawnedMessage.trim()))
                     );
                 }
 

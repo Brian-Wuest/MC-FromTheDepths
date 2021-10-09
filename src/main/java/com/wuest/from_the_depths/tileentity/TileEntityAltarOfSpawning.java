@@ -2,6 +2,7 @@ package com.wuest.from_the_depths.tileentity;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.wuest.from_the_depths.FromTheDepths;
 import com.wuest.from_the_depths.ModRegistry;
 import com.wuest.from_the_depths.base.TileEntityBase;
@@ -246,9 +247,11 @@ public class TileEntityAltarOfSpawning extends TileEntityBase<ConfigTileEntityAl
         this.config.ticksUntilNextLightningBolt = tickRate;
         this.config.currentSpawnInfo = spawnInfo;
 
-        // No entity has been spawned yet -> Boss Spawn Warning Message
-        TextComponentString warningMessage = new TextComponentString(config.currentSpawnInfo.bossInfo.warningMessage);
-        this.world.getPlayers(EntityPlayerMP.class, validPlayer).forEach(player -> player.sendMessage(warningMessage));
+        if (!Strings.isNullOrEmpty(config.currentSpawnInfo.bossInfo.warningMessage)) {
+            // No entity has been spawned yet -> Boss Spawn Warning Message
+            TextComponentString warningMessage = new TextComponentString(config.currentSpawnInfo.bossInfo.warningMessage.trim());
+            this.world.getPlayers(EntityPlayerMP.class, validPlayer).forEach(player -> player.sendMessage(warningMessage));
+        }
 
         // Get the pre-boss minions.
         if (spawnInfo.bossAddInfo != null) {
