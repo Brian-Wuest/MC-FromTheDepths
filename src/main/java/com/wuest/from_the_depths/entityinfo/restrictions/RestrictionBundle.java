@@ -2,15 +2,24 @@ package com.wuest.from_the_depths.entityinfo.restrictions;
 
 import com.google.gson.annotations.SerializedName;
 import com.wuest.from_the_depths.base.Weather;
-//import com.wuest.from_the_depths.integration.SereneSeasonHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Bundles all restriction types together.
@@ -35,8 +44,7 @@ public class RestrictionBundle {
 
     private int groundRadius;
 
-    public RestrictionBundle()
-    {
+    public RestrictionBundle() {
         this.dimensions = null;
         this.timeOfDay = null;
         this.weather = null;
@@ -89,11 +97,9 @@ public class RestrictionBundle {
 
                 if (this.yLevel.operator == DataAndComparator.Operator.MORE) {
                     key += "higher";
-                }
-                else if (this.yLevel.operator == DataAndComparator.Operator.LESS) {
+                } else if (this.yLevel.operator == DataAndComparator.Operator.LESS) {
                     key += "lower";
-                }
-                else {
+                } else {
                     key += "equals";
                 }
 
@@ -121,9 +127,129 @@ public class RestrictionBundle {
         return Pair.of(canStart, message);
     }
 
+    @SideOnly(Side.CLIENT)
+    public void addToolTipInfo(List<String> toolTip, String spawnKey) {
+        World world = Minecraft.getMinecraft().world;
+
+        if (this.dimensions != null) {
+            StringBuilder dimensionMessage = new StringBuilder(TextFormatting.BLUE + "Dimensions" + TextFormatting.WHITE + ": ");
+            boolean addedOtherDimensions = false;
+
+            for (int dimensionKey : this.dimensions) {
+                if (DimensionManager.isDimensionRegistered(dimensionKey)) {
+                    if (addedOtherDimensions) {
+                        dimensionMessage.append(", ");
+                    }
+
+                    DimensionType dimensionType = DimensionManager.getProviderType(dimensionKey);
+                    dimensionMessage.append(I18n.format(dimensionType.getName()));
+                    addedOtherDimensions = true;
+                }
+            }
+
+            toolTip.add(dimensionMessage.toString());
+        }
+
+        if (this.timeOfDay != null) {
+            StringBuilder timeOfDayMessage = new StringBuilder(TextFormatting.BLUE + "Time of Day")
+                    .append(TextFormatting.WHITE)
+                    .append(": ");
+
+            switch (this.timeOfDay.operator) {
+                case EQUALS: {
+                    timeOfDayMessage.append("At: ");
+                    break;
+                }
+
+                case LESS: {
+                    timeOfDayMessage.append("Before: ");
+                    break;
+                }
+
+                case MORE: {
+                    timeOfDayMessage.append("After: ");
+                    break;
+                }
+            }
+
+            timeOfDayMessage.append(this.timeOfDay.data);
+
+            toolTip.add(timeOfDayMessage.toString());
+        }
+
+        if (this.weather != null) {
+            String weatherMessage = TextFormatting.BLUE +
+                    "Weather" +
+                    TextFormatting.WHITE +
+                    ": " +
+                    this.weather.getName();
+
+            toolTip.add(weatherMessage);
+        }
+
+        if (this.biomes != null) {
+            StringBuilder biomeMessage = new StringBuilder(TextFormatting.BLUE + "Biomes" + TextFormatting.WHITE + ": ");
+            boolean addedOtherBiome = false;
+
+            for (ResourceLocation biomeRegistration : this.biomes) {
+                if (ForgeRegistries.BIOMES.containsKey(biomeRegistration)) {
+                    if (addedOtherBiome) {
+                        biomeMessage.append(", ");
+                    }
+
+                    Biome biome = ForgeRegistries.BIOMES.getValue(biomeRegistration);
+                    biomeMessage.append(I18n.format(biome.getBiomeName()));
+                    addedOtherBiome = true;
+                }
+            }
+
+            toolTip.add(biomeMessage.toString());
+        }
+
+        if (this.yLevel != null) {
+            StringBuilder levelMessage = new StringBuilder(TextFormatting.BLUE + "Y-Level")
+                    .append(TextFormatting.WHITE)
+                    .append(": ");
+
+            switch (this.yLevel.operator) {
+                case EQUALS: {
+                    levelMessage.append("At: ");
+                    break;
+                }
+
+                case LESS: {
+                    levelMessage.append("Below: ");
+                    break;
+                }
+
+                case MORE: {
+                    levelMessage.append("Above: ");
+                    break;
+                }
+            }
+
+            levelMessage.append(this.yLevel.data);
+
+            toolTip.add(levelMessage.toString());
+        }
+
+        if (this.groundRadius != 0) {
+            StringBuilder radiusMessage = new StringBuilder(TextFormatting.BLUE.toString())
+                    .append("Solid Ground Around Altar")
+                    .append(TextFormatting.WHITE)
+                    .append(": ")
+                    .append(this.groundRadius);
+
+            toolTip.add(radiusMessage.toString());
+        }
+
+        if (SereneSeasonHelper.isSereneSeasonLoaded.getAsBoolean()) {
+            SereneSeasonHelper.addSeasonRestrictionToToolTip(toolTip, spawnKey);
+        }
+    }
+
     @Override
-    public String toString()
-    {
+    public String toString() {
         StringBuilder builder = new StringBuilder("RestrictionBundle: ");
 
         if (this.dimensions != null) {

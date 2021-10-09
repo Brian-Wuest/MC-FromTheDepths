@@ -8,6 +8,8 @@ import com.wuest.from_the_depths.base.Triple;
 import com.wuest.from_the_depths.entityinfo.SpawnInfo;
 import com.wuest.from_the_depths.entityinfo.restrictions.RestrictionBundle;
 import com.wuest.from_the_depths.tileentity.TileEntityAltarOfSpawning;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,12 +18,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -160,8 +167,8 @@ public class ItemTotemOfSpawning extends Item {
 
                                 return EnumActionResult.SUCCESS;
                             } else {
-								player.sendMessage(new TextComponentTranslation("from_the_depths.messages.boss_entity_not_found", spawnInfo.bossInfo.name, spawnInfo.bossInfo.domain));
-							}
+                                player.sendMessage(new TextComponentTranslation("from_the_depths.messages.boss_entity_not_found", spawnInfo.bossInfo.name, spawnInfo.bossInfo.domain));
+                            }
                         }
                     }
                 }
@@ -183,6 +190,30 @@ public class ItemTotemOfSpawning extends Item {
             return new ActionResult<>(EnumActionResult.PASS, heldStack);
         else
             return new ActionResult<>(EnumActionResult.FAIL, heldStack);
+    }
+
+    /**
+     * allows items to add custom lines of information to the mouseover description
+     */
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> tooltip, ITooltipFlag advanced) {
+        super.addInformation(stack, world, tooltip, advanced);
+
+        SpawnInfo spawnInfo = this.getSpawnInfoFromItemStack(stack);
+
+        if (spawnInfo != null) {
+            if (ModRegistry.spawnRestrictions.containsKey(spawnInfo.key)) {
+                boolean advancedKeyDown = Minecraft.getMinecraft().currentScreen.isShiftKeyDown();
+
+                if (!advancedKeyDown) {
+                    tooltip.add("Hold" + TextFormatting.BLUE + " Shift " + TextFormatting.GRAY + "for advanced information.");
+                } else {
+                    RestrictionBundle restrictionBundle = ModRegistry.spawnRestrictions.get(spawnInfo.key);
+                    restrictionBundle.addToolTipInfo(tooltip, spawnInfo.key);
+                }
+            }
+        }
     }
 
     public SpawnInfo getSpawnInfoFromItemStack(ItemStack stack) {

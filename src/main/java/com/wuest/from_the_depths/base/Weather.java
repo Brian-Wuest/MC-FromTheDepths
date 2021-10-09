@@ -7,21 +7,27 @@ import java.util.function.Predicate;
 
 public enum Weather {
     @SerializedName(value = "clear", alternate = {"CLEAR", "Clear", "clean", "CLEAN", "Clean"})
-    CLEAR(world -> !world.isRaining() && !world.isThundering()),
+    CLEAR("Clear", world -> !world.isRaining() && !world.isThundering()),
 
     @SerializedName(value = "rain", alternate = {"RAIN", "Rain", "RAINING", "raining"})
-    RAINING(WorldInfo::isRaining),
+    RAINING("Raining", WorldInfo::isRaining),
 
     @SerializedName(value = "storm", alternate = {"STORM", "Storm", "thundering", "THUNDERING"})
-    STORM(WorldInfo::isThundering);
+    STORM("Storm", WorldInfo::isThundering);
 
     private final Predicate<WorldInfo> isCurrentState;
+    private final String name;
 
-    Weather(Predicate<WorldInfo> isCurrentState) {
+    Weather(String name, Predicate<WorldInfo> isCurrentState) {
         this.isCurrentState = isCurrentState;
+        this.name = name;
     }
 
     public boolean isCurrentState(WorldInfo worldInfo) {
         return isCurrentState.test(worldInfo);
+    }
+
+    public String getName() {
+        return this.name;
     }
 }

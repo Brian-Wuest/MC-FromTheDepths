@@ -268,8 +268,8 @@ public class ModRegistry {
 
 							RestrictionBundle bundle = gson.fromJson(restrictions, RestrictionBundle.class);
 
-							//FromTheDepths.logger.info("Registering Spawn info restrictions for " + key + ". Restrictions: " + bundle);
-							spawnRestrictions.put(key, bundle);
+							FromTheDepths.logger.info("Registering Spawn info restrictions for " + key + ". Restrictions: " + bundle);
+							ModRegistry.spawnRestrictions.put(key, bundle);
 						}
 					} catch (IOException | IllegalArgumentException | JsonSyntaxException exception) {
 						FromTheDepths.logger.error("From_The_Depths: Error Loading Spawn Restrictions: {}. {}", file.getPath(), exception);

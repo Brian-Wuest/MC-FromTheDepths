@@ -3,14 +3,18 @@ package com.wuest.from_the_depths.entityinfo.restrictions;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import net.minecraft.util.JsonUtils;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import sereneseasons.api.season.ISeasonState;
 import sereneseasons.api.season.Season;
 import sereneseasons.api.season.SeasonHelper;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.function.BooleanSupplier;
@@ -18,12 +22,11 @@ import java.util.function.BooleanSupplier;
 /**
  * Helper class that contains Utility Methods to interact with Serene Seasons.
  * (trying to keep the mod as an Optional Soft Dependency)
- *
- * @author Davoleo
  */
 public class SereneSeasonHelper {
 
     public static final BooleanSupplier isSereneSeasonLoaded = () -> Loader.isModLoaded("sereneseasons");
+
     private static final BiPredicate<Pair<Season, Season.SubSeason>, World> SEASON_SPAWN_RESTRICTION = (season, world) -> {
         ISeasonState worldSeason = SeasonHelper.getSeasonState(world);
         if (season.getRight() == null) {
@@ -32,6 +35,7 @@ public class SereneSeasonHelper {
             return worldSeason.getSeason() == season.getLeft() && worldSeason.getSubSeason() == season.getRight();
         }
     };
+
     public static Map<String, Pair<Season, Season.SubSeason>> seasonRestrictions = new HashMap<>();
 
     /**
@@ -65,39 +69,54 @@ public class SereneSeasonHelper {
         String sString = JsonUtils.getString(seasonObj, "season");
         String sSString = JsonUtils.getString(seasonObj, "subSeason", "");
         Pair<Season, Season.SubSeason> seasons = seasonFromStrings(sString.toUpperCase(), sSString.toUpperCase());
-        seasonRestrictions.put(spawnKey, seasons);
+        SereneSeasonHelper.seasonRestrictions.put(spawnKey, seasons);
     }
 
     /**
-     * @param world ZA WARUDO
+     * @param world The world
      * @return whether season restrictions are asserted for the passed boss spawn key.
      */
     public static Pair<Boolean, String> testSeasonRestrictions(String spawnKey, World world) {
-        //Return true if Serene Seasons is not installed
-        if (!isSereneSeasonLoaded.getAsBoolean()) {
+        // Return true if Serene Seasons is not installed
+        if (!SereneSeasonHelper.isSereneSeasonLoaded.getAsBoolean()) {
             return Pair.of(true, null);
         }
 
-        Pair<Season, Season.SubSeason> seasonPair = seasonRestrictions.get(spawnKey);
+        Pair<Season, Season.SubSeason> seasonPair = SereneSeasonHelper.seasonRestrictions.get(spawnKey);
 
-        //Return true if no season restrictions are specified
+        // Return true if no season restrictions are specified
         if (seasonPair == null) {
             return Pair.of(true, null);
         }
 
         String correctSeason;
-        //Save the correct
+
+        // Get the correct season
         if (seasonPair.getRight() != null) {
             correctSeason = seasonPair.getRight().toString().replace('_', ' ').toLowerCase();
         } else {
             correctSeason = seasonPair.getLeft().toString().toLowerCase();
         }
 
-        //Test the SEASON predicate
-        boolean result = SEASON_SPAWN_RESTRICTION.test(seasonRestrictions.get(spawnKey), world);
+        // Test the SEASON predicate
+        boolean result = SereneSeasonHelper.SEASON_SPAWN_RESTRICTION.test(SereneSeasonHelper.seasonRestrictions.get(spawnKey), world);
 
         return Pair.of(result, correctSeason);
     }
 
-}
+    @SideOnly(Side.CLIENT)
+    public static void addSeasonRestrictionToToolTip(List<String> toolTip, String spawnKey) {
+        if (SereneSeasonHelper.seasonRestrictions.containsKey(spawnKey)) {
+            Pair<Season, Season.SubSeason> seasonPair = SereneSeasonHelper.seasonRestrictions.get(spawnKey);
+            String correctSeason;
 
+            if (seasonPair.getRight() != null) {
+                correctSeason = seasonPair.getRight().toString().replace('_', ' ').toLowerCase();
+            } else {
+                correctSeason = seasonPair.getLeft().toString().toLowerCase();
+            }
+
+            toolTip.add(TextFormatting.BLUE + "Required Season" + TextFormatting.WHITE + ": " + correctSeason);
+        }
+    }
+}
