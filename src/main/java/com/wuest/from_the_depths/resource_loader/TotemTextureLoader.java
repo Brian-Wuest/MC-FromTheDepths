@@ -36,17 +36,20 @@ public class TotemTextureLoader implements IResourcePack, IResourceType {
     }
 
     public static void generateItemModels(String bossKey) throws IOException {
-        File modelFile = FromTheDepths.proxy.modDirectory.resolve("models/item/" + bossKey + ".json").toFile();
+        File modelFile = FromTheDepths.proxy.modDirectory.resolve("models" + File.separatorChar + "item" + File.separatorChar + bossKey + ".json").toFile();
         boolean wasCreated = modelFile.createNewFile();
+
         if (wasCreated) {
             JsonObject modelObj = new JsonObject();
             modelObj.addProperty("parent", "item/generated");
 
             JsonObject texturesObj = new JsonObject();
-            texturesObj.addProperty("layer0", "from_the_depths_totem:" + bossKey + ".png");
+            texturesObj.addProperty("layer0", TotemTextureLoader.DOMAIN + ":" + bossKey);
             modelObj.add("textures", texturesObj);
 
             BufferedWriter writer = new BufferedWriter(new FileWriter(modelFile));
+            writer.write(modelObj.toString());
+            writer.flush();
             writer.close();
         } else {
             FromTheDepths.logger.warn("Warning: Item Model File for boss " + bossKey + " couldn't be generated!");

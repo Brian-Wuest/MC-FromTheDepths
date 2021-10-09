@@ -19,6 +19,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.io.File;
+
 /**
  * @author WuestMan
  */
@@ -59,7 +61,7 @@ public class ClientEventHandler {
         if (item instanceof ItemTotemOfSpawning) {
             ItemTotemOfSpawning totem = ((ItemTotemOfSpawning) item);
 
-            if (totem.key != null && FromTheDepths.proxy.modDirectory.resolve("textures/" + totem.key + ".png").toFile().exists()) {
+            if (totem.key != null && FromTheDepths.proxy.modDirectory.resolve("textures" + File.separatorChar + totem.key + ".png").toFile().exists()) {
                 FromTheDepths.logger.info("Boss with name: " + totem.key + " got custom texture");
                 ClientEventHandler.regItem(item, 0, TotemTextureLoader.DOMAIN + ':' + totem.key);
             } else {
