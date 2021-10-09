@@ -1,5 +1,6 @@
 package com.wuest.from_the_depths.entityinfo.restrictions;
 
+import com.google.gson.annotations.SerializedName;
 import com.wuest.from_the_depths.base.Weather;
 //import com.wuest.from_the_depths.integration.SereneSeasonHelper;
 import net.minecraft.util.ResourceLocation;
@@ -17,14 +18,19 @@ import java.util.Arrays;
 @SuppressWarnings("FieldMayBeFinal")
 public class RestrictionBundle {
 
+    @SerializedName(value = "dimensions", alternate = {"Dimensions"})
     private Integer[] dimensions;
 
+    @SerializedName(value = "timeOfDay", alternate = {"TimeOfDay", "Timeofday", "TimeofDay", "time_of_day", "Time_Of_Day", "Time_of_Day", "Time_of_day"})
     private DataAndComparator<Long> timeOfDay;
 
+    @SerializedName(value = "weather", alternate = {"Weather"})
     private Weather weather;
 
+    @SerializedName(value = "biomes", alternate = {"Biomes"})
     private ResourceLocation[] biomes;
 
+    @SerializedName(value = "yLevel", alternate = {"ylevel", "YLevel", "y_level"})
     private DataAndComparator<Integer> yLevel;
 
     private int groundRadius;
