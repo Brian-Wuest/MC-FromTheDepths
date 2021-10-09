@@ -137,15 +137,6 @@ public abstract class TileEntityBase<T extends BaseConfig> extends TileEntity im
   }
 
   /**
-   * Called when the chunk this TileEntity is on is Unloaded.
-   */
-  @Override
-  public void onChunkUnload() {
-    // Make sure to write the tile to the tag.
-    this.writeToNBT(this.getTileData());
-  }
-
-  /**
    * Called when you receive a TileEntityData packet for the location this
    * TileEntity is currently in. On the client, the NetworkManager will always be
    * the remote server. On the server, it will be whomever is responsible for
@@ -236,4 +227,11 @@ public abstract class TileEntityBase<T extends BaseConfig> extends TileEntity im
   protected void addAllowedCapabilities() {
   }
 
+  protected void saveTagData() {
+    // This ensures that the tile data has been created since the write methods don't do this.
+    this.getTileData();
+
+    // Make sure to write the tile to the tag when unloading chunks.
+    this.writeToNBT(new NBTTagCompound());
+  }
 }
