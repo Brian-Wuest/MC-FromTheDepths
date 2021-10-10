@@ -33,6 +33,10 @@ public class CommonProxy implements IGuiHandler {
     public void registerRenderers() {
     }
 
+    public void registerCustomTextureModels() {
+
+    }
+
     public void preInit(FMLPreInitializationEvent event) {
         this.modDirectory = Paths.get(event.getModConfigurationDirectory().getAbsolutePath(), "FTD_Summons");
 

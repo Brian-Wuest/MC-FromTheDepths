@@ -22,11 +22,18 @@ public class ClientProxy extends CommonProxy {
 
         // After all items have been registered and all recipes loaded, register any necessary renderer.
         FromTheDepths.proxy.registerRenderers();
+
+        FromTheDepths.proxy.registerCustomTextureModels();
     }
 
     @Override
     public void registerRenderers() {
         ClientModRegistry.RegisterSpecialRenderers();
+    }
+
+    @Override
+    public void registerCustomTextureModels() {
+        ClientModRegistry.generateItemModels();
     }
 
     @Override
